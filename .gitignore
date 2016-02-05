@@ -1,0 +1,13 @@
+.DS_Store
+*.pyc
+*.swp
+1_cache/
+2_cache/
+3_cache/
+4_cache/
+5_cache/
+6_cache/
+7_cache/
+8_cache/
+9_cache
+.Rhistory
