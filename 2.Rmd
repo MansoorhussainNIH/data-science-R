@@ -1,0 +1,113 @@
+---
+output: 
+  html_document: 
+    keep_md: yes
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(cache=TRUE)
+```
+#Data Science Using R
+##2 - R Programming
+
+###0) R version used
+```{r}
+print(R.version.string)
+```
+
+###1) basic input & evaluation demo
+```{r}
+x <- 1
+print(x)
+msg <- "hello world"
+print(msg)
+y <- 1:20
+print(y)
+```
+
+###2) basic R objects / attributes
+```{r}
+print(class(1:10)) # 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 (integer vector)
+print(class(1.5)) # 1.5 (numeric)
+print(class("a")) # "a" (char)
+print(class(1+2i)) # 1+2i (complex)
+print(class(FALSE)) # FALSE logical
+print(class(Inf)) # "Infinity"" numeric
+print(class(NaN)) # "Not a Number" numeric
+```
+
+###3) basic vectors / lists
+```{r}
+print(class(c(1,2.3,9.6))) # vectors of numerics using concatenate 
+print(class(c(TRUE,FALSE))) # vectors of logicals
+print(class(vector("numeric",10))) # also creates a vector of numerics
+
+# if possible, R tries to coerce a vector into one singular type.
+# Since "a" cannot be numeric, but numeric can be "char", that is what occurs here
+print(class(c(1.7,"a"))) # "1.7", "a"
+
+# logical can be represented as a numeric, TRUE being 1 and FALSE being 0
+print(class(c(TRUE,2))) # 1, 2
+
+# logical can also be represented as character, hence that is what occurs herel
+print(class(c(FALSE,"a"))) # "FALSE", "a"
+
+# the above examples are implicit coercion since it occurs without explicitly stating so
+# but explicit coercion can also be done explicitly
+print(class(0:6)) # normally this is an integer vector
+print(class(as.numeric(0:6))) # but can also be explicitly coerced to be numeric vector
+print(class(as.logical(0:6))) # can also be explicitly logical.
+print(as.logical(0:6)) # 0 being false and anything else being true
+print(class(as.character(0:6))) # can easily be coerced to be character as well
+
+# nonsensical explicit coercion results in NA values (missing values)
+x <- c("a", "b", "c")
+print(as.numeric(x)) # since coercing chracter into numeric does not make sense, it introduces NA values
+
+# lists can include multiple different kinds of types of objects
+x <- list(1,"a",TRUE,1+4i)
+print(x)
+```
+
+###4) basic matrices
+```{r}
+m <- matrix(nrow=2, ncol=3)
+print(m)
+dim(m) # dimension of the m (row, col)
+attributes(m) # attributes that the matrix object can have, which is dim, and the dim values which are 2,3 (row,col)
+
+n <- matrix(1:6) # can create a single column "matrix" this way
+print(n)
+
+n <- matrix(1:6, nrow=2, ncol=3) # or create a matrix fully filled this way
+print(n)
+
+n <- matrix(1:7, nrow=2, ncol=3) # if the vector supplied overfills the matrix, it will put the first set that fits, but gives you warning
+print(n)
+
+o <- 1:10 # can create a matrix by setting the dimension (row, col) directly.
+dim(o) <- c(5,2)
+print(o)
+
+# incorrect dimension value (such as too little or too big for the vector)
+# will not let you get away with it, hence the comments to show this
+
+#p <- 1:10
+#dim(p) <- c(5,3)
+#print(p)
+
+# matrix can also be formed by column binding list of values
+cbind(1:3, 10:12) 
+# if one of the "column" in the cbind arguments is long, the other lists are extended (such as 1,2,3,4,1) by repetition, but there is a warning
+cbind(1:4, 10:13, 2:6)
+# similar thing occurs when one of the column is too short, which the R language fixes by extending the shorter end by repetition (with warning)
+cbind(1:3, 10:11)
+
+# similar to column binding, there's also row binding.
+rbind(1:3, 10:12)
+
+```
+
+###5) basic factors
+```{r}
+
+```
