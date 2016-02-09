@@ -70,72 +70,15 @@ img {
 <pre class="r"><code>print(R.version.string)</code></pre>
 <pre><code>## [1] &quot;R version 3.2.3 (2015-12-10)&quot;</code></pre>
 </div>
-<div id="basic-input-evaluation-demo" class="section level3">
-<h3>1) basic input &amp; evaluation demo</h3>
-<pre class="r"><code>x &lt;- 1
-print(x)</code></pre>
-<pre><code>## [1] 1</code></pre>
-<pre class="r"><code>msg &lt;- &quot;hello world&quot;
-print(msg)</code></pre>
-<pre><code>## [1] &quot;hello world&quot;</code></pre>
-<pre class="r"><code>y &lt;- 1:20
-print(y)</code></pre>
+<div id="basic-datatypes-inputevalrobjectvectorlistsmatrixfactors" class="section level3">
+<h3>1) basic datatypes: input/eval/Robject/vectorlists/matrix/factors</h3>
+<pre class="r"><code>print(1:20)</code></pre>
 <pre><code>##  [1]  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20</code></pre>
-</div>
-<div id="basic-r-objects-attributes" class="section level3">
-<h3>2) basic R objects / attributes</h3>
-<pre class="r"><code>print(class(1:10)) # 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 (integer vector)</code></pre>
-<pre><code>## [1] &quot;integer&quot;</code></pre>
-<pre class="r"><code>print(class(1.5)) # 1.5 (numeric)</code></pre>
-<pre><code>## [1] &quot;numeric&quot;</code></pre>
-<pre class="r"><code>print(class(&quot;a&quot;)) # &quot;a&quot; (char)</code></pre>
-<pre><code>## [1] &quot;character&quot;</code></pre>
-<pre class="r"><code>print(class(1+2i)) # 1+2i (complex)</code></pre>
-<pre><code>## [1] &quot;complex&quot;</code></pre>
-<pre class="r"><code>print(class(FALSE)) # FALSE logical</code></pre>
-<pre><code>## [1] &quot;logical&quot;</code></pre>
-<pre class="r"><code>print(class(Inf)) # &quot;Infinity&quot;&quot; numeric</code></pre>
-<pre><code>## [1] &quot;numeric&quot;</code></pre>
-<pre class="r"><code>print(class(NaN)) # &quot;Not a Number&quot; numeric</code></pre>
-<pre><code>## [1] &quot;numeric&quot;</code></pre>
-</div>
-<div id="basic-vectors-lists" class="section level3">
-<h3>3) basic vectors / lists</h3>
-<pre class="r"><code>print(class(c(1,2.3,9.6))) # vectors of numerics using concatenate </code></pre>
-<pre><code>## [1] &quot;numeric&quot;</code></pre>
-<pre class="r"><code>print(class(c(TRUE,FALSE))) # vectors of logicals</code></pre>
-<pre><code>## [1] &quot;logical&quot;</code></pre>
-<pre class="r"><code>print(class(vector(&quot;numeric&quot;,10))) # also creates a vector of numerics</code></pre>
-<pre><code>## [1] &quot;numeric&quot;</code></pre>
-<pre class="r"><code># if possible, R tries to coerce a vector into one singular type.
-# Since &quot;a&quot; cannot be numeric, but numeric can be &quot;char&quot;, that is what occurs here
-print(class(c(1.7,&quot;a&quot;))) # &quot;1.7&quot;, &quot;a&quot;</code></pre>
-<pre><code>## [1] &quot;character&quot;</code></pre>
-<pre class="r"><code># logical can be represented as a numeric, TRUE being 1 and FALSE being 0
-print(class(c(TRUE,2))) # 1, 2</code></pre>
-<pre><code>## [1] &quot;numeric&quot;</code></pre>
-<pre class="r"><code># logical can also be represented as character, hence that is what occurs herel
-print(class(c(FALSE,&quot;a&quot;))) # &quot;FALSE&quot;, &quot;a&quot;</code></pre>
-<pre><code>## [1] &quot;character&quot;</code></pre>
-<pre class="r"><code># the above examples are implicit coercion since it occurs without explicitly stating so
-# but explicit coercion can also be done explicitly
-print(class(0:6)) # normally this is an integer vector</code></pre>
-<pre><code>## [1] &quot;integer&quot;</code></pre>
-<pre class="r"><code>print(class(as.numeric(0:6))) # but can also be explicitly coerced to be numeric vector</code></pre>
-<pre><code>## [1] &quot;numeric&quot;</code></pre>
-<pre class="r"><code>print(class(as.logical(0:6))) # can also be explicitly logical.</code></pre>
-<pre><code>## [1] &quot;logical&quot;</code></pre>
-<pre class="r"><code>print(as.logical(0:6)) # 0 being false and anything else being true</code></pre>
-<pre><code>## [1] FALSE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE</code></pre>
-<pre class="r"><code>print(class(as.character(0:6))) # can easily be coerced to be character as well</code></pre>
-<pre><code>## [1] &quot;character&quot;</code></pre>
-<pre class="r"><code># nonsensical explicit coercion results in NA values (missing values)
-x &lt;- c(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;)
-print(as.numeric(x)) # since coercing chracter into numeric does not make sense, it introduces NA values</code></pre>
-<pre><code>## Warning in print(as.numeric(x)): NAs introduced by coercion</code></pre>
-<pre><code>## [1] NA NA NA</code></pre>
-<pre class="r"><code># lists can include multiple different kinds of types of objects
-x &lt;- list(1,&quot;a&quot;,TRUE,1+4i)
+<pre class="r"><code>print(1+2i)</code></pre>
+<pre><code>## [1] 1+2i</code></pre>
+<pre class="r"><code>print(c(TRUE,&quot;a&quot;))</code></pre>
+<pre><code>## [1] &quot;TRUE&quot; &quot;a&quot;</code></pre>
+<pre class="r"><code>x&lt;-list(1,&quot;a&quot;,TRUE,1+4i)
 print(x)</code></pre>
 <pre><code>## [[1]]
 ## [1] 1
@@ -148,85 +91,374 @@ print(x)</code></pre>
 ## 
 ## [[4]]
 ## [1] 1+4i</code></pre>
-</div>
-<div id="basic-matrices" class="section level3">
-<h3>4) basic matrices</h3>
-<pre class="r"><code>m &lt;- matrix(nrow=2, ncol=3)
+<pre class="r"><code>m&lt;-matrix(nrow=2,ncol=3)
 print(m)</code></pre>
 <pre><code>##      [,1] [,2] [,3]
 ## [1,]   NA   NA   NA
 ## [2,]   NA   NA   NA</code></pre>
-<pre class="r"><code>dim(m) # dimension of the m (row, col)</code></pre>
+<pre class="r"><code>dim(m)</code></pre>
 <pre><code>## [1] 2 3</code></pre>
-<pre class="r"><code>attributes(m) # attributes that the matrix object can have, which is dim, and the dim values which are 2,3 (row,col)</code></pre>
-<pre><code>## $dim
-## [1] 2 3</code></pre>
-<pre class="r"><code>n &lt;- matrix(1:6) # can create a single column &quot;matrix&quot; this way
-print(n)</code></pre>
-<pre><code>##      [,1]
-## [1,]    1
-## [2,]    2
-## [3,]    3
-## [4,]    4
-## [5,]    5
-## [6,]    6</code></pre>
-<pre class="r"><code>n &lt;- matrix(1:6, nrow=2, ncol=3) # or create a matrix fully filled this way
-print(n)</code></pre>
-<pre><code>##      [,1] [,2] [,3]
-## [1,]    1    3    5
-## [2,]    2    4    6</code></pre>
-<pre class="r"><code>n &lt;- matrix(1:7, nrow=2, ncol=3) # if the vector supplied overfills the matrix, it will put the first set that fits, but gives you warning</code></pre>
-<pre><code>## Warning in matrix(1:7, nrow = 2, ncol = 3): data length [7] is not a sub-
-## multiple or multiple of the number of rows [2]</code></pre>
-<pre class="r"><code>print(n)</code></pre>
-<pre><code>##      [,1] [,2] [,3]
-## [1,]    1    3    5
-## [2,]    2    4    6</code></pre>
-<pre class="r"><code>o &lt;- 1:10 # can create a matrix by setting the dimension (row, col) directly.
-dim(o) &lt;- c(5,2)
-print(o)</code></pre>
+<pre class="r"><code>print(matrix(1:8,nrow=2,ncol=4))</code></pre>
+<pre><code>##      [,1] [,2] [,3] [,4]
+## [1,]    1    3    5    7
+## [2,]    2    4    6    8</code></pre>
+<pre class="r"><code>num&lt;-1:10
+dim(num)&lt;-c(5,2)
+print(num)</code></pre>
 <pre><code>##      [,1] [,2]
 ## [1,]    1    6
 ## [2,]    2    7
 ## [3,]    3    8
 ## [4,]    4    9
 ## [5,]    5   10</code></pre>
-<pre class="r"><code># incorrect dimension value (such as too little or too big for the vector)
-# will not let you get away with it, hence the comments to show this
-
-#p &lt;- 1:10
-#dim(p) &lt;- c(5,3)
-#print(p)
-
-# matrix can also be formed by column binding list of values
-cbind(1:3, 10:12) </code></pre>
+<pre class="r"><code>cbind(1:3,10:12)</code></pre>
 <pre><code>##      [,1] [,2]
 ## [1,]    1   10
 ## [2,]    2   11
 ## [3,]    3   12</code></pre>
-<pre class="r"><code># if one of the &quot;column&quot; in the cbind arguments is long, the other lists are extended (such as 1,2,3,4,1) by repetition, but there is a warning
-cbind(1:4, 10:13, 2:6)</code></pre>
-<pre><code>## Warning in cbind(1:4, 10:13, 2:6): number of rows of result is not a
-## multiple of vector length (arg 1)</code></pre>
-<pre><code>##      [,1] [,2] [,3]
-## [1,]    1   10    2
-## [2,]    2   11    3
-## [3,]    3   12    4
-## [4,]    4   13    5
-## [5,]    1   10    6</code></pre>
-<pre class="r"><code># similar thing occurs when one of the column is too short, which the R language fixes by extending the shorter end by repetition (with warning)
-cbind(1:3, 10:11)</code></pre>
-<pre><code>## Warning in cbind(1:3, 10:11): number of rows of result is not a multiple of
-## vector length (arg 2)</code></pre>
-<pre><code>##      [,1] [,2]
-## [1,]    1   10
-## [2,]    2   11
-## [3,]    3   10</code></pre>
-<pre class="r"><code># similar to column binding, there's also row binding.
-rbind(1:3, 10:12)</code></pre>
+<pre class="r"><code>rbind(1:3,10:12)</code></pre>
 <pre><code>##      [,1] [,2] [,3]
 ## [1,]    1    2    3
 ## [2,]   10   11   12</code></pre>
+<pre class="r"><code>x&lt;-factor(c(&quot;yes&quot;,&quot;yes&quot;,&quot;no&quot;,&quot;yes&quot;,&quot;no&quot;))
+x</code></pre>
+<pre><code>## [1] yes yes no  yes no 
+## Levels: no yes</code></pre>
+<pre class="r"><code>table(x)</code></pre>
+<pre><code>## x
+##  no yes 
+##   2   3</code></pre>
+<pre class="r"><code>unclass(x)</code></pre>
+<pre><code>## [1] 2 2 1 2 1
+## attr(,&quot;levels&quot;)
+## [1] &quot;no&quot;  &quot;yes&quot;</code></pre>
+<pre class="r"><code>y&lt;-factor(c(&quot;yes&quot;,&quot;yes&quot;,&quot;no&quot;,&quot;yes&quot;,&quot;no&quot;), levels=c(&quot;yes&quot;,&quot;no&quot;))
+y</code></pre>
+<pre><code>## [1] yes yes no  yes no 
+## Levels: yes no</code></pre>
+<pre class="r"><code>x&lt;-c(1,2,NA,3)
+is.na(x)</code></pre>
+<pre><code>## [1] FALSE FALSE  TRUE FALSE</code></pre>
+<pre class="r"><code>y&lt;-c(1,2,NaN,NA,6)
+is.na(y)</code></pre>
+<pre><code>## [1] FALSE FALSE  TRUE  TRUE FALSE</code></pre>
+<pre class="r"><code>is.nan(y)</code></pre>
+<pre><code>## [1] FALSE FALSE  TRUE FALSE FALSE</code></pre>
+<pre class="r"><code>x&lt;-data.frame(foo=1:4,bar=c(T,T,F,F))
+x</code></pre>
+<pre><code>##   foo   bar
+## 1   1  TRUE
+## 2   2  TRUE
+## 3   3 FALSE
+## 4   4 FALSE</code></pre>
+<pre class="r"><code>print(paste(&quot;nrow:&quot;, nrow(x),&quot;, ncol:&quot;,ncol(x)))</code></pre>
+<pre><code>## [1] &quot;nrow: 4 , ncol: 2&quot;</code></pre>
+<pre class="r"><code>x&lt;-1:3
+names(x)</code></pre>
+<pre><code>## NULL</code></pre>
+<pre class="r"><code>names(x)&lt;-c(&quot;foo&quot;,&quot;bar&quot;,&quot;norf&quot;)
+names(x)</code></pre>
+<pre><code>## [1] &quot;foo&quot;  &quot;bar&quot;  &quot;norf&quot;</code></pre>
+<pre class="r"><code>x&lt;-list(a=1,b=2,c=3)
+x</code></pre>
+<pre><code>## $a
+## [1] 1
+## 
+## $b
+## [1] 2
+## 
+## $c
+## [1] 3</code></pre>
+<pre class="r"><code>m&lt;-matrix(1:4,nrow=2,ncol=3)</code></pre>
+<pre><code>## Warning in matrix(1:4, nrow = 2, ncol = 3): data length [4] is not a sub-
+## multiple or multiple of the number of columns [3]</code></pre>
+<pre class="r"><code>dimnames(m)&lt;-list(c(&quot;a&quot;,&quot;b&quot;),c(&quot;c&quot;,&quot;d&quot;,&quot;e&quot;))
+m</code></pre>
+<pre><code>##   c d e
+## a 1 3 1
+## b 2 4 2</code></pre>
+</div>
+<div id="basic-reading-read.tabledputdgetdumpsource" class="section level3">
+<h3>2) basic reading: read.table/dput/dget/dump/source/</h3>
+<pre class="r"><code>data&lt;-read.table(&quot;foo.txt&quot;)
+data</code></pre>
+<pre><code>##       V1   V2
+## 1   name type
+## 2   Meow  Cat
+## 3   Woof  Dog
+## 4 Kakaka  Fox</code></pre>
+<pre class="r"><code>foo&lt;-read.table(file=&quot;test.txt&quot;,header=TRUE,sep=&quot;\n&quot;,nrows=3)
+foo</code></pre>
+<pre><code>##                                                                                                                                             X.F48MJBB02HA5PZ_cs_nbp_rc.cs_nbp.32.57.sample.700033450.rbarcode.ACGTTCCAC.primer.V3.V5.subject.159470302.body_site.Saliva.center.WUGSC
+## 1                                                                                                                                                                                                                                                         CCTACGGGAGGCAGCAGGGATGAGAT
+## 2                                                                                                                                           &gt;F48MJBB02I669X_cs_nbp_rc cs_nbp=32-305 sample=700033450 rbarcode=ACGTTCCAC primer=V3-V5 subject=159470302 body_site=Saliva center=WUGSC
+## 3 CCTATCCCCTGTGTGCCTTGAGTATCGGAGGGGCAGGCGGAATTCCTAGTGTAGCGGTGAAATGCGTAGATATTAGGAAGAACACCGGTGGCGAAGGCGGCCTGCTGGACGAAAACTGACGTTGAGGCTCGAAGGCGTGGGGAGCAAGCAGGATTAGATACCCTGGTAGTCCACGCGGTAAACGATGAATACTAGGCGTTGGTGCCCCAAGGGCATCGGTGCCGTCGCAAACGCAATAAGTATTCCACCTGGGGAGTACGTTCGCAAGAATGAA</code></pre>
+<pre class="r"><code># passing adata around by deparsing R object using dput
+# and reading back using dget
+y&lt;-data.frame(a=1,b=&quot;a&quot;)
+#dput(y)
+dput(y,file=&quot;y.R&quot;) # actually creates physical y.R
+new.y&lt;-dget(&quot;y.R&quot;)
+new.y</code></pre>
+<pre><code>##   a b
+## 1 1 a</code></pre>
+<pre class="r"><code>x&lt;-&quot;foo&quot;
+y&lt;-data.frame(a=1, b=&quot;a&quot;)
+dump(c(&quot;x&quot;,&quot;y&quot;),file=&quot;data.R&quot;) # creates physical data.R
+rm(x,y)
+source(&quot;data.R&quot;)
+y</code></pre>
+<pre><code>##   a b
+## 1 1 a</code></pre>
+<pre class="r"><code>x</code></pre>
+<pre><code>## [1] &quot;foo&quot;</code></pre>
+</div>
+<div id="basic-connections-filereadlineswritelinesurl" class="section level3">
+<h3>3) basic connections: file/readLines/writeLines/url</h3>
+<pre class="r"><code>con&lt;-file(&quot;HMP_16s_single_cell_MDA_from_fecal_specimens-short.txt&quot;,&quot;r&quot;)
+x&lt;-readLines(con,100)
+x</code></pre>
+<pre><code>## [1] &quot;&gt;1042139-140-141-142_A04_TIGR_WGACA01T1F15058_1042140_1122243671925_016_1122232824624 Trace of J:\\Environmental_Genomics\\Lasken lab\\Lasken Lab DNA Sequencing Log\\03-29-10 Sequencing Results - Fecal Combo sort\\TraceFiles-20100329131835\\1042139-140-141-142_A04_TIGR_WGACA01T1F15058_1042140_1122243671925_016_1122232824624.scf; length: 485; low quality 95; medium quality 145; high quality 245&quot;
+## [2] &quot;ACTGCTAATACCGCATATGCCATGAACATCGCATGATGAAAATGGGAAAGGAGCAATCCG&quot;                                                                                                                                                                                                                                                                                                                                                
+## [3] &quot;CTAATAGATGAGCTTGCGTCTGATTAACTAGTTGGTGTGGTAATGGCATACCAAGGTAAC&quot;                                                                                                                                                                                                                                                                                                                                                
+## [4] &quot;GATCAGTAGCCGGACTGAGAGGTTGAACGGCCACATTGGGACTGAGATACGGCCCAGACT&quot;                                                                                                                                                                                                                                                                                                                                                
+## [5] &quot;CCTACGGGAGGCAGCAGTCGGGAATATTGCGCAATGGAGGAAACTCTGACGCAGTGACGC&quot;                                                                                                                                                                                                                                                                                                                                                
+## [6] &quot;CGCGTATAGGATGAAGGTTTTCGGATTGTAAACTATTGTCATTAGGGAAGATAAAAGACA&quot;                                                                                                                                                                                                                                                                                                                                                
+## [7] &quot;GTACCTAAGGAGGAAGC&quot;</code></pre>
+<pre class="r"><code>out&lt;-file(&quot;test-output.txt&quot;,&quot;w&quot;)
+writeLines(text = x,con = out)
+close(con)
+close(out)
+con&lt;-url(&quot;http://www.google.com&quot;,&quot;r&quot;)
+x&lt;-readLines(con)</code></pre>
+<pre><code>## Warning in readLines(con): incomplete final line found on 'http://
+## www.google.com'</code></pre>
+<pre class="r"><code>head(x,1)</code></pre>
+<pre><code>## [1] &quot;&lt;!doctype html&gt;&lt;html itemscope=\&quot;\&quot; itemtype=\&quot;http://schema.org/WebPage\&quot; lang=\&quot;en\&quot;&gt;&lt;head&gt;&lt;meta content=\&quot;Search the world's information, including webpages, images, videos and more. Google has many special features to help you find exactly what you're looking for.\&quot; name=\&quot;description\&quot;&gt;&lt;meta content=\&quot;noodp\&quot; name=\&quot;robots\&quot;&gt;&lt;meta content=\&quot;text/html; charset=UTF-8\&quot; http-equiv=\&quot;Content-Type\&quot;&gt;&lt;meta content=\&quot;/logos/doodles/2016/lunar-new-year-2016-5134827118395392-hp.jpg\&quot; itemprop=\&quot;image\&quot;&gt;&lt;meta content=\&quot;Happy Lunar New Year! #GoogleDoodle\&quot; property=\&quot;og:description\&quot;&gt;&lt;meta content=\&quot;http://www.google.com/logos/doodles/2016/lunar-new-year-2016-5134827118395392-thp.png\&quot; property=\&quot;og:image\&quot;&gt;&lt;meta content=\&quot;500\&quot; property=\&quot;og:image:width\&quot;&gt;&lt;meta content=\&quot;200\&quot; property=\&quot;og:image:height\&quot;&gt;&lt;title&gt;Google&lt;/title&gt;&lt;script&gt;(function(){window.google={kEI:'-V-5Vr3lGISMjwOEkrW4CQ',kEXPI:'1350255,3700062,3700307,3700385,4028790,4029815,4031109,4032677,4033307,4036509,4036527,4038012,4039268,4039954,4042784,4042792,4043492,4044606,4045841,4046304,4048882,4049499,4049501,4049549,4049557,4050886,4050891,4050908,4051241,4051559,4051596,4051714,4052304,4052781,4054117,4054224,4054284,4054513,4055744,4056038,4056162,4056590,4056606,4057170,4057586,4057836,4057920,4058004,4058033,4058117,4058337,4058544,4059275,4059318,4059328,4059359,8300096,8300273,8300310,8300317,8502095,8502315,8502347,8502691,8502985,8503109,8503131,8503212,8503331,8503332,10200083',authuser:0,kscs:'c9c918f0_24'};google.kHL='en';})();(function(){google.lc=[];google.li=0;google.getEI=function(a){for(var b;a&amp;&amp;(!a.getAttribute||!(b=a.getAttribute(\&quot;eid\&quot;)));)a=a.parentNode;return b||google.kEI};google.getLEI=function(a){for(var b=null;a&amp;&amp;(!a.getAttribute||!(b=a.getAttribute(\&quot;leid\&quot;)));)a=a.parentNode;return b};google.https=function(){return\&quot;https:\&quot;==window.location.protocol};google.ml=function(){return null};google.wl=function(a,b){try{google.ml(Error(a),!1,b)}catch(d){}};google.time=function(){return(new Date).getTime()};google.log=function(a,b,d,e,g){a=google.logUrl(a,b,d,e,g);if(\&quot;\&quot;!=a){b=new Image;var c=google.lc,f=google.li;c[f]=b;b.onerror=b.onload=b.onabort=function(){delete c[f]};window.google&amp;&amp;window.google.vel&amp;&amp;window.google.vel.lu&amp;&amp;window.google.vel.lu(a);b.src=a;google.li=f+1}};google.logUrl=function(a,b,d,e,g){var c=\&quot;\&quot;,f=google.ls||\&quot;\&quot;;if(!d&amp;&amp;-1==b.search(\&quot;&amp;ei=\&quot;)){var h=google.getEI(e),c=\&quot;&amp;ei=\&quot;+h;-1==b.search(\&quot;&amp;lei=\&quot;)&amp;&amp;((e=google.getLEI(e))?c+=\&quot;&amp;lei=\&quot;+e:h!=google.kEI&amp;&amp;(c+=\&quot;&amp;lei=\&quot;+google.kEI))}a=d||\&quot;/\&quot;+(g||\&quot;gen_204\&quot;)+\&quot;?atyp=i&amp;ct=\&quot;+a+\&quot;&amp;cad=\&quot;+b+c+f+\&quot;&amp;zx=\&quot;+google.time();/^http:/i.test(a)&amp;&amp;google.https()&amp;&amp;(google.ml(Error(\&quot;a\&quot;),!1,{src:a,glmm:1}),a=\&quot;\&quot;);return a};google.y={};google.x=function(a,b){google.y[a.id]=[a,b];return!1};google.load=function(a,b,d){google.x({id:a+k++},function(){google.load(a,b,d)})};var k=0;})();var _gjwl=location;function _gjuc(){var a=_gjwl.href.indexOf(\&quot;#\&quot;);if(0&lt;=a&amp;&amp;(a=_gjwl.href.substring(a),0&lt;a.indexOf(\&quot;&amp;q=\&quot;)||0&lt;=a.indexOf(\&quot;#q=\&quot;))&amp;&amp;(a=a.substring(1),-1==a.indexOf(\&quot;#\&quot;))){for(var d=0;d&lt;a.length;){var b=d;\&quot;&amp;\&quot;==a.charAt(b)&amp;&amp;++b;var c=a.indexOf(\&quot;&amp;\&quot;,b);-1==c&amp;&amp;(c=a.length);b=a.substring(b,c);if(0==b.indexOf(\&quot;fp=\&quot;))a=a.substring(0,d)+a.substring(c,a.length),c=d;else if(\&quot;cad=h\&quot;==b)return 0;d=c}_gjwl.href=\&quot;/search?\&quot;+a+\&quot;&amp;cad=h\&quot;;return 1}return 0}&quot;</code></pre>
+<pre class="r"><code>close(con)</code></pre>
+</div>
+<div id="basic-subsetting-vectorlistmatrixpartial-matchingremoving-na-values" class="section level3">
+<h3>4) basic subsetting: vector/list/matrix/partial-matching/removing-NA-values</h3>
+<pre class="r"><code>x&lt;-c(&quot;a&quot;,&quot;b&quot;,&quot;c&quot;,&quot;d&quot;,&quot;e&quot;)
+x[1:4]</code></pre>
+<pre><code>## [1] &quot;a&quot; &quot;b&quot; &quot;c&quot; &quot;d&quot;</code></pre>
+<pre class="r"><code>x[x&gt;&quot;b&quot;]</code></pre>
+<pre><code>## [1] &quot;c&quot; &quot;d&quot; &quot;e&quot;</code></pre>
+<pre class="r"><code>y&lt;-list(foo=1:4,bar=c(0.6,0.4,0.2),baz=TRUE,bad=list(4,3,2,1))
+y[[2]]</code></pre>
+<pre><code>## [1] 0.6 0.4 0.2</code></pre>
+<pre class="r"><code>y$bar</code></pre>
+<pre><code>## [1] 0.6 0.4 0.2</code></pre>
+<pre class="r"><code>y[[&quot;bar&quot;]]</code></pre>
+<pre><code>## [1] 0.6 0.4 0.2</code></pre>
+<pre class="r"><code>y[[&quot;bad&quot;]][[3]]</code></pre>
+<pre><code>## [1] 2</code></pre>
+<pre class="r"><code>m&lt;-matrix(1:6,2,3)
+m</code></pre>
+<pre><code>##      [,1] [,2] [,3]
+## [1,]    1    3    5
+## [2,]    2    4    6</code></pre>
+<pre class="r"><code>m[1,2] #m[row,col]</code></pre>
+<pre><code>## [1] 3</code></pre>
+<pre class="r"><code>m[1,] #m entire row=1</code></pre>
+<pre><code>## [1] 1 3 5</code></pre>
+<pre class="r"><code>m[1,,drop=FALSE] # if drop=FALSE, the 1x1 matrix is maintained</code></pre>
+<pre><code>##      [,1] [,2] [,3]
+## [1,]    1    3    5</code></pre>
+<pre class="r"><code>x&lt;-list(aardvark=1:5)
+x[[&quot;aard&quot;,exact=FALSE]] # if exact=FALSE, partial matching is ok</code></pre>
+<pre><code>## [1] 1 2 3 4 5</code></pre>
+<pre class="r"><code>x&lt;-c(1,2,NA,4,NA,5)
+x[!is.na(x)]</code></pre>
+<pre><code>## [1] 1 2 4 5</code></pre>
+<pre class="r"><code>y&lt;-c(&quot;a&quot;,&quot;b&quot;,NA,&quot;d&quot;,NA,NA)
+x[complete.cases(x,y)]</code></pre>
+<pre><code>## [1] 1 2 4</code></pre>
+<pre class="r"><code>y[complete.cases(x,y)]</code></pre>
+<pre><code>## [1] &quot;a&quot; &quot;b&quot; &quot;d&quot;</code></pre>
+<pre class="r"><code>airquality[1:10,]</code></pre>
+<pre><code>##    Ozone Solar.R Wind Temp Month Day
+## 1     41     190  7.4   67     5   1
+## 2     36     118  8.0   72     5   2
+## 3     12     149 12.6   74     5   3
+## 4     18     313 11.5   62     5   4
+## 5     NA      NA 14.3   56     5   5
+## 6     28      NA 14.9   66     5   6
+## 7     23     299  8.6   65     5   7
+## 8     19      99 13.8   59     5   8
+## 9      8      19 20.1   61     5   9
+## 10    NA     194  8.6   69     5  10</code></pre>
+<pre class="r"><code>airquality[complete.cases(airquality),][1:10,]</code></pre>
+<pre><code>##    Ozone Solar.R Wind Temp Month Day
+## 1     41     190  7.4   67     5   1
+## 2     36     118  8.0   72     5   2
+## 3     12     149 12.6   74     5   3
+## 4     18     313 11.5   62     5   4
+## 7     23     299  8.6   65     5   7
+## 8     19      99 13.8   59     5   8
+## 9      8      19 20.1   61     5   9
+## 12    16     256  9.7   69     5  12
+## 13    11     290  9.2   66     5  13
+## 14    14     274 10.9   68     5  14</code></pre>
+</div>
+<div id="basic-vectorized-operations" class="section level3">
+<h3>5) basic vectorized operations</h3>
+<pre class="r"><code>x&lt;-1:4;y&lt;-6:9
+x*y</code></pre>
+<pre><code>## [1]  6 14 24 36</code></pre>
+<pre class="r"><code>x&lt;-matrix(1:4,2,2);y&lt;-matrix(rep(10,4),2,2)
+x*y # element-wise multiplication</code></pre>
+<pre><code>##      [,1] [,2]
+## [1,]   10   30
+## [2,]   20   40</code></pre>
+<pre class="r"><code>x%*%y # true matrix multiplication</code></pre>
+<pre><code>##      [,1] [,2]
+## [1,]   40   40
+## [2,]   60   60</code></pre>
+<pre class="r"><code>y%*%x</code></pre>
+<pre><code>##      [,1] [,2]
+## [1,]   30   70
+## [2,]   30   70</code></pre>
+</div>
+<div id="basic-control-structures-if-elseforwhilerepeat" class="section level3">
+<h3>6) basic control structures: if-else/for/while/repeat</h3>
+<pre class="r"><code>x&lt;-5;y&lt;-7
+if(x&gt;y) {
+    print(&quot;x is bigger than y&quot;)
+} else if(x&lt;y) {
+    print(&quot;y is bigger than x&quot;)
+} else {
+    print(&quot;x and y are same&quot;)
+}</code></pre>
+<pre><code>## [1] &quot;y is bigger than x&quot;</code></pre>
+<pre class="r"><code>z&lt;- if(x&gt;3) {
+    10
+} else {
+    30
+}
+z</code></pre>
+<pre><code>## [1] 10</code></pre>
+<pre class="r"><code>for(i in 4:1) {
+    print(i)
+}</code></pre>
+<pre><code>## [1] 4
+## [1] 3
+## [1] 2
+## [1] 1</code></pre>
+<pre class="r"><code>x&lt;-c(&quot;d&quot;,&quot;c&quot;,&quot;b&quot;,&quot;a&quot;)
+for(i in 1:4){ print(x[i]) } # 1 of 3 ways to achieve similar result</code></pre>
+<pre><code>## [1] &quot;d&quot;
+## [1] &quot;c&quot;
+## [1] &quot;b&quot;
+## [1] &quot;a&quot;</code></pre>
+<pre class="r"><code>for(i in seq_along(x)){ print(x[i]) } # 1 of 3 ways to achieve similar result</code></pre>
+<pre><code>## [1] &quot;d&quot;
+## [1] &quot;c&quot;
+## [1] &quot;b&quot;
+## [1] &quot;a&quot;</code></pre>
+<pre class="r"><code>for(letter in x) { print(letter) } # 1 of 3 ways to achieve similar result</code></pre>
+<pre><code>## [1] &quot;d&quot;
+## [1] &quot;c&quot;
+## [1] &quot;b&quot;
+## [1] &quot;a&quot;</code></pre>
+<pre class="r"><code>x&lt;-matrix(1:6,2,3)
+x</code></pre>
+<pre><code>##      [,1] [,2] [,3]
+## [1,]    1    3    5
+## [2,]    2    4    6</code></pre>
+<pre class="r"><code># nested for-loop
+for(i in seq_len(nrow(x))) {
+    for(j in seq_len(ncol(x))) {
+        print(x[i,j])
+    }
+}</code></pre>
+<pre><code>## [1] 1
+## [1] 3
+## [1] 5
+## [1] 2
+## [1] 4
+## [1] 6</code></pre>
+<pre class="r"><code>count&lt;-0
+while(count&lt;10) {
+    print(count)
+    count&lt;-count+1
+}</code></pre>
+<pre><code>## [1] 0
+## [1] 1
+## [1] 2
+## [1] 3
+## [1] 4
+## [1] 5
+## [1] 6
+## [1] 7
+## [1] 8
+## [1] 9</code></pre>
+<pre class="r"><code>z&lt;-5
+while(z&gt;=3 &amp;&amp; z&lt;=10) {
+    print(z)
+    coin&lt;-rbinom(1,1,0.5)
+    if(coin==1) { # random coin toss-up
+        z&lt;-z+1
+    } else {
+        z&lt;-z-1
+    }
+}</code></pre>
+<pre><code>## [1] 5
+## [1] 6
+## [1] 5
+## [1] 4
+## [1] 3</code></pre>
+<pre class="r"><code>x0&lt;-1
+i&lt;-0
+repeat{ #infinite while(TRUE) loop
+    i&lt;-i+1
+    x1&lt;-rnorm(1)
+    if(abs(x1-x0)&gt;6) {
+        print(abs(x1-x0))
+        print(i)
+        break
+    } else {
+        x0&lt;-x1
+    }
+}</code></pre>
+<pre><code>## [1] 6.126088
+## [1] 16405</code></pre>
+<pre class="r"><code>for(i in 1:100) {
+    if(i&lt;=90) { # skip from 1 to 90
+        next
+    }
+    print(i)
+}</code></pre>
+<pre><code>## [1] 91
+## [1] 92
+## [1] 93
+## [1] 94
+## [1] 95
+## [1] 96
+## [1] 97
+## [1] 98
+## [1] 99
+## [1] 100</code></pre>
+</div>
+<div id="basic-functions" class="section level3">
+<h3>7) basic functions</h3>
+<pre class="r"><code>above&lt;-function(x,n) {
+    use&lt;-x&gt;n
+    x[use]
+}
+above(1:20,12)</code></pre>
+<pre><code>## [1] 13 14 15 16 17 18 19 20</code></pre>
+<pre class="r"><code>colmeans&lt;-function(y) {
+    nc&lt;-ncol(y)
+    means&lt;-numeric(nc)
+    for(i in 1:nc){
+        #means[i]&lt;-mean(y[,i])
+        means[i]&lt;-mean(y[,i][!is.na(y[,i])])
+    }
+    means
+}
+colmeans(airquality)</code></pre>
+<pre><code>## [1]  42.129310 185.931507   9.957516  77.882353   6.993464  15.803922</code></pre>
 </div>
 </div>
 </div>

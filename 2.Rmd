@@ -14,100 +14,202 @@ knitr::opts_chunk$set(cache=TRUE)
 print(R.version.string)
 ```
 
-###1) basic input & evaluation demo
+###1) basic datatypes: input/eval/Robject/vectorlists/matrix/factors
 ```{r}
-x <- 1
+print(1:20)
+print(1+2i)
+print(c(TRUE,"a"))
+x<-list(1,"a",TRUE,1+4i)
 print(x)
-msg <- "hello world"
-print(msg)
-y <- 1:20
-print(y)
-```
-
-###2) basic R objects / attributes
-```{r}
-print(class(1:10)) # 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 (integer vector)
-print(class(1.5)) # 1.5 (numeric)
-print(class("a")) # "a" (char)
-print(class(1+2i)) # 1+2i (complex)
-print(class(FALSE)) # FALSE logical
-print(class(Inf)) # "Infinity"" numeric
-print(class(NaN)) # "Not a Number" numeric
-```
-
-###3) basic vectors / lists
-```{r}
-print(class(c(1,2.3,9.6))) # vectors of numerics using concatenate 
-print(class(c(TRUE,FALSE))) # vectors of logicals
-print(class(vector("numeric",10))) # also creates a vector of numerics
-
-# if possible, R tries to coerce a vector into one singular type.
-# Since "a" cannot be numeric, but numeric can be "char", that is what occurs here
-print(class(c(1.7,"a"))) # "1.7", "a"
-
-# logical can be represented as a numeric, TRUE being 1 and FALSE being 0
-print(class(c(TRUE,2))) # 1, 2
-
-# logical can also be represented as character, hence that is what occurs herel
-print(class(c(FALSE,"a"))) # "FALSE", "a"
-
-# the above examples are implicit coercion since it occurs without explicitly stating so
-# but explicit coercion can also be done explicitly
-print(class(0:6)) # normally this is an integer vector
-print(class(as.numeric(0:6))) # but can also be explicitly coerced to be numeric vector
-print(class(as.logical(0:6))) # can also be explicitly logical.
-print(as.logical(0:6)) # 0 being false and anything else being true
-print(class(as.character(0:6))) # can easily be coerced to be character as well
-
-# nonsensical explicit coercion results in NA values (missing values)
-x <- c("a", "b", "c")
-print(as.numeric(x)) # since coercing chracter into numeric does not make sense, it introduces NA values
-
-# lists can include multiple different kinds of types of objects
-x <- list(1,"a",TRUE,1+4i)
-print(x)
-```
-
-###4) basic matrices
-```{r}
-m <- matrix(nrow=2, ncol=3)
+m<-matrix(nrow=2,ncol=3)
 print(m)
-dim(m) # dimension of the m (row, col)
-attributes(m) # attributes that the matrix object can have, which is dim, and the dim values which are 2,3 (row,col)
-
-n <- matrix(1:6) # can create a single column "matrix" this way
-print(n)
-
-n <- matrix(1:6, nrow=2, ncol=3) # or create a matrix fully filled this way
-print(n)
-
-n <- matrix(1:7, nrow=2, ncol=3) # if the vector supplied overfills the matrix, it will put the first set that fits, but gives you warning
-print(n)
-
-o <- 1:10 # can create a matrix by setting the dimension (row, col) directly.
-dim(o) <- c(5,2)
-print(o)
-
-# incorrect dimension value (such as too little or too big for the vector)
-# will not let you get away with it, hence the comments to show this
-
-#p <- 1:10
-#dim(p) <- c(5,3)
-#print(p)
-
-# matrix can also be formed by column binding list of values
-cbind(1:3, 10:12) 
-# if one of the "column" in the cbind arguments is long, the other lists are extended (such as 1,2,3,4,1) by repetition, but there is a warning
-cbind(1:4, 10:13, 2:6)
-# similar thing occurs when one of the column is too short, which the R language fixes by extending the shorter end by repetition (with warning)
-cbind(1:3, 10:11)
-
-# similar to column binding, there's also row binding.
-rbind(1:3, 10:12)
-
+dim(m)
+print(matrix(1:8,nrow=2,ncol=4))
+num<-1:10
+dim(num)<-c(5,2)
+print(num)
+cbind(1:3,10:12)
+rbind(1:3,10:12)
+x<-factor(c("yes","yes","no","yes","no"))
+x
+table(x)
+unclass(x)
+y<-factor(c("yes","yes","no","yes","no"), levels=c("yes","no"))
+y
+x<-c(1,2,NA,3)
+is.na(x)
+y<-c(1,2,NaN,NA,6)
+is.na(y)
+is.nan(y)
+x<-data.frame(foo=1:4,bar=c(T,T,F,F))
+x
+print(paste("nrow:", nrow(x),", ncol:",ncol(x)))
+x<-1:3
+names(x)
+names(x)<-c("foo","bar","norf")
+names(x)
+x<-list(a=1,b=2,c=3)
+x
+m<-matrix(1:4,nrow=2,ncol=3)
+dimnames(m)<-list(c("a","b"),c("c","d","e"))
+m
 ```
 
-###5) basic factors
+###2) basic reading: read.table/dput/dget/dump/source/
 ```{r}
+data<-read.table("foo.txt")
+data
+foo<-read.table(file="test.txt",header=TRUE,sep="\n",nrows=3)
+foo
+# passing adata around by deparsing R object using dput
+# and reading back using dget
+y<-data.frame(a=1,b="a")
+#dput(y)
+dput(y,file="y.R") # actually creates physical y.R
+new.y<-dget("y.R")
+new.y
+x<-"foo"
+y<-data.frame(a=1, b="a")
+dump(c("x","y"),file="data.R") # creates physical data.R
+rm(x,y)
+source("data.R")
+y
+x
+```
 
+###3) basic connections: file/readLines/writeLines/url
+```{r}
+con<-file("HMP_16s_single_cell_MDA_from_fecal_specimens-short.txt","r")
+x<-readLines(con,100)
+x
+out<-file("test-output.txt","w")
+writeLines(text = x,con = out)
+close(con)
+close(out)
+con<-url("http://www.google.com","r")
+x<-readLines(con)
+head(x,1)
+close(con)
+```
+
+###4) basic subsetting: vector/list/matrix/partial-matching/removing-NA-values
+```{r}
+x<-c("a","b","c","d","e")
+x[1:4]
+x[x>"b"]
+y<-list(foo=1:4,bar=c(0.6,0.4,0.2),baz=TRUE,bad=list(4,3,2,1))
+y[[2]]
+y$bar
+y[["bar"]]
+y[["bad"]][[3]]
+m<-matrix(1:6,2,3)
+m
+m[1,2] #m[row,col]
+m[1,] #m entire row=1
+m[1,,drop=FALSE] # if drop=FALSE, the 1x1 matrix is maintained
+x<-list(aardvark=1:5)
+x[["aard",exact=FALSE]] # if exact=FALSE, partial matching is ok
+x<-c(1,2,NA,4,NA,5)
+x[!is.na(x)]
+y<-c("a","b",NA,"d",NA,NA)
+x[complete.cases(x,y)]
+y[complete.cases(x,y)]
+airquality[1:10,]
+airquality[complete.cases(airquality),][1:10,]
+```
+
+###5) basic vectorized operations
+```{r}
+x<-1:4;y<-6:9
+x*y
+x<-matrix(1:4,2,2);y<-matrix(rep(10,4),2,2)
+x*y # element-wise multiplication
+x%*%y # true matrix multiplication
+y%*%x
+```
+
+###6) basic control structures: if-else/for/while/repeat
+```{r}
+x<-5;y<-7
+if(x>y) {
+    print("x is bigger than y")
+} else if(x<y) {
+    print("y is bigger than x")
+} else {
+    print("x and y are same")
+}
+z<- if(x>3) {
+    10
+} else {
+    30
+}
+z
+for(i in 4:1) {
+    print(i)
+}
+x<-c("d","c","b","a")
+for(i in 1:4){ print(x[i]) } # 1 of 3 ways to achieve similar result
+for(i in seq_along(x)){ print(x[i]) } # 1 of 3 ways to achieve similar result
+for(letter in x) { print(letter) } # 1 of 3 ways to achieve similar result
+x<-matrix(1:6,2,3)
+x
+# nested for-loop
+for(i in seq_len(nrow(x))) {
+    for(j in seq_len(ncol(x))) {
+        print(x[i,j])
+    }
+}
+count<-0
+while(count<10) {
+    print(count)
+    count<-count+1
+}
+z<-5
+while(z>=3 && z<=10) {
+    print(z)
+    coin<-rbinom(1,1,0.5)
+    if(coin==1) { # random coin toss-up
+        z<-z+1
+    } else {
+        z<-z-1
+    }
+}
+x0<-1
+i<-0
+repeat{ #infinite while(TRUE) loop
+    i<-i+1
+    x1<-rnorm(1)
+    if(abs(x1-x0)>6) {
+        print(abs(x1-x0))
+        print(i)
+        break
+    } else {
+        x0<-x1
+    }
+}
+for(i in 1:100) {
+    if(i<=90) { # skip from 1 to 90
+        next
+    }
+    print(i)
+}
+```
+
+###7) basic functions
+```{r}
+above<-function(x,n) {
+    use<-x>n
+    x[use]
+}
+above(1:20,12)
+colmeans<-function(y) {
+    nc<-ncol(y)
+    means<-numeric(nc)
+    for(i in 1:nc){
+        #means[i]<-mean(y[,i])
+        means[i]<-mean(y[,i][!is.na(y[,i])])
+    }
+    means
+}
+colmeans(airquality)
 ```
