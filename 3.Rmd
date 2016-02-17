@@ -1,0 +1,379 @@
+---
+output: 
+  html_document: 
+    keep_md: yes
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(cache=TRUE)
+```
+#Data Science Using R
+##3 - Getting and Cleaning Data
+
+###0) R version used
+```{r}
+print(R.version.string)
+```
+
+###1) downloading/reading-local/reading-xls/reading-XML/XPath/JSON/data.table
+```{r}
+# downloading
+list.files()
+if(!file.exists("data")){
+    dir.create("data")
+}
+list.files("./data")
+
+# reading local
+if(!file.exists("data/cameras.csv")){
+    fileUrl<-"https://data.baltimorecity.gov/api/views/dz54-2aru/rows.csv?accessType=DOWNLOAD"
+    download.file(fileUrl,destfile="./data/cameras.csv",method="curl")
+}
+cameraData<-read.table("./data/cameras.csv",sep=",",header=TRUE)
+head(cameraData,2)
+str(cameraData)
+
+# reading xls
+if(!file.exists("data/cameras.xlsx")){
+    fileUrl<-"https://data.baltimorecity.gov/api/views/dz54-2aru/rows.xlsx?accessType=DOWNLOAD"
+    download.file(fileUrl,destfile="./data/cameras.xlsx",method="curl")
+}
+library(xlsx)
+cameraData<-read.xlsx("./data/cameras.xlsx",sheetIndex=1,header=TRUE)
+head(cameraData,2)
+str(cameraData)
+cameraDataSubset<-read.xlsx("./data/cameras.xlsx",sheetIndex=1,colIndex=2:3,rowIndex=1:4)
+head(cameraDataSubset,2)
+str(cameraDataSubset)
+
+# reading XML
+if(!file.exists("data/simple.xml")){
+    fileUrl<-"http://www.w3schools.com/xml/simple.xml"
+    download.file(fileUrl,destfile="./data/simple.xml",method="curl")
+}
+library(XML)
+doc<-xmlTreeParse("./data/simple.xml",useInternal=TRUE)
+rootNode<-xmlRoot(doc)
+names(rootNode[[1]])
+rootNode[[1]]
+rootNode[[1]][[2]]
+# programmatically extracting parts of file
+xmlSApply(rootNode,xmlValue)
+# get the item menu/price using XPath
+xpathSApply(rootNode,"//name",xmlValue)
+xpathSApply(rootNode,"//price",xmlValue)
+
+# extract content by attributes using XPath
+if(!file.exists("data/baltimore-ravens.html")){
+    fileUrl<-"http://espn.go.com/nfl/team/_/name/bal/baltimore-ravens"
+    download.file(fileUrl,destfile="./data/baltimore-ravens.html",method="curl")
+}
+doc<-htmlTreeParse("./data/baltimore-ravens.html",useInternal=TRUE)
+xpathSApply(doc,"//li[@class='team-name']",xmlValue)
+
+# reading JSON
+if(!file.exists("data/jtleek.json")){
+    fileUrl<-"https://api.github.com/users/jtleek/repos"
+    download.file(fileUrl,destfile="./data/jtleek.json",method="curl")
+}
+library(jsonlite)
+jsonData<-fromJSON("./data/jtleek.json")
+names(jsonData)
+
+#nested objects JSON
+library(datasets)
+names(jsonData$owner)
+testjson<-toJSON(data.frame(foo=1:4,bar=c(T,T,F,F)),pretty=TRUE)
+testjson
+head(fromJSON(testjson))
+
+# data.table (written in C / VERY FAST)
+# inherits from data.frame
+library(data.table)
+set.seed(37)
+df=data.frame(x=rbinom(5,2,0.5),y=rep(c("a","b","c","d","e")))
+dt=data.table(x=rbinom(5,2,0.5),y=rep(c("a","b","c","d","e")))
+dt
+# subset of data.table
+dt[2,] # dt where row is 2 and all of column
+dt[dt$y=="a",] # dt where row is where dt's y value equals to "a" and all of col
+dt[c(2,3)] # dt where row is 2 and 3 and all of col
+dt[,c(2,3)] # subsetting col doesn't work the same as for dataframe
+
+dt[,list(mean(x),sum(x))] # obtains a list of mean of x values of dt, and sum of x
+dt[,table(y)] # ~table(dt$y); obtains a table of y values in dt
+dt[,z:=x^2] # creates a new col z that is x ^ 2 
+dt2<-dt # this does not actually create a new/separate copy
+dt2[,y:=2]
+head(dt2)
+head(dt) # dt2<-dt does not actually create a new copy
+
+# multiple operations within creating a new col
+dt[,m:={tmp<-(x+z);log2(tmp+5)}]
+head(dt)
+
+# plyr like operations
+dt[,a:=x>0]
+head(dt)
+
+# by a means where a condition is TRUE, it takes the mean of x and z
+# and when a is false, collect those values and perform the func
+dt[,b:=sum(x+z),by=a]
+head(dt)
+
+# special variables: .N
+set.seed(123)
+dt<-data.table(x=sample(letters[1:2],5,TRUE))
+head(dt)
+dt[,.N,by=x] # .N counts by x
+
+# special variables: Keys
+dt<-data.table(x=rep(c("a","b","c"),each=3),y=rnorm(3))
+setkey(dt,x) # set x as the key so that it can be extracted as below
+dt
+dt["a"]
+
+dt1<-data.table(x=c("a","a","b","dt1"),y=1:4)
+dt2<-data.table(x=c("a","b","dt2"),z=5:7)
+setkey(dt1,x); setkey(dt2,x)
+dt1
+dt2
+# hard to interpret, but when x = a, y = 1 and 2 (dt1) and z = 5 (dt2), hence
+# x=a;y=1;z=5
+# x=a;y=2;z=5
+# when x = b, y = 3 (dt1) and z = 6 hence
+# x = b;y=3;z=6
+# since there is no common x key value for dt1 and dt2 for dt1 and dt2, it is omitted
+merge(dt1,dt2) 
+
+# fast reading
+big_df<-data.frame(x=rnorm(1E6),y=rnorm(1E6))
+file<-tempfile()
+write.table(big_df,file=file,row.names=FALSE,col.names=TRUE,sep="\t",quote=FALSE)
+library(microbenchmark)
+#fast reading
+microbenchmark(fread(file),times=1)
+# normal read table
+microbenchmark(read.table(file,header=TRUE,sep="\t"),times=1)
+```
+
+###2) reading MySQL
+```{r}
+library(RMySQL)
+# connect and obtain result
+ucscDb<-dbConnect(MySQL(),user="genome",host="genome-mysql.cse.ucsc.edu")
+result<-dbGetQuery(ucscDb,"show databases;"); dbDisconnect(ucscDb);
+
+# connecting to hg19 db and listing all the tables
+hg19<-dbConnect(MySQL(),user="genome",db="hg19",host="genome-mysql.cse.ucsc.edu")
+allTables<-dbListTables(hg19)
+length(allTables)
+allTables[1:5]
+
+# get dimensions of specific table
+dbListFields(hg19,"affyU133Plus2")
+dbGetQuery(hg19,"select count(*) from affyU133Plus2")
+
+# read from a table
+affyData<-dbReadTable(hg19,"affyU133Plus2")
+str(affyData)
+
+# select a specific subset
+query<-dbSendQuery(hg19, "select * from affyU133Plus2 where misMatches between 1 and 3")
+affyMis<-fetch(query); quantile(affyMis$misMatches)
+affyMisSmall<-fetch(query,n=10); dbClearResult(query);
+dim(affyMisSmall)
+dbDisconnect(hg19)
+```
+
+###3) reading HDF5
+```{r}
+# heirarchical data format
+# groups contain zero or more data sets/metadata
+#       group header with grou name and list of attributes
+#       group symbol table with list of objects in group
+# datasets multidimensional array of data elements with metadata
+#       have header with name,datatype,dataspace,storage layout
+#       have data array with data
+#  http:/www.hdfgroup.org
+
+if(!file.exists("/data/biocLite.R")){
+    fileUrl<-"http://bioconductor.org/biocLite.R"
+    download.file(fileUrl,"./data/biocLite.R",method="curl")
+}
+source("http://bioconductor.org/biocLite.R")
+#biocLite("rhdf5")
+require(rhdf5)
+
+if(file.exists("example.h5")){
+    file.remove("example.h5")
+}
+
+created<-h5createFile("example.h5")
+created
+
+# create groups
+created<-h5createGroup("example.h5","foo")
+created<-h5createGroup("example.h5","baa")
+created<-h5createGroup("example.h5","foo/foobaa")
+h5ls("example.h5")
+
+# write to groups
+A<-matrix(1:10,nr=5,nc=2)
+h5write(A,"example.h5","foo/A")
+B<-array(seq(0.1,2.0,by=0.1),dim=c(5,2,2))
+attr(B,"scale")<-"liter"
+h5write(B,"example.h5","foo/foobaa/B")
+h5ls("example.h5")
+
+# reading data
+readA<-h5read("example.h5","foo/A")
+readA
+readA<-h5read("example.h5","foo/foobaa/B")
+readA
+
+# writing and reading chunks
+h5write(c(12,13,14),"example.h5","foo/A",index=list(1:3,1)) # write 12,13,14 into rows 1 through 3 column 1 of foo/A within example.h5
+h5read("example.h5","foo/A")
+```
+
+###4) reading from the web
+```{r}
+# just in case google blocks the ip for accessing too often
+if(!file.exists("data/google-scholar.html")){
+    fileUrl<-"http://scholar.google.com/citations?user=HI-I6C0AAAAJ&hl=en"
+    download.file(fileUrl,"./data/google-scholar.html",method="curl")
+}
+htmlurl<-"http://scholar.google.com/citations?user=HI-I6C0AAAAJ&hl=en"
+con = url(htmlurl)
+htmlCode<-readLines(con)
+close(con)
+
+# parsing with XML
+library(XML)
+html<-htmlTreeParse(htmlurl,useInternalNodes=TRUE)
+xpathSApply(html,"//title",xmlValue)
+
+# GET from httr package
+library(httr)
+html2=GET(htmlurl)
+content2<-content(html2,as="text")
+parsedHtml<-htmlParse(content2,asText=TRUE)
+xpathSApply(parsedHtml,"//title",xmlValue)
+
+# accessing websites with password
+pg1<-GET("http://httpbin.org/basic-auth/user/passwd") # denied due to authentication block
+pg1
+pg2<-GET("http://httpbin.org/basic-auth/user/passwd",authenticate("user","passwd")) # authenticated
+pg2
+
+# using handles
+google<-handle("http://www.google.com")
+pg1<-GET(handle=google,path="/") # cookies will be authenticated / maintained
+pg2<-GET(handle=google,path="search")
+```
+
+###5) reading from APIs
+```{r}
+library(httr)
+source("hidden.R") # contains consumer key/secret
+myapp<-oauth_app("twitter",key=oauth()$consumer_key,secret=oauth()$consumer_secret)
+sig<-sign_oauth1.0(app=myapp,token=oauth()$token_key,token_secret = oauth()$token_secret)
+homeTL<-GET("https://api.twitter.com/1.1/statuses/home_timeline.json",sig)
+json1<-content(homeTL)
+json2<-jsonlite::fromJSON(toJSON(json1))
+json2[1,1:4]
+```
+
+###6) reading from other sources
+```{r}
+### files
+# file - connection to text file
+# url - connection to url
+# gzfile - connection to .gz file
+# bzfile - connection to .bz2 file
+
+### loads data from Minitab, S, SAS, SPSS, Stata, Systat
+# read.arff (Weka)
+# read.dta (Stata)
+# read.mtp (minitab)
+# read.octave (octave)
+# read.spss (SPSS)
+# read.xport (SAS)
+
+### reading images
+# jpeg package
+# readbitmap package
+# png package
+# bioconductor package - EBImage
+
+### reading GIS data
+# rgdal package
+# rgeos package
+# raster package
+
+### reading music data
+# tuneR package
+# seewave custom package?
+```
+
+###7) subsetting / scoring
+```{r}
+set.seed(13435)
+x<-data.frame("var1"=sample(1:5),"var2"=sample(6:10),"var3"=sample(11:15)) 
+x<-x[sample(1:5),]; # shuffle around rows 1 through 5
+x$var2[c(1,3)]<-NA # mark 1st and 3rd row value of var2 as NA (after shuffling above)
+x
+x[,1] # subsets column 1
+x[,"var3"] # subsets column that matches the name "var3" (3rd col)
+x[1:2,"var2"] # subsets row 1,2 of column "var2"
+x[(x$var1<=3 & x$var3 > 11),] # select rows that match the var1 value <= 3 and var3>11 (and all cols)
+x[(x$var1<=3 | x$var3 > 15),] # select rows that match the var1 value <= 3 OR var3>11 (and all cols)
+x[which(x$var2>8),] # subset of x where var2 value is greater than 8 (DEALS WITH MISSING VALUES)
+sort(x$var1) # get var1 column and sort it
+sort(x$var1,decreasing=TRUE) # same as above but descending
+sort(x$var2,na.last=TRUE) # by default (or NA) removes NA, TRUE puts last, FALSE puts first
+x[order(x$var1),] # subset of x where it's ordered by var1 value
+x[order(x$var1,x$var3),] # same as above, but ordered by var1 and then by var3 (if var1 has ties, var3 is the tiebreaker)
+
+### PLYR ###
+library(plyr)
+arrange(x,var1) # same as above above, but simpler (and notice lack of "")
+arrange(x,desc(var1)) # descending "x[order(x$var1,decreasing=TRUE),]"
+#############
+
+x$var4<-rnorm(5) # adds a new column to x as "var4" with rnorm(5) applied
+x
+x<-cbind(x,"var5"=rnorm(5)) # column bind also works
+x
+```
+
+###8) summarizing data
+```{r}
+if(!file.exists("./data")){dir.create("./data")}
+if(!file.exists("data/restaurants.csv")){
+    fileUrl<-"https://data.baltimorecity.gov/api/views/k5ry-ef3g/rows.csv?accessType=DOWNLOAD"
+    download.file(fileUrl,destfile="./data/restaurants.csv",method="curl")
+}
+restData<-read.csv("./data/restaurants.csv")
+head(restData,n=1)
+tail(restData,n=1)
+summary(restData)
+str(restData)
+quantile(restData$councilDistrict,na.rm=TRUE)
+quantile(restData$councilDistrict,probs=c(0.5,0.75,0.9),na.rm=TRUE) # gets 50%, 75%, 90% quantile
+table(restData$zipCode,useNA="ifany") # useNA = "ifany" if there's any use NA, "no" is no, "always" always use it
+table(restData$councilDistrict,restData$zipCode) # use councilDistrict as row and column as zipCode
+# checking for missing values
+sum(is.na(restData$councilDistrict)) # sum of counts of missing values in councilDistrict
+any(is.na(restData$councilDistrict)) # is there any missing values in councilDistrict?
+all(restData$councilDistrict>0) # all should be greater than 0
+all(restData$zipCode>0) # there is at least one negative zip code (invalid) data
+colSums(is.na(restData)) # sum of all of the column of restData that has na values
+all(colSums(is.na(restData))==0) # all of the column should have 0 value for is.na check
+
+table(restData$zipCode %in% c("21212")) # tally a table of counts when the zipcode matches 21212
+table(c("21212") %in% restData$zipCode) # opposite is not as useful (when 21212 matches the zipcode)
+
+
+
+```

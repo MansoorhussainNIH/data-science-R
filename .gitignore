@@ -10,3 +10,5 @@
 8_cache/
 9_cache
 .Rhistory
+hidden.R
+.httr-oauth
