@@ -72,893 +72,328 @@ img {
 </div>
 <div id="downloadingreading-localreading-xlsreading-xmlxpathjsondata.table" class="section level3">
 <h3>1) downloading/reading-local/reading-xls/reading-XML/XPath/JSON/data.table</h3>
-<pre class="r"><code># downloading
-list.files()</code></pre>
-<pre><code>##  [1] &quot;2_cache&quot;                                               
-##  [2] &quot;2_files&quot;                                               
-##  [3] &quot;2.html&quot;                                                
-##  [4] &quot;2.md&quot;                                                  
-##  [5] &quot;2.Rmd&quot;                                                 
-##  [6] &quot;3_cache&quot;                                               
-##  [7] &quot;3.html&quot;                                                
-##  [8] &quot;3.md&quot;                                                  
-##  [9] &quot;3.Rmd&quot;                                                 
-## [10] &quot;data&quot;                                                  
-## [11] &quot;data.R&quot;                                                
-## [12] &quot;foo.txt&quot;                                               
-## [13] &quot;HMP_16s_single_cell_MDA_from_fecal_specimens-short.txt&quot;
-## [14] &quot;otu_table_psn_v35.txt.gz&quot;                              
-## [15] &quot;README.md&quot;                                             
-## [16] &quot;test-output.txt&quot;                                       
-## [17] &quot;y.R&quot;</code></pre>
-<pre class="r"><code>if(!file.exists(&quot;data&quot;)){
-    dir.create(&quot;data&quot;)
-}
-list.files(&quot;./data&quot;)</code></pre>
-<pre><code>## [1] &quot;cameras.csv&quot;  &quot;cameras.xlsx&quot; &quot;jtleek.json&quot;</code></pre>
-<pre class="r"><code># reading local
-if(!file.exists(&quot;data/cameras.csv&quot;)){
-    fileUrl&lt;-&quot;https://data.baltimorecity.gov/api/views/dz54-2aru/rows.csv?accessType=DOWNLOAD&quot;
-    download.file(fileUrl,destfile=&quot;./data/cameras.csv&quot;,method=&quot;curl&quot;)
-}
-cameraData&lt;-read.table(&quot;./data/cameras.csv&quot;,sep=&quot;,&quot;,header=TRUE)
-head(cameraData,2)</code></pre>
-<pre><code>##                    address direction    street crossStreet
-## 1 S CATON AVE &amp; BENSON AVE       N/B Caton Ave  Benson Ave
-## 2 S CATON AVE &amp; BENSON AVE       S/B Caton Ave  Benson Ave
-##             intersection                      Location.1
-## 1 Caton Ave &amp; Benson Ave (39.2693779962, -76.6688185297)
-## 2 Caton Ave &amp; Benson Ave (39.2693157898, -76.6689698176)</code></pre>
-<pre class="r"><code>str(cameraData)</code></pre>
-<pre><code>## 'data.frame':    80 obs. of  6 variables:
-##  $ address     : Factor w/ 71 levels &quot;E 33RD ST &amp; THE ALAMEDA&quot;,..: 49 49 70 57 1 14 14 31 5 35 ...
-##  $ direction   : Factor w/ 4 levels &quot;E/B&quot;,&quot;N/B&quot;,&quot;S/B&quot;,..: 2 3 1 3 1 1 4 3 4 1 ...
-##  $ street      : Factor w/ 55 levels &quot;Caton Ave&quot;,&quot;Charles&quot;,..: 1 1 54 50 4 8 8 2 26 33 ...
-##  $ crossStreet : Factor w/ 66 levels &quot;33rd St&quot;,&quot;4th St&quot;,..: 6 6 49 1 58 40 40 36 7 38 ...
-##  $ intersection: Factor w/ 74 levels &quot; &amp;&quot;,&quot;Caton Ave &amp; Benson Ave&quot;,..: 2 2 73 69 7 13 13 3 35 47 ...
-##  $ Location.1  : Factor w/ 76 levels &quot;(39.1999130165, -76.5559766825)&quot;,..: 7 6 8 49 48 35 36 74 32 29 ...</code></pre>
-<pre class="r"><code># reading xls
-if(!file.exists(&quot;data/cameras.xlsx&quot;)){
-    fileUrl&lt;-&quot;https://data.baltimorecity.gov/api/views/dz54-2aru/rows.xlsx?accessType=DOWNLOAD&quot;
-    download.file(fileUrl,destfile=&quot;./data/cameras.xlsx&quot;,method=&quot;curl&quot;)
-}
-library(xlsx)
-cameraData&lt;-read.xlsx(&quot;./data/cameras.xlsx&quot;,sheetIndex=1,header=TRUE)
-head(cameraData,2)</code></pre>
-<pre><code>##                    address direction    street crossStreet
-## 1 S CATON AVE &amp; BENSON AVE       N/B Caton Ave  Benson Ave
-## 2 S CATON AVE &amp; BENSON AVE       S/B Caton Ave  Benson Ave
-##             intersection                      Location.1
-## 1 Caton Ave &amp; Benson Ave (39.2693779962, -76.6688185297)
-## 2 Caton Ave &amp; Benson Ave (39.2693157898, -76.6689698176)</code></pre>
-<pre class="r"><code>str(cameraData)</code></pre>
-<pre><code>## 'data.frame':    80 obs. of  6 variables:
-##  $ address     : Factor w/ 71 levels &quot;E 33RD ST &amp; THE ALAMEDA&quot;,..: 49 49 70 57 1 14 14 31 5 35 ...
-##  $ direction   : Factor w/ 4 levels &quot;E/B&quot;,&quot;N/B&quot;,&quot;S/B&quot;,..: 2 3 1 3 1 1 4 3 4 1 ...
-##  $ street      : Factor w/ 55 levels &quot;Caton Ave&quot;,&quot;Charles&quot;,..: 1 1 54 50 4 8 8 2 26 33 ...
-##  $ crossStreet : Factor w/ 66 levels &quot;33rd St&quot;,&quot;4th St&quot;,..: 6 6 49 1 58 40 40 36 7 38 ...
-##  $ intersection: Factor w/ 74 levels &quot; &amp;&quot;,&quot;Caton Ave &amp; Benson Ave&quot;,..: 2 2 73 69 7 13 13 3 35 47 ...
-##  $ Location.1  : Factor w/ 76 levels &quot;(39.1999130165, -76.5559766825)&quot;,..: 7 6 8 49 48 35 36 74 32 29 ...</code></pre>
-<pre class="r"><code>cameraDataSubset&lt;-read.xlsx(&quot;./data/cameras.xlsx&quot;,sheetIndex=1,colIndex=2:3,rowIndex=1:4)
-head(cameraDataSubset,2)</code></pre>
-<pre><code>##   direction    street
-## 1       N/B Caton Ave
-## 2       S/B Caton Ave</code></pre>
-<pre class="r"><code>str(cameraDataSubset)</code></pre>
-<pre><code>## 'data.frame':    3 obs. of  2 variables:
-##  $ direction: Factor w/ 3 levels &quot;E/B&quot;,&quot;N/B&quot;,&quot;S/B&quot;: 2 3 1
-##  $ street   : Factor w/ 2 levels &quot;Caton Ave&quot;,&quot;Wilkens Ave&quot;: 1 1 2</code></pre>
-<pre class="r"><code># reading XML
-if(!file.exists(&quot;data/simple.xml&quot;)){
-    fileUrl&lt;-&quot;http://www.w3schools.com/xml/simple.xml&quot;
-    download.file(fileUrl,destfile=&quot;./data/simple.xml&quot;,method=&quot;curl&quot;)
-}
-library(XML)
-doc&lt;-xmlTreeParse(&quot;./data/simple.xml&quot;,useInternal=TRUE)
-rootNode&lt;-xmlRoot(doc)
-names(rootNode[[1]])</code></pre>
-<pre><code>##          name         price   description      calories 
-##        &quot;name&quot;       &quot;price&quot; &quot;description&quot;    &quot;calories&quot;</code></pre>
-<pre class="r"><code>rootNode[[1]]</code></pre>
-<pre><code>## &lt;food&gt;
-##   &lt;name&gt;Belgian Waffles&lt;/name&gt;
-##   &lt;price&gt;$5.95&lt;/price&gt;
-##   &lt;description&gt;Two of our famous Belgian Waffles with plenty of real maple syrup&lt;/description&gt;
-##   &lt;calories&gt;650&lt;/calories&gt;
-## &lt;/food&gt;</code></pre>
-<pre class="r"><code>rootNode[[1]][[2]]</code></pre>
-<pre><code>## &lt;price&gt;$5.95&lt;/price&gt;</code></pre>
-<pre class="r"><code># programmatically extracting parts of file
-xmlSApply(rootNode,xmlValue)</code></pre>
-<pre><code>##                                                                                                                     food 
-##                               &quot;Belgian Waffles$5.95Two of our famous Belgian Waffles with plenty of real maple syrup650&quot; 
-##                                                                                                                     food 
-##                    &quot;Strawberry Belgian Waffles$7.95Light Belgian waffles covered with strawberries and whipped cream900&quot; 
-##                                                                                                                     food 
-## &quot;Berry-Berry Belgian Waffles$8.95Light Belgian waffles covered with an assortment of fresh berries and whipped cream900&quot; 
-##                                                                                                                     food 
-##                                                &quot;French Toast$4.50Thick slices made from our homemade sourdough bread600&quot; 
-##                                                                                                                     food 
-##                         &quot;Homestyle Breakfast$6.95Two eggs, bacon or sausage, toast, and our ever-popular hash browns950&quot;</code></pre>
-<pre class="r"><code># get the item menu/price using XPath
-xpathSApply(rootNode,&quot;//name&quot;,xmlValue)</code></pre>
-<pre><code>## [1] &quot;Belgian Waffles&quot;             &quot;Strawberry Belgian Waffles&quot; 
-## [3] &quot;Berry-Berry Belgian Waffles&quot; &quot;French Toast&quot;               
-## [5] &quot;Homestyle Breakfast&quot;</code></pre>
-<pre class="r"><code>xpathSApply(rootNode,&quot;//price&quot;,xmlValue)</code></pre>
-<pre><code>## [1] &quot;$5.95&quot; &quot;$7.95&quot; &quot;$8.95&quot; &quot;$4.50&quot; &quot;$6.95&quot;</code></pre>
-<pre class="r"><code># extract content by attributes using XPath
-if(!file.exists(&quot;data/baltimore-ravens.html&quot;)){
-    fileUrl&lt;-&quot;http://espn.go.com/nfl/team/_/name/bal/baltimore-ravens&quot;
-    download.file(fileUrl,destfile=&quot;./data/baltimore-ravens.html&quot;,method=&quot;curl&quot;)
-}
-doc&lt;-htmlTreeParse(&quot;./data/baltimore-ravens.html&quot;,useInternal=TRUE)
-xpathSApply(doc,&quot;//li[@class='team-name']&quot;,xmlValue)</code></pre>
-<pre><code>## [1] &quot;Baltimore RavensRavens&quot; &quot;Baltimore RavensRavens&quot;</code></pre>
-<pre class="r"><code># reading JSON
-if(!file.exists(&quot;data/jtleek.json&quot;)){
-    fileUrl&lt;-&quot;https://api.github.com/users/jtleek/repos&quot;
-    download.file(fileUrl,destfile=&quot;./data/jtleek.json&quot;,method=&quot;curl&quot;)
-}
-library(jsonlite)
-jsonData&lt;-fromJSON(&quot;./data/jtleek.json&quot;)
-names(jsonData)</code></pre>
-<pre><code>##  [1] &quot;id&quot;                &quot;name&quot;              &quot;full_name&quot;        
-##  [4] &quot;owner&quot;             &quot;private&quot;           &quot;html_url&quot;         
-##  [7] &quot;description&quot;       &quot;fork&quot;              &quot;url&quot;              
-## [10] &quot;forks_url&quot;         &quot;keys_url&quot;          &quot;collaborators_url&quot;
-## [13] &quot;teams_url&quot;         &quot;hooks_url&quot;         &quot;issue_events_url&quot; 
-## [16] &quot;events_url&quot;        &quot;assignees_url&quot;     &quot;branches_url&quot;     
-## [19] &quot;tags_url&quot;          &quot;blobs_url&quot;         &quot;git_tags_url&quot;     
-## [22] &quot;git_refs_url&quot;      &quot;trees_url&quot;         &quot;statuses_url&quot;     
-## [25] &quot;languages_url&quot;     &quot;stargazers_url&quot;    &quot;contributors_url&quot; 
-## [28] &quot;subscribers_url&quot;   &quot;subscription_url&quot;  &quot;commits_url&quot;      
-## [31] &quot;git_commits_url&quot;   &quot;comments_url&quot;      &quot;issue_comment_url&quot;
-## [34] &quot;contents_url&quot;      &quot;compare_url&quot;       &quot;merges_url&quot;       
-## [37] &quot;archive_url&quot;       &quot;downloads_url&quot;     &quot;issues_url&quot;       
-## [40] &quot;pulls_url&quot;         &quot;milestones_url&quot;    &quot;notifications_url&quot;
-## [43] &quot;labels_url&quot;        &quot;releases_url&quot;      &quot;deployments_url&quot;  
-## [46] &quot;created_at&quot;        &quot;updated_at&quot;        &quot;pushed_at&quot;        
-## [49] &quot;git_url&quot;           &quot;ssh_url&quot;           &quot;clone_url&quot;        
-## [52] &quot;svn_url&quot;           &quot;homepage&quot;          &quot;size&quot;             
-## [55] &quot;stargazers_count&quot;  &quot;watchers_count&quot;    &quot;language&quot;         
-## [58] &quot;has_issues&quot;        &quot;has_downloads&quot;     &quot;has_wiki&quot;         
-## [61] &quot;has_pages&quot;         &quot;forks_count&quot;       &quot;mirror_url&quot;       
-## [64] &quot;open_issues_count&quot; &quot;forks&quot;             &quot;open_issues&quot;      
-## [67] &quot;watchers&quot;          &quot;default_branch&quot;</code></pre>
-<pre class="r"><code>#nested objects JSON
-library(datasets)
-names(jsonData$owner)</code></pre>
-<pre><code>##  [1] &quot;login&quot;               &quot;id&quot;                  &quot;avatar_url&quot;         
-##  [4] &quot;gravatar_id&quot;         &quot;url&quot;                 &quot;html_url&quot;           
-##  [7] &quot;followers_url&quot;       &quot;following_url&quot;       &quot;gists_url&quot;          
-## [10] &quot;starred_url&quot;         &quot;subscriptions_url&quot;   &quot;organizations_url&quot;  
-## [13] &quot;repos_url&quot;           &quot;events_url&quot;          &quot;received_events_url&quot;
-## [16] &quot;type&quot;                &quot;site_admin&quot;</code></pre>
-<pre class="r"><code>testjson&lt;-toJSON(data.frame(foo=1:4,bar=c(T,T,F,F)),pretty=TRUE)
-testjson</code></pre>
-<pre><code>## [
-##   {
-##     &quot;foo&quot;: 1,
-##     &quot;bar&quot;: true
-##   },
-##   {
-##     &quot;foo&quot;: 2,
-##     &quot;bar&quot;: true
-##   },
-##   {
-##     &quot;foo&quot;: 3,
-##     &quot;bar&quot;: false
-##   },
-##   {
-##     &quot;foo&quot;: 4,
-##     &quot;bar&quot;: false
-##   }
-## ]</code></pre>
-<pre class="r"><code>head(fromJSON(testjson))</code></pre>
-<pre><code>##   foo   bar
-## 1   1  TRUE
-## 2   2  TRUE
-## 3   3 FALSE
-## 4   4 FALSE</code></pre>
-<pre class="r"><code># data.table (written in C / VERY FAST)
-# inherits from data.frame
-library(data.table)
-set.seed(37)
-df=data.frame(x=rbinom(5,2,0.5),y=rep(c(&quot;a&quot;,&quot;b&quot;,&quot;c&quot;,&quot;d&quot;,&quot;e&quot;)))
-dt=data.table(x=rbinom(5,2,0.5),y=rep(c(&quot;a&quot;,&quot;b&quot;,&quot;c&quot;,&quot;d&quot;,&quot;e&quot;)))
-dt</code></pre>
-<pre><code>##    x y
-## 1: 2 a
-## 2: 1 b
-## 3: 1 c
-## 4: 0 d
-## 5: 0 e</code></pre>
-<pre class="r"><code># subset of data.table
-dt[2,] # dt where row is 2 and all of column</code></pre>
-<pre><code>##    x y
-## 1: 1 b</code></pre>
-<pre class="r"><code>dt[dt$y==&quot;a&quot;,] # dt where row is where dt's y value equals to &quot;a&quot; and all of col</code></pre>
-<pre><code>##    x y
-## 1: 2 a</code></pre>
-<pre class="r"><code>dt[c(2,3)] # dt where row is 2 and 3 and all of col</code></pre>
-<pre><code>##    x y
-## 1: 1 b
-## 2: 1 c</code></pre>
-<pre class="r"><code>dt[,c(2,3)] # subsetting col doesn't work the same as for dataframe</code></pre>
-<pre><code>## [1] 2 3</code></pre>
-<pre class="r"><code>dt[,list(mean(x),sum(x))] # obtains a list of mean of x values of dt, and sum of x</code></pre>
-<pre><code>##     V1 V2
-## 1: 0.8  4</code></pre>
-<pre class="r"><code>dt[,table(y)] # ~table(dt$y); obtains a table of y values in dt</code></pre>
-<pre><code>## y
-## a b c d e 
-## 1 1 1 1 1</code></pre>
-<pre class="r"><code>dt[,z:=x^2] # creates a new col z that is x ^ 2 
-dt2&lt;-dt # this does not actually create a new/separate copy
-dt2[,y:=2]</code></pre>
-<pre><code>## Warning in `[.data.table`(dt2, , `:=`(y, 2)): Coerced 'double' RHS to
-## 'character' to match the column's type; may have truncated precision.
-## Either change the target column to 'double' first (by creating a new
-## 'double' vector length 5 (nrows of entire table) and assign that; i.e.
-## 'replace' column), or coerce RHS to 'character' (e.g. 1L, NA_[real|
-## integer]_, as.*, etc) to make your intent clear and for speed. Or, set the
-## column type correctly up front when you create the table and stick to it,
-## please.</code></pre>
-<pre class="r"><code>head(dt2)</code></pre>
-<pre><code>##    x y z
-## 1: 2 2 4
-## 2: 1 2 1
-## 3: 1 2 1
-## 4: 0 2 0
-## 5: 0 2 0</code></pre>
-<pre class="r"><code>head(dt) # dt2&lt;-dt does not actually create a new copy</code></pre>
-<pre><code>##    x y z
-## 1: 2 2 4
-## 2: 1 2 1
-## 3: 1 2 1
-## 4: 0 2 0
-## 5: 0 2 0</code></pre>
-<pre class="r"><code># multiple operations within creating a new col
-dt[,m:={tmp&lt;-(x+z);log2(tmp+5)}]
-head(dt)</code></pre>
-<pre><code>##    x y z        m
-## 1: 2 2 4 3.459432
-## 2: 1 2 1 2.807355
-## 3: 1 2 1 2.807355
-## 4: 0 2 0 2.321928
-## 5: 0 2 0 2.321928</code></pre>
-<pre class="r"><code># plyr like operations
-dt[,a:=x&gt;0]
-head(dt)</code></pre>
-<pre><code>##    x y z        m     a
-## 1: 2 2 4 3.459432  TRUE
-## 2: 1 2 1 2.807355  TRUE
-## 3: 1 2 1 2.807355  TRUE
-## 4: 0 2 0 2.321928 FALSE
-## 5: 0 2 0 2.321928 FALSE</code></pre>
-<pre class="r"><code># by a means where a condition is TRUE, it takes the mean of x and z
-# and when a is false, collect those values and perform the func
-dt[,b:=sum(x+z),by=a]
-head(dt)</code></pre>
-<pre><code>##    x y z        m     a  b
-## 1: 2 2 4 3.459432  TRUE 10
-## 2: 1 2 1 2.807355  TRUE 10
-## 3: 1 2 1 2.807355  TRUE 10
-## 4: 0 2 0 2.321928 FALSE  0
-## 5: 0 2 0 2.321928 FALSE  0</code></pre>
-<pre class="r"><code># special variables: .N
-set.seed(123)
-dt&lt;-data.table(x=sample(letters[1:2],5,TRUE))
-head(dt)</code></pre>
-<pre><code>##    x
-## 1: a
-## 2: b
-## 3: a
-## 4: b
-## 5: b</code></pre>
-<pre class="r"><code>dt[,.N,by=x] # .N counts by x</code></pre>
-<pre><code>##    x N
-## 1: a 2
-## 2: b 3</code></pre>
-<pre class="r"><code># special variables: Keys
-dt&lt;-data.table(x=rep(c(&quot;a&quot;,&quot;b&quot;,&quot;c&quot;),each=3),y=rnorm(3))
-setkey(dt,x) # set x as the key so that it can be extracted as below
-dt</code></pre>
-<pre><code>##    x         y
-## 1: a -1.689556
-## 2: a  1.239496
-## 3: a -0.108966
-## 4: b -1.689556
-## 5: b  1.239496
-## 6: b -0.108966
-## 7: c -1.689556
-## 8: c  1.239496
-## 9: c -0.108966</code></pre>
-<pre class="r"><code>dt[&quot;a&quot;]</code></pre>
-<pre><code>##    x         y
-## 1: a -1.689556
-## 2: a  1.239496
-## 3: a -0.108966</code></pre>
-<pre class="r"><code>dt1&lt;-data.table(x=c(&quot;a&quot;,&quot;a&quot;,&quot;b&quot;,&quot;dt1&quot;),y=1:4)
-dt2&lt;-data.table(x=c(&quot;a&quot;,&quot;b&quot;,&quot;dt2&quot;),z=5:7)
-setkey(dt1,x); setkey(dt2,x)
-dt1</code></pre>
-<pre><code>##      x y
-## 1:   a 1
-## 2:   a 2
-## 3:   b 3
-## 4: dt1 4</code></pre>
-<pre class="r"><code>dt2</code></pre>
-<pre><code>##      x z
-## 1:   a 5
-## 2:   b 6
-## 3: dt2 7</code></pre>
-<pre class="r"><code># hard to interpret, but when x = a, y = 1 and 2 (dt1) and z = 5 (dt2), hence
-# x=a;y=1;z=5
-# x=a;y=2;z=5
-# when x = b, y = 3 (dt1) and z = 6 hence
-# x = b;y=3;z=6
-# since there is no common x key value for dt1 and dt2 for dt1 and dt2, it is omitted
-merge(dt1,dt2) </code></pre>
-<pre><code>##    x y z
-## 1: a 1 5
-## 2: a 2 5
-## 3: b 3 6</code></pre>
-<pre class="r"><code># fast reading
-big_df&lt;-data.frame(x=rnorm(1E6),y=rnorm(1E6))
-file&lt;-tempfile()
-write.table(big_df,file=file,row.names=FALSE,col.names=TRUE,sep=&quot;\t&quot;,quote=FALSE)
-library(microbenchmark)
-#fast reading
-microbenchmark(fread(file),times=1)</code></pre>
-<pre><code>## Unit: milliseconds
-##         expr      min       lq     mean   median       uq      max neval
-##  fread(file) 316.6081 316.6081 316.6081 316.6081 316.6081 316.6081     1</code></pre>
-<pre class="r"><code># normal read table
-microbenchmark(read.table(file,header=TRUE,sep=&quot;\t&quot;),times=1)</code></pre>
-<pre><code>## Unit: seconds
-##                                          expr      min       lq     mean
-##  read.table(file, header = TRUE, sep = &quot;\\t&quot;) 6.800849 6.800849 6.800849
-##    median       uq      max neval
-##  6.800849 6.800849 6.800849     1</code></pre>
+<p>```{r}‘’’ # downloading list.files() if(!file.exists(“data”)){ dir.create(“data”) } list.files(“./data”)</p>
 </div>
+</div>
+</div>
+<div id="reading-local" class="section level1">
+<h1>reading local</h1>
+<p>if(!file.exists(“data/cameras.csv”)){ fileUrl&lt;-“<a href="https://data.baltimorecity.gov/api/views/dz54-2aru/rows.csv?accessType=DOWNLOAD" class="uri">https://data.baltimorecity.gov/api/views/dz54-2aru/rows.csv?accessType=DOWNLOAD</a>” download.file(fileUrl,destfile=“./data/cameras.csv”,method=“curl”) } cameraData&lt;-read.table(“./data/cameras.csv”,sep=“,”,header=TRUE) head(cameraData,2) str(cameraData)</p>
+</div>
+<div id="reading-xls" class="section level1">
+<h1>reading xls</h1>
+<p>if(!file.exists(“data/cameras.xlsx”)){ fileUrl&lt;-“<a href="https://data.baltimorecity.gov/api/views/dz54-2aru/rows.xlsx?accessType=DOWNLOAD" class="uri">https://data.baltimorecity.gov/api/views/dz54-2aru/rows.xlsx?accessType=DOWNLOAD</a>” download.file(fileUrl,destfile=“./data/cameras.xlsx”,method=“curl”) }</p>
+<p>if(!require(xlsx)){ install.packages(“xlsx”,repo=“<a href="https://cran.rstudio.com/" class="uri">https://cran.rstudio.com/</a>”) } library(xlsx) cameraData&lt;-read.xlsx(“./data/cameras.xlsx”,sheetIndex=1,header=TRUE) head(cameraData,2) str(cameraData) cameraDataSubset&lt;-read.xlsx(“./data/cameras.xlsx”,sheetIndex=1,colIndex=2:3,rowIndex=1:4) head(cameraDataSubset,2) str(cameraDataSubset)</p>
+</div>
+<div id="reading-xml" class="section level1">
+<h1>reading XML</h1>
+<p>if(!file.exists(“data/simple.xml”)){ fileUrl&lt;-“<a href="http://www.w3schools.com/xml/simple.xml" class="uri">http://www.w3schools.com/xml/simple.xml</a>” download.file(fileUrl,destfile=“./data/simple.xml”,method=“curl”) } if(!require(XML)){ install.packages(“XML”,repo=“<a href="https://cran.rstudio.com/" class="uri">https://cran.rstudio.com/</a>”) } library(XML) doc&lt;-xmlTreeParse(“./data/simple.xml”,useInternal=TRUE) rootNode&lt;-xmlRoot(doc) names(rootNode[[1]]) rootNode[[1]] rootNode[[1]][[2]]</p>
+</div>
+<div id="programmatically-extracting-parts-of-file" class="section level1">
+<h1>programmatically extracting parts of file</h1>
+<p>xmlSApply(rootNode,xmlValue) # get the item menu/price using XPath xpathSApply(rootNode,“//name”,xmlValue) xpathSApply(rootNode,“//price”,xmlValue)</p>
+</div>
+<div id="extract-content-by-attributes-using-xpath" class="section level1">
+<h1>extract content by attributes using XPath</h1>
+<p>if(!file.exists(“data/baltimore-ravens.html”)){ fileUrl&lt;-“<a href="http://espn.go.com/nfl/team/_/name/bal/baltimore-ravens" class="uri">http://espn.go.com/nfl/team/_/name/bal/baltimore-ravens</a>” download.file(fileUrl,destfile=“./data/baltimore-ravens.html”,method=“curl”) } doc&lt;-htmlTreeParse(“./data/baltimore-ravens.html”,useInternal=TRUE) xpathSApply(doc,“//li<span class="citation">[@class='team-name']</span>”,xmlValue)</p>
+</div>
+<div id="reading-json" class="section level1">
+<h1>reading JSON</h1>
+<p>if(!file.exists(“data/jtleek.json”)){ fileUrl&lt;-“<a href="https://api.github.com/users/jtleek/repos" class="uri">https://api.github.com/users/jtleek/repos</a>” download.file(fileUrl,destfile=“./data/jtleek.json”,method=“curl”) } library(jsonlite) jsonData&lt;-fromJSON(“./data/jtleek.json”) names(jsonData)</p>
+</div>
+<div id="nested-objects-json" class="section level1">
+<h1>nested objects JSON</h1>
+<p>library(datasets) names(jsonData$owner) testjson&lt;-toJSON(data.frame(foo=1:4,bar=c(T,T,F,F)),pretty=TRUE) testjson head(fromJSON(testjson))</p>
+</div>
+<div id="data.table-written-in-c-very-fast" class="section level1">
+<h1>data.table (written in C / VERY FAST)</h1>
+</div>
+<div id="inherits-from-data.frame" class="section level1">
+<h1>inherits from data.frame</h1>
+<p>if(!require(data.table)){ install.packages(“data.table”,repo=“<a href="https://cran.rstudio.com/" class="uri">https://cran.rstudio.com/</a>”) } library(data.table) set.seed(37) df=data.frame(x=rbinom(5,2,0.5),y=rep(c(“a”,“b”,“c”,“d”,“e”))) dt=data.table(x=rbinom(5,2,0.5),y=rep(c(“a”,“b”,“c”,“d”,“e”))) dt # subset of data.table dt[2,] # dt where row is 2 and all of column dt[dt$y==“a”,] # dt where row is where dt’s y value equals to “a” and all of col dt[c(2,3)] # dt where row is 2 and 3 and all of col dt[,c(2,3)] # subsetting col doesn’t work the same as for dataframe</p>
+<p>dt[,list(mean(x),sum(x))] # obtains a list of mean of x values of dt, and sum of x dt[,table(y)] # ~table(dt$y); obtains a table of y values in dt dt[,z:=x^2] # creates a new col z that is x ^ 2 dt2&lt;-dt # this does not actually create a new/separate copy dt2[,y:=2] head(dt2) head(dt) # dt2&lt;-dt does not actually create a new copy</p>
+</div>
+<div id="multiple-operations-within-creating-a-new-col" class="section level1">
+<h1>multiple operations within creating a new col</h1>
+<p>dt[,m:={tmp&lt;-(x+z);log2(tmp+5)}] head(dt)</p>
+</div>
+<div id="plyr-like-operations" class="section level1">
+<h1>plyr like operations</h1>
+<p>dt[,a:=x&gt;0] head(dt)</p>
+</div>
+<div id="by-a-means-where-a-condition-is-true-it-takes-the-mean-of-x-and-z" class="section level1">
+<h1>by a means where a condition is TRUE, it takes the mean of x and z</h1>
+</div>
+<div id="and-when-a-is-false-collect-those-values-and-perform-the-func" class="section level1">
+<h1>and when a is false, collect those values and perform the func</h1>
+<p>dt[,b:=sum(x+z),by=a] head(dt)</p>
+</div>
+<div id="special-variables-.n" class="section level1">
+<h1>special variables: .N</h1>
+<p>set.seed(123) dt&lt;-data.table(x=sample(letters[1:2],5,TRUE)) head(dt) dt[,.N,by=x] # .N counts by x</p>
+</div>
+<div id="special-variables-keys" class="section level1">
+<h1>special variables: Keys</h1>
+<p>dt&lt;-data.table(x=rep(c(“a”,“b”,“c”),each=3),y=rnorm(3)) setkey(dt,x) # set x as the key so that it can be extracted as below dt dt[“a”]</p>
+<p>dt1&lt;-data.table(x=c(“a”,“a”,“b”,“dt1”),y=1:4) dt2&lt;-data.table(x=c(“a”,“b”,“dt2”),z=5:7) setkey(dt1,x); setkey(dt2,x) dt1 dt2 # hard to interpret, but when x = a, y = 1 and 2 (dt1) and z = 5 (dt2), hence # x=a;y=1;z=5 # x=a;y=2;z=5 # when x = b, y = 3 (dt1) and z = 6 hence # x = b;y=3;z=6 # since there is no common x key value for dt1 and dt2 for dt1 and dt2, it is omitted merge(dt1,dt2)</p>
+</div>
+<div id="fast-reading" class="section level1">
+<h1>fast reading</h1>
+<p>big_df&lt;-data.frame(x=rnorm(1E6),y=rnorm(1E6)) file&lt;-tempfile() write.table(big_df,file=file,row.names=FALSE,col.names=TRUE,sep=“”,quote=FALSE) if(!require(microbenchmark)){ install.packages(“microbenchmark”,repo=“<a href="https://cran.rstudio.com/" class="uri">https://cran.rstudio.com/</a>”) } library(microbenchmark) #fast reading microbenchmark(fread(file),times=1) # normal read table microbenchmark(read.table(file,header=TRUE,sep=“”),times=1) ```‘’’</p>
 <div id="reading-mysql" class="section level3">
 <h3>2) reading MySQL</h3>
-<pre class="r"><code>library(RMySQL)
-# connect and obtain result
-ucscDb&lt;-dbConnect(MySQL(),user=&quot;genome&quot;,host=&quot;genome-mysql.cse.ucsc.edu&quot;)
-result&lt;-dbGetQuery(ucscDb,&quot;show databases;&quot;); dbDisconnect(ucscDb);</code></pre>
-<pre><code>## [1] TRUE</code></pre>
-<pre class="r"><code># connecting to hg19 db and listing all the tables
-hg19&lt;-dbConnect(MySQL(),user=&quot;genome&quot;,db=&quot;hg19&quot;,host=&quot;genome-mysql.cse.ucsc.edu&quot;)
-allTables&lt;-dbListTables(hg19)
-length(allTables)</code></pre>
-<pre><code>## [1] 11027</code></pre>
-<pre class="r"><code>allTables[1:5]</code></pre>
-<pre><code>## [1] &quot;HInv&quot;         &quot;HInvGeneMrna&quot; &quot;acembly&quot;      &quot;acemblyClass&quot;
-## [5] &quot;acemblyPep&quot;</code></pre>
-<pre class="r"><code># get dimensions of specific table
-dbListFields(hg19,&quot;affyU133Plus2&quot;)</code></pre>
-<pre><code>##  [1] &quot;bin&quot;         &quot;matches&quot;     &quot;misMatches&quot;  &quot;repMatches&quot;  &quot;nCount&quot;     
-##  [6] &quot;qNumInsert&quot;  &quot;qBaseInsert&quot; &quot;tNumInsert&quot;  &quot;tBaseInsert&quot; &quot;strand&quot;     
-## [11] &quot;qName&quot;       &quot;qSize&quot;       &quot;qStart&quot;      &quot;qEnd&quot;        &quot;tName&quot;      
-## [16] &quot;tSize&quot;       &quot;tStart&quot;      &quot;tEnd&quot;        &quot;blockCount&quot;  &quot;blockSizes&quot; 
-## [21] &quot;qStarts&quot;     &quot;tStarts&quot;</code></pre>
-<pre class="r"><code>dbGetQuery(hg19,&quot;select count(*) from affyU133Plus2&quot;)</code></pre>
-<pre><code>##   count(*)
-## 1    58463</code></pre>
-<pre class="r"><code># read from a table
-affyData&lt;-dbReadTable(hg19,&quot;affyU133Plus2&quot;)</code></pre>
-<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 0 imported
-## as numeric</code></pre>
-<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 1 imported
-## as numeric</code></pre>
-<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 2 imported
-## as numeric</code></pre>
-<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 3 imported
-## as numeric</code></pre>
-<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 4 imported
-## as numeric</code></pre>
-<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 5 imported
-## as numeric</code></pre>
-<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 6 imported
-## as numeric</code></pre>
-<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 7 imported
-## as numeric</code></pre>
-<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 8 imported
-## as numeric</code></pre>
-<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 11
-## imported as numeric</code></pre>
-<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 12
-## imported as numeric</code></pre>
-<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 13
-## imported as numeric</code></pre>
-<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 15
-## imported as numeric</code></pre>
-<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 16
-## imported as numeric</code></pre>
-<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 17
-## imported as numeric</code></pre>
-<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 18
-## imported as numeric</code></pre>
-<pre class="r"><code>str(affyData)</code></pre>
-<pre><code>## 'data.frame':    58463 obs. of  22 variables:
-##  $ bin        : num  585 585 585 585 585 585 585 585 73 585 ...
-##  $ matches    : num  530 3355 4156 4667 5180 ...
-##  $ misMatches : num  4 17 14 9 14 5 3 0 21 23 ...
-##  $ repMatches : num  0 0 0 0 0 0 0 0 0 0 ...
-##  $ nCount     : num  23 109 83 68 167 14 6 8 56 75 ...
-##  $ qNumInsert : num  3 9 16 21 10 0 1 1 2 22 ...
-##  $ qBaseInsert: num  41 67 18 42 38 0 1 1 2 41 ...
-##  $ tNumInsert : num  3 9 2 3 1 0 1 2 1 3 ...
-##  $ tBaseInsert: num  898 11621 93 5743 29 ...
-##  $ strand     : chr  &quot;-&quot; &quot;-&quot; &quot;-&quot; &quot;-&quot; ...
-##  $ qName      : chr  &quot;225995_x_at&quot; &quot;225035_x_at&quot; &quot;226340_x_at&quot; &quot;1557034_s_at&quot; ...
-##  $ qSize      : num  637 3635 4318 4834 5399 ...
-##  $ qStart     : num  5 0 3 48 0 0 0 1 12 3 ...
-##  $ qEnd       : num  603 3548 4274 4834 5399 ...
-##  $ tName      : chr  &quot;chr1&quot; &quot;chr1&quot; &quot;chr1&quot; &quot;chr1&quot; ...
-##  $ tSize      : num  2.49e+08 2.49e+08 2.49e+08 2.49e+08 2.49e+08 ...
-##  $ tStart     : num  14361 14381 14399 14406 19688 ...
-##  $ tEnd       : num  15816 29483 18745 24893 25078 ...
-##  $ blockCount : num  5 17 18 23 11 1 3 4 4 24 ...
-##  $ blockSizes : chr  &quot;93,144,229,70,21,&quot; &quot;73,375,71,165,303,360,198,661,201,1,260,250,74,73,98,155,163,&quot; &quot;690,10,32,33,376,4,5,15,5,11,7,41,277,859,141,51,443,1253,&quot; &quot;99,352,286,24,49,14,6,5,8,149,14,44,98,12,10,355,837,59,8,1500,133,624,58,&quot; ...
-##  $ qStarts    : chr  &quot;34,132,278,541,611,&quot; &quot;87,165,540,647,818,1123,1484,1682,2343,2545,2546,2808,3058,3133,3206,3317,3472,&quot; &quot;44,735,746,779,813,1190,1195,1201,1217,1223,1235,1243,1285,1564,2423,2565,2617,3062,&quot; &quot;0,99,452,739,764,814,829,836,842,851,1001,1016,1061,1160,1173,1184,1540,2381,2441,2450,3951,4103,4728,&quot; ...
-##  $ tStarts    : chr  &quot;14361,14454,14599,14968,15795,&quot; &quot;14381,14454,14969,15075,15240,15543,15903,16104,16853,17054,17232,17492,17914,17988,18267,24736,29320,&quot; &quot;14399,15089,15099,15131,15164,15540,15544,15549,15564,15569,15580,15587,15628,15906,16857,16998,17049,17492,&quot; &quot;14406,20227,20579,20865,20889,20938,20952,20958,20963,20971,21120,21134,21178,21276,21288,21298,21653,22492,22551,22559,24059,2&quot;| __truncated__ ...</code></pre>
-<pre class="r"><code># select a specific subset
-query&lt;-dbSendQuery(hg19, &quot;select * from affyU133Plus2 where misMatches between 1 and 3&quot;)</code></pre>
-<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 0 imported
-## as numeric</code></pre>
-<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 1 imported
-## as numeric</code></pre>
-<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 2 imported
-## as numeric</code></pre>
-<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 3 imported
-## as numeric</code></pre>
-<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 4 imported
-## as numeric</code></pre>
-<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 5 imported
-## as numeric</code></pre>
-<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 6 imported
-## as numeric</code></pre>
-<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 7 imported
-## as numeric</code></pre>
-<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 8 imported
-## as numeric</code></pre>
-<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 11
-## imported as numeric</code></pre>
-<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 12
-## imported as numeric</code></pre>
-<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 13
-## imported as numeric</code></pre>
-<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 15
-## imported as numeric</code></pre>
-<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 16
-## imported as numeric</code></pre>
-<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 17
-## imported as numeric</code></pre>
-<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 18
-## imported as numeric</code></pre>
-<pre class="r"><code>affyMis&lt;-fetch(query); quantile(affyMis$misMatches)</code></pre>
-<pre><code>##   0%  25%  50%  75% 100% 
-##    1    1    2    2    3</code></pre>
-<pre class="r"><code>affyMisSmall&lt;-fetch(query,n=10); dbClearResult(query);</code></pre>
-<pre><code>## [1] TRUE</code></pre>
-<pre class="r"><code>dim(affyMisSmall)</code></pre>
-<pre><code>## [1] 10 22</code></pre>
-<pre class="r"><code>dbDisconnect(hg19)</code></pre>
-<pre><code>## [1] TRUE</code></pre>
+<p>```{r}‘’’ if(!require(RMySQL)){ install.packages(“RMySQL”,repo=“<a href="https://cran.rstudio.com/" class="uri">https://cran.rstudio.com/</a>”) } library(RMySQL) # connect and obtain result ucscDb&lt;-dbConnect(MySQL(),user=“genome”,host=“genome-mysql.cse.ucsc.edu”) result&lt;-dbGetQuery(ucscDb,“show databases;”); dbDisconnect(ucscDb);</p>
 </div>
+</div>
+<div id="connecting-to-hg19-db-and-listing-all-the-tables" class="section level1">
+<h1>connecting to hg19 db and listing all the tables</h1>
+<p>hg19&lt;-dbConnect(MySQL(),user=“genome”,db=“hg19”,host=“genome-mysql.cse.ucsc.edu”) allTables&lt;-dbListTables(hg19) length(allTables) allTables[1:5]</p>
+</div>
+<div id="get-dimensions-of-specific-table" class="section level1">
+<h1>get dimensions of specific table</h1>
+<p>dbListFields(hg19,“affyU133Plus2”) dbGetQuery(hg19,“select count(*) from affyU133Plus2“)</p>
+</div>
+<div id="read-from-a-table" class="section level1">
+<h1>read from a table</h1>
+<p>affyData&lt;-dbReadTable(hg19,“affyU133Plus2”) str(affyData)</p>
+</div>
+<div id="select-a-specific-subset" class="section level1">
+<h1>select a specific subset</h1>
+<p>query&lt;-dbSendQuery(hg19, “select * from affyU133Plus2 where misMatches between 1 and 3”) affyMis&lt;-fetch(query); quantile(affyMis$misMatches) affyMisSmall&lt;-fetch(query,n=10); dbClearResult(query); dim(affyMisSmall) dbDisconnect(hg19) ```‘’’</p>
 <div id="reading-hdf5" class="section level3">
 <h3>3) reading HDF5</h3>
-<pre class="r"><code># heirarchical data format
-# groups contain zero or more data sets/metadata
-#       group header with grou name and list of attributes
-#       group symbol table with list of objects in group
-# datasets multidimensional array of data elements with metadata
-#       have header with name,datatype,dataspace,storage layout
-#       have data array with data
-#  http:/www.hdfgroup.org
-
-if(!file.exists(&quot;/data/biocLite.R&quot;)){
-    fileUrl&lt;-&quot;http://bioconductor.org/biocLite.R&quot;
-    download.file(fileUrl,&quot;./data/biocLite.R&quot;,method=&quot;curl&quot;)
-}
-source(&quot;http://bioconductor.org/biocLite.R&quot;)</code></pre>
-<pre><code>## Bioconductor version 3.2 (BiocInstaller 1.20.1), ?biocLite for help</code></pre>
-<pre class="r"><code>#biocLite(&quot;rhdf5&quot;)
-require(rhdf5)
-
-if(file.exists(&quot;example.h5&quot;)){
-    file.remove(&quot;example.h5&quot;)
-}</code></pre>
-<pre><code>## [1] TRUE</code></pre>
-<pre class="r"><code>created&lt;-h5createFile(&quot;example.h5&quot;)
-created</code></pre>
-<pre><code>## [1] TRUE</code></pre>
-<pre class="r"><code># create groups
-created&lt;-h5createGroup(&quot;example.h5&quot;,&quot;foo&quot;)
-created&lt;-h5createGroup(&quot;example.h5&quot;,&quot;baa&quot;)
-created&lt;-h5createGroup(&quot;example.h5&quot;,&quot;foo/foobaa&quot;)
-h5ls(&quot;example.h5&quot;)</code></pre>
-<pre><code>##   group   name     otype dclass dim
-## 0     /    baa H5I_GROUP           
-## 1     /    foo H5I_GROUP           
-## 2  /foo foobaa H5I_GROUP</code></pre>
-<pre class="r"><code># write to groups
-A&lt;-matrix(1:10,nr=5,nc=2)
-h5write(A,&quot;example.h5&quot;,&quot;foo/A&quot;)
-B&lt;-array(seq(0.1,2.0,by=0.1),dim=c(5,2,2))
-attr(B,&quot;scale&quot;)&lt;-&quot;liter&quot;
-h5write(B,&quot;example.h5&quot;,&quot;foo/foobaa/B&quot;)
-h5ls(&quot;example.h5&quot;)</code></pre>
-<pre><code>##         group   name       otype  dclass       dim
-## 0           /    baa   H5I_GROUP                  
-## 1           /    foo   H5I_GROUP                  
-## 2        /foo      A H5I_DATASET INTEGER     5 x 2
-## 3        /foo foobaa   H5I_GROUP                  
-## 4 /foo/foobaa      B H5I_DATASET   FLOAT 5 x 2 x 2</code></pre>
-<pre class="r"><code># reading data
-readA&lt;-h5read(&quot;example.h5&quot;,&quot;foo/A&quot;)
-readA</code></pre>
-<pre><code>##      [,1] [,2]
-## [1,]    1    6
-## [2,]    2    7
-## [3,]    3    8
-## [4,]    4    9
-## [5,]    5   10</code></pre>
-<pre class="r"><code>readA&lt;-h5read(&quot;example.h5&quot;,&quot;foo/foobaa/B&quot;)
-readA</code></pre>
-<pre><code>## , , 1
-## 
-##      [,1] [,2]
-## [1,]  0.1  0.6
-## [2,]  0.2  0.7
-## [3,]  0.3  0.8
-## [4,]  0.4  0.9
-## [5,]  0.5  1.0
-## 
-## , , 2
-## 
-##      [,1] [,2]
-## [1,]  1.1  1.6
-## [2,]  1.2  1.7
-## [3,]  1.3  1.8
-## [4,]  1.4  1.9
-## [5,]  1.5  2.0</code></pre>
-<pre class="r"><code># writing and reading chunks
-h5write(c(12,13,14),&quot;example.h5&quot;,&quot;foo/A&quot;,index=list(1:3,1)) # write 12,13,14 into rows 1 through 3 column 1 of foo/A within example.h5
-h5read(&quot;example.h5&quot;,&quot;foo/A&quot;)</code></pre>
-<pre><code>##      [,1] [,2]
-## [1,]   12    6
-## [2,]   13    7
-## [3,]   14    8
-## [4,]    4    9
-## [5,]    5   10</code></pre>
+<p>```{r}‘’’ # heirarchical data format # groups contain zero or more data sets/metadata # group header with grou name and list of attributes # group symbol table with list of objects in group # datasets multidimensional array of data elements with metadata # have header with name,datatype,dataspace,storage layout # have data array with data # <a href="http:/www.hdfgroup.org" class="uri">http:/www.hdfgroup.org</a></p>
+<p>if(!file.exists(“/data/biocLite.R”)){ fileUrl&lt;-“<a href="http://bioconductor.org/biocLite.R" class="uri">http://bioconductor.org/biocLite.R</a>” download.file(fileUrl,“./data/biocLite.R”,method=“curl”) } source(“<a href="http://bioconductor.org/biocLite.R" class="uri">http://bioconductor.org/biocLite.R</a>”) if(!require(rhdf5)){ biocLite(“rhdf5”) } library(rhdf5) if(file.exists(“example.h5”)){ file.remove(“example.h5”) }</p>
+<p>created&lt;-h5createFile(“example.h5”) created</p>
 </div>
+</div>
+<div id="create-groups" class="section level1">
+<h1>create groups</h1>
+<p>created&lt;-h5createGroup(“example.h5”,“foo”) created&lt;-h5createGroup(“example.h5”,“baa”) created&lt;-h5createGroup(“example.h5”,“foo/foobaa”) h5ls(“example.h5”)</p>
+</div>
+<div id="write-to-groups" class="section level1">
+<h1>write to groups</h1>
+<p>A&lt;-matrix(1:10,nr=5,nc=2) h5write(A,“example.h5”,“foo/A”) B&lt;-array(seq(0.1,2.0,by=0.1),dim=c(5,2,2)) attr(B,“scale”)&lt;-“liter” h5write(B,“example.h5”,“foo/foobaa/B”) h5ls(“example.h5”)</p>
+</div>
+<div id="reading-data" class="section level1">
+<h1>reading data</h1>
+<p>readA&lt;-h5read(“example.h5”,“foo/A”) readA readA&lt;-h5read(“example.h5”,“foo/foobaa/B”) readA</p>
+</div>
+<div id="writing-and-reading-chunks" class="section level1">
+<h1>writing and reading chunks</h1>
+<p>h5write(c(12,13,14),“example.h5”,“foo/A”,index=list(1:3,1)) # write 12,13,14 into rows 1 through 3 column 1 of foo/A within example.h5 h5read(“example.h5”,“foo/A”) ```‘’’</p>
 <div id="reading-from-the-web" class="section level3">
 <h3>4) reading from the web</h3>
-<pre class="r"><code># just in case google blocks the ip for accessing too often
-if(!file.exists(&quot;data/google-scholar.html&quot;)){
-    fileUrl&lt;-&quot;http://scholar.google.com/citations?user=HI-I6C0AAAAJ&amp;hl=en&quot;
-    download.file(fileUrl,&quot;./data/google-scholar.html&quot;,method=&quot;curl&quot;)
-}
-htmlurl&lt;-&quot;http://scholar.google.com/citations?user=HI-I6C0AAAAJ&amp;hl=en&quot;
-con = url(htmlurl)
-htmlCode&lt;-readLines(con)</code></pre>
-<pre><code>## Warning in readLines(con): incomplete final line found on 'http://
-## scholar.google.com/citations?user=HI-I6C0AAAAJ&amp;hl=en'</code></pre>
-<pre class="r"><code>close(con)
-
-# parsing with XML
-library(XML)
-html&lt;-htmlTreeParse(htmlurl,useInternalNodes=TRUE)
-xpathSApply(html,&quot;//title&quot;,xmlValue)</code></pre>
-<pre><code>## [1] &quot;Jeff Leek - Google Scholar Citations&quot;</code></pre>
-<pre class="r"><code># GET from httr package
-library(httr)
-html2=GET(htmlurl)
-content2&lt;-content(html2,as=&quot;text&quot;)
-parsedHtml&lt;-htmlParse(content2,asText=TRUE)
-xpathSApply(parsedHtml,&quot;//title&quot;,xmlValue)</code></pre>
-<pre><code>## [1] &quot;Jeff Leek - Google Scholar Citations&quot;</code></pre>
-<pre class="r"><code># accessing websites with password
-pg1&lt;-GET(&quot;http://httpbin.org/basic-auth/user/passwd&quot;) # denied due to authentication block
-pg1</code></pre>
-<pre><code>## Response [http://httpbin.org/basic-auth/user/passwd]
-##   Date: 2016-02-16 19:45
-##   Status: 401
-##   Content-Type: &lt;unknown&gt;
-## &lt;EMPTY BODY&gt;</code></pre>
-<pre class="r"><code>pg2&lt;-GET(&quot;http://httpbin.org/basic-auth/user/passwd&quot;,authenticate(&quot;user&quot;,&quot;passwd&quot;)) # authenticated
-pg2</code></pre>
-<pre><code>## Response [http://httpbin.org/basic-auth/user/passwd]
-##   Date: 2016-02-16 19:45
-##   Status: 200
-##   Content-Type: application/json
-##   Size: 47 B
-## {
-##   &quot;authenticated&quot;: true, 
-##   &quot;user&quot;: &quot;user&quot;
-## }</code></pre>
-<pre class="r"><code># using handles
-google&lt;-handle(&quot;http://www.google.com&quot;)
-pg1&lt;-GET(handle=google,path=&quot;/&quot;) # cookies will be authenticated / maintained
-pg2&lt;-GET(handle=google,path=&quot;search&quot;)</code></pre>
+<p>```{r}‘’’ # just in case google blocks the ip for accessing too often if(!file.exists(“data/google-scholar.html”)){ fileUrl&lt;-“<a href="http://scholar.google.com/citations?user=HI-I6C0AAAAJ&amp;hl=en" class="uri">http://scholar.google.com/citations?user=HI-I6C0AAAAJ&amp;hl=en</a>” download.file(fileUrl,“./data/google-scholar.html”,method=“curl”) } htmlurl&lt;-“<a href="http://scholar.google.com/citations?user=HI-I6C0AAAAJ&amp;hl=en" class="uri">http://scholar.google.com/citations?user=HI-I6C0AAAAJ&amp;hl=en</a>” con = url(htmlurl) htmlCode&lt;-readLines(con) close(con)</p>
 </div>
+</div>
+<div id="parsing-with-xml" class="section level1">
+<h1>parsing with XML</h1>
+<p>library(XML) html&lt;-htmlTreeParse(htmlurl,useInternalNodes=TRUE) xpathSApply(html,“//title”,xmlValue)</p>
+</div>
+<div id="get-from-httr-package" class="section level1">
+<h1>GET from httr package</h1>
+<p>library(httr) html2=GET(htmlurl) content2&lt;-content(html2,as=“text”) parsedHtml&lt;-htmlParse(content2,asText=TRUE) xpathSApply(parsedHtml,“//title”,xmlValue)</p>
+</div>
+<div id="accessing-websites-with-password" class="section level1">
+<h1>accessing websites with password</h1>
+<p>pg1&lt;-GET(“<a href="http://httpbin.org/basic-auth/user/passwd" class="uri">http://httpbin.org/basic-auth/user/passwd</a>”) # denied due to authentication block pg1 pg2&lt;-GET(“<a href="http://httpbin.org/basic-auth/user/passwd" class="uri">http://httpbin.org/basic-auth/user/passwd</a>”,authenticate(“user”,“passwd”)) # authenticated pg2</p>
+</div>
+<div id="using-handles" class="section level1">
+<h1>using handles</h1>
+<p>google&lt;-handle(“<a href="http://www.google.com" class="uri">http://www.google.com</a>”) pg1&lt;-GET(handle=google,path=“/”) # cookies will be authenticated / maintained pg2&lt;-GET(handle=google,path=“search”)</p>
+<p>```‘’’</p>
 <div id="reading-from-apis" class="section level3">
 <h3>5) reading from APIs</h3>
-<pre class="r"><code>library(httr)
-source(&quot;hidden.R&quot;) # contains consumer key/secret
-myapp&lt;-oauth_app(&quot;twitter&quot;,key=oauth()$consumer_key,secret=oauth()$consumer_secret)
-sig&lt;-sign_oauth1.0(app=myapp,token=oauth()$token_key,token_secret = oauth()$token_secret)
-homeTL&lt;-GET(&quot;https://api.twitter.com/1.1/statuses/home_timeline.json&quot;,sig)
-json1&lt;-content(homeTL)
-json2&lt;-jsonlite::fromJSON(toJSON(json1))
-json2[1,1:4]</code></pre>
-<pre><code>##                       created_at           id             id_str text
-## 1 Tue Feb 16 20:15:07 +0000 2016 6.996885e+17 699688478892646401 안녕</code></pre>
+<p><code>{r}''' library(httr) if(!require(base64enc)){   install.packages(&quot;base64enc&quot;,repo=&quot;https://cran.rstudio.com/&quot;) } library(base64enc) source(&quot;hidden.R&quot;) # contains consumer key/secret myapp&lt;-oauth_app(&quot;twitter&quot;,key=oauth()$consumer_key,secret=oauth()$consumer_secret) sig&lt;-sign_oauth1.0(app=myapp,token=oauth()$token_key,token_secret = oauth()$token_secret) homeTL&lt;-GET(&quot;https://api.twitter.com/1.1/statuses/home_timeline.json&quot;,sig) json1&lt;-content(homeTL) json2&lt;-jsonlite::fromJSON(toJSON(json1)) json2[1,1:4]</code>‘’’</p>
 </div>
 <div id="reading-from-other-sources" class="section level3">
 <h3>6) reading from other sources</h3>
-<pre class="r"><code>### files
-# file - connection to text file
-# url - connection to url
-# gzfile - connection to .gz file
-# bzfile - connection to .bz2 file
-
-### loads data from Minitab, S, SAS, SPSS, Stata, Systat
-# read.arff (Weka)
-# read.dta (Stata)
-# read.mtp (minitab)
-# read.octave (octave)
-# read.spss (SPSS)
-# read.xport (SAS)
-
-### reading images
-# jpeg package
-# readbitmap package
-# png package
-# bioconductor package - EBImage
-
-### reading GIS data
-# rgdal package
-# rgeos package
-# raster package
-
-### reading music data
-# tuneR package
-# seewave custom package?</code></pre>
+<p>```{r}‘’’ ### files # file - connection to text file # url - connection to url # gzfile - connection to .gz file # bzfile - connection to .bz2 file</p>
 </div>
+<div id="loads-data-from-minitab-s-sas-spss-stata-systat" class="section level3">
+<h3>loads data from Minitab, S, SAS, SPSS, Stata, Systat</h3>
+</div>
+</div>
+<div id="read.arff-weka" class="section level1">
+<h1>read.arff (Weka)</h1>
+</div>
+<div id="read.dta-stata" class="section level1">
+<h1>read.dta (Stata)</h1>
+</div>
+<div id="read.mtp-minitab" class="section level1">
+<h1>read.mtp (minitab)</h1>
+</div>
+<div id="read.octave-octave" class="section level1">
+<h1>read.octave (octave)</h1>
+</div>
+<div id="read.spss-spss" class="section level1">
+<h1>read.spss (SPSS)</h1>
+</div>
+<div id="read.xport-sas" class="section level1">
+<h1>read.xport (SAS)</h1>
+<div id="reading-images" class="section level3">
+<h3>reading images</h3>
+</div>
+</div>
+<div id="jpeg-package" class="section level1">
+<h1>jpeg package</h1>
+</div>
+<div id="readbitmap-package" class="section level1">
+<h1>readbitmap package</h1>
+</div>
+<div id="png-package" class="section level1">
+<h1>png package</h1>
+</div>
+<div id="bioconductor-package---ebimage" class="section level1">
+<h1>bioconductor package - EBImage</h1>
+<div id="reading-gis-data" class="section level3">
+<h3>reading GIS data</h3>
+</div>
+</div>
+<div id="rgdal-package" class="section level1">
+<h1>rgdal package</h1>
+</div>
+<div id="rgeos-package" class="section level1">
+<h1>rgeos package</h1>
+</div>
+<div id="raster-package" class="section level1">
+<h1>raster package</h1>
+<div id="reading-music-data" class="section level3">
+<h3>reading music data</h3>
+</div>
+</div>
+<div id="tuner-package" class="section level1">
+<h1>tuneR package</h1>
+</div>
+<div id="seewave-custom-package" class="section level1">
+<h1>seewave custom package?</h1>
+<p>```‘’’</p>
 <div id="subsetting-scoring" class="section level3">
 <h3>7) subsetting / scoring</h3>
-<pre class="r"><code>set.seed(13435)
-x&lt;-data.frame(&quot;var1&quot;=sample(1:5),&quot;var2&quot;=sample(6:10),&quot;var3&quot;=sample(11:15)) 
-x&lt;-x[sample(1:5),]; # shuffle around rows 1 through 5
-x$var2[c(1,3)]&lt;-NA # mark 1st and 3rd row value of var2 as NA (after shuffling above)
-x</code></pre>
-<pre><code>##   var1 var2 var3
-## 1    2   NA   15
-## 4    1   10   11
-## 2    3   NA   12
-## 3    5    6   14
-## 5    4    9   13</code></pre>
-<pre class="r"><code>x[,1] # subsets column 1</code></pre>
-<pre><code>## [1] 2 1 3 5 4</code></pre>
-<pre class="r"><code>x[,&quot;var3&quot;] # subsets column that matches the name &quot;var3&quot; (3rd col)</code></pre>
-<pre><code>## [1] 15 11 12 14 13</code></pre>
-<pre class="r"><code>x[1:2,&quot;var2&quot;] # subsets row 1,2 of column &quot;var2&quot;</code></pre>
-<pre><code>## [1] NA 10</code></pre>
-<pre class="r"><code>x[(x$var1&lt;=3 &amp; x$var3 &gt; 11),] # select rows that match the var1 value &lt;= 3 and var3&gt;11 (and all cols)</code></pre>
-<pre><code>##   var1 var2 var3
-## 1    2   NA   15
-## 2    3   NA   12</code></pre>
-<pre class="r"><code>x[(x$var1&lt;=3 | x$var3 &gt; 15),] # select rows that match the var1 value &lt;= 3 OR var3&gt;11 (and all cols)</code></pre>
-<pre><code>##   var1 var2 var3
-## 1    2   NA   15
-## 4    1   10   11
-## 2    3   NA   12</code></pre>
-<pre class="r"><code>x[which(x$var2&gt;8),] # subset of x where var2 value is greater than 8 (DEALS WITH MISSING VALUES)</code></pre>
-<pre><code>##   var1 var2 var3
-## 4    1   10   11
-## 5    4    9   13</code></pre>
-<pre class="r"><code>sort(x$var1) # get var1 column and sort it</code></pre>
-<pre><code>## [1] 1 2 3 4 5</code></pre>
-<pre class="r"><code>sort(x$var1,decreasing=TRUE) # same as above but descending</code></pre>
-<pre><code>## [1] 5 4 3 2 1</code></pre>
-<pre class="r"><code>sort(x$var2,na.last=TRUE) # by default (or NA) removes NA, TRUE puts last, FALSE puts first</code></pre>
-<pre><code>## [1]  6  9 10 NA NA</code></pre>
-<pre class="r"><code>x[order(x$var1),] # subset of x where it's ordered by var1 value</code></pre>
-<pre><code>##   var1 var2 var3
-## 4    1   10   11
-## 1    2   NA   15
-## 2    3   NA   12
-## 5    4    9   13
-## 3    5    6   14</code></pre>
-<pre class="r"><code>x[order(x$var1,x$var3),] # same as above, but ordered by var1 and then by var3 (if var1 has ties, var3 is the tiebreaker)</code></pre>
-<pre><code>##   var1 var2 var3
-## 4    1   10   11
-## 1    2   NA   15
-## 2    3   NA   12
-## 5    4    9   13
-## 3    5    6   14</code></pre>
-<pre class="r"><code>### PLYR ###
-library(plyr)
-arrange(x,var1) # same as above above, but simpler (and notice lack of &quot;&quot;)</code></pre>
-<pre><code>##   var1 var2 var3
-## 1    1   10   11
-## 2    2   NA   15
-## 3    3   NA   12
-## 4    4    9   13
-## 5    5    6   14</code></pre>
-<pre class="r"><code>arrange(x,desc(var1)) # descending &quot;x[order(x$var1,decreasing=TRUE),]&quot;</code></pre>
-<pre><code>##   var1 var2 var3
-## 1    5    6   14
-## 2    4    9   13
-## 3    3   NA   12
-## 4    2   NA   15
-## 5    1   10   11</code></pre>
-<pre class="r"><code>#############
-
-x$var4&lt;-rnorm(5) # adds a new column to x as &quot;var4&quot; with rnorm(5) applied
-x</code></pre>
-<pre><code>##   var1 var2 var3       var4
-## 1    2   NA   15  0.1875960
-## 4    1   10   11  1.7869764
-## 2    3   NA   12  0.4966936
-## 3    5    6   14  0.0631830
-## 5    4    9   13 -0.5361329</code></pre>
-<pre class="r"><code>x&lt;-cbind(x,&quot;var5&quot;=rnorm(5)) # column bind also works
-x</code></pre>
-<pre><code>##   var1 var2 var3       var4        var5
-## 1    2   NA   15  0.1875960  0.62578490
-## 4    1   10   11  1.7869764 -2.45083750
-## 2    3   NA   12  0.4966936  0.08909424
-## 3    5    6   14  0.0631830  0.47838570
-## 5    4    9   13 -0.5361329  1.00053336</code></pre>
+<p>```{r}‘’’ set.seed(13435) x&lt;-data.frame(“var1”=sample(1:5),“var2”=sample(6:10),“var3”=sample(11:15)) x&lt;-x[sample(1:5),]; # shuffle around rows 1 through 5 x<span class="math">\(var2[c(1,3)]&lt;-NA # mark 1st and 3rd row value of var2 as NA (after shuffling above) x x[,1] # subsets column 1 x[,&quot;var3&quot;] # subsets column that matches the name &quot;var3&quot; (3rd col) x[1:2,&quot;var2&quot;] # subsets row 1,2 of column &quot;var2&quot; x[(x\)</span>var1&lt;=3 &amp; x<span class="math">\(var3 &gt; 11),] # select rows that match the var1 value &lt;= 3 and var3&gt;11 (and all cols) x[(x\)</span>var1&lt;=3 | x<span class="math">\(var3 &gt; 15),] # select rows that match the var1 value &lt;= 3 OR var3&gt;11 (and all cols) x[which(x\)</span>var2&gt;8),] # subset of x where var2 value is greater than 8 (DEALS WITH MISSING VALUES) sort(x<span class="math">\(var1) # get var1 column and sort it sort(x\)</span>var1,decreasing=TRUE) # same as above but descending sort(x<span class="math">\(var2,na.last=TRUE) # by default (or NA) removes NA, TRUE puts last, FALSE puts first x[order(x\)</span>var1),] # subset of x where it’s ordered by var1 value x[order(x<span class="math">\(var1,x\)</span>var3),] # same as above, but ordered by var1 and then by var3 (if var1 has ties, var3 is the tiebreaker)</p>
+</div>
+<div id="plyr" class="section level3">
+<h3>PLYR</h3>
+<p>library(plyr) arrange(x,var1) # same as above above, but simpler (and notice lack of “”) arrange(x,desc(var1)) # descending “x[order(x$var1,decreasing=TRUE),]” #############</p>
+<p>x$var4&lt;-rnorm(5) # adds a new column to x as “var4” with rnorm(5) applied x x&lt;-cbind(x,“var5”=rnorm(5)) # column bind also works x ```‘’’</p>
 </div>
 <div id="summarizing-data" class="section level3">
 <h3>8) summarizing data</h3>
-<pre class="r"><code>if(!file.exists(&quot;./data&quot;)){dir.create(&quot;./data&quot;)}
+<p>```{r}‘’’ if(!file.exists(“./data”)){dir.create(“./data”)} if(!file.exists(“data/restaurants.csv”)){ fileUrl&lt;-“<a href="https://data.baltimorecity.gov/api/views/k5ry-ef3g/rows.csv?accessType=DOWNLOAD" class="uri">https://data.baltimorecity.gov/api/views/k5ry-ef3g/rows.csv?accessType=DOWNLOAD</a>” download.file(fileUrl,destfile=“./data/restaurants.csv”,method=“curl”) } restData&lt;-read.csv(“./data/restaurants.csv”) head(restData,n=1) tail(restData,n=1) summary(restData) str(restData) quantile(restData<span class="math">\(councilDistrict,na.rm=TRUE) quantile(restData\)</span>councilDistrict,probs=c(0.5,0.75,0.9),na.rm=TRUE) # gets 50%, 75%, 90% quantile table(restData<span class="math">\(zipCode,useNA=&quot;ifany&quot;) # useNA = &quot;ifany&quot; if there's any use NA, &quot;no&quot; is no, &quot;always&quot; always use it table(restData\)</span>councilDistrict,restData<span class="math">\(zipCode) # use councilDistrict as row and column as zipCode # checking for missing values sum(is.na(restData\)</span>councilDistrict)) # sum of counts of missing values in councilDistrict any(is.na(restData<span class="math">\(councilDistrict)) # is there any missing values in councilDistrict? all(restData\)</span>councilDistrict&gt;0) # all should be greater than 0 all(restData$zipCode&gt;0) # there is at least one negative zip code (invalid) data colSums(is.na(restData)) # sum of all of the column of restData that has na values all(colSums(is.na(restData))==0) # all of the column should have 0 value for is.na check</p>
+</div>
+</div>
+<div id="tally-a-table-of-counts-when-the-zipcode-matches-21212" class="section level1">
+<h1>tally a table of counts when the zipcode matches 21212</h1>
+<p>table(restData<span class="math">\(zipCode %in% c(&quot;21212&quot;)) # opposite is not as useful (when 21212 matches the zipcode) table(c(&quot;21212&quot;) %in% restData\)</span>zipCode) # also multiple matches work (match 21212 or 21213) table(restData$zipCode %in% c(“21212”,“21213”))</p>
+</div>
+<div id="subsetting-values-with-specific-characteristics" class="section level1">
+<h1>subsetting values with specific characteristics</h1>
+<p>head(restData[restData$zipCode %in% c(“21212”,“21213”),],3)</p>
+<p>data(UCBAdmissions) DF&lt;-as.data.frame(UCBAdmissions) head(DF) # cross tabs; Freq is what actually is displayed; Broken down by Gender (row) and Admit (col) xt&lt;-xtabs(Freq ~ Gender + Admit,data=DF) xt # cross tabs for a larger number of variables are hard to see warpbreaks$replicate&lt;-rep(1:9,len=54) head(warpbreaks,3) # break down breaks by all the variables “.” within xt&lt;-xtabs(breaks~.,data=warpbreaks) # flat tables;makes it easier to read many variables # by summarizing/formatting the data in a much smaller and # compact form ftable(xt)</p>
+</div>
+<div id="size-of-a-data-set" class="section level1">
+<h1>size of a data set</h1>
+<p>fakeData&lt;-rnorm(1e6) print(object.size(fakeData),units=“Mb”) ```‘’’</p>
+<div id="creating-new-variables" class="section level3">
+<h3>9) creating new variables</h3>
+<pre class="r"><code>### creating new variables along with transformation of data
+### variables to do the following:
+# 1) missingness indicators
+# 2) &quot;cutting up&quot; quantitative variables
+# 3) applying transforms
+
+if(!file.exists(&quot;./data&quot;)){dir.create(&quot;./data&quot;)}
 if(!file.exists(&quot;data/restaurants.csv&quot;)){
     fileUrl&lt;-&quot;https://data.baltimorecity.gov/api/views/k5ry-ef3g/rows.csv?accessType=DOWNLOAD&quot;
     download.file(fileUrl,destfile=&quot;./data/restaurants.csv&quot;,method=&quot;curl&quot;)
 }
 restData&lt;-read.csv(&quot;./data/restaurants.csv&quot;)
-head(restData,n=1)</code></pre>
-<pre><code>##   name zipCode neighborhood councilDistrict policeDistrict
-## 1  410   21206    Frankford               2   NORTHEASTERN
-##                          Location.1
-## 1 4509 BELAIR ROAD\nBaltimore, MD\n</code></pre>
-<pre class="r"><code>tail(restData,n=1)</code></pre>
-<pre><code>##        name zipCode neighborhood councilDistrict policeDistrict
-## 1327 ZORBAS   21224    Greektown               2   SOUTHEASTERN
-##                             Location.1
-## 1327 4710 EASTERN Ave\nBaltimore, MD\n</code></pre>
-<pre class="r"><code>summary(restData)</code></pre>
-<pre><code>##                            name         zipCode             neighborhood
-##  MCDONALD'S                  :   8   Min.   :-21226   Downtown    :128  
-##  POPEYES FAMOUS FRIED CHICKEN:   7   1st Qu.: 21202   Fells Point : 91  
-##  SUBWAY                      :   6   Median : 21218   Inner Harbor: 89  
-##  KENTUCKY FRIED CHICKEN      :   5   Mean   : 21185   Canton      : 81  
-##  BURGER KING                 :   4   3rd Qu.: 21226   Federal Hill: 42  
-##  DUNKIN DONUTS               :   4   Max.   : 21287   Mount Vernon: 33  
-##  (Other)                     :1293                    (Other)     :863  
-##  councilDistrict       policeDistrict
-##  Min.   : 1.000   SOUTHEASTERN:385   
-##  1st Qu.: 2.000   CENTRAL     :288   
-##  Median : 9.000   SOUTHERN    :213   
-##  Mean   : 7.191   NORTHERN    :157   
-##  3rd Qu.:11.000   NORTHEASTERN: 72   
-##  Max.   :14.000   EASTERN     : 67   
-##                   (Other)     :145   
-##                           Location.1    
-##  1101 RUSSELL ST\nBaltimore, MD\n:   9  
-##  201 PRATT ST\nBaltimore, MD\n   :   8  
-##  2400 BOSTON ST\nBaltimore, MD\n :   8  
-##  300 LIGHT ST\nBaltimore, MD\n   :   5  
-##  300 CHARLES ST\nBaltimore, MD\n :   4  
-##  301 LIGHT ST\nBaltimore, MD\n   :   4  
-##  (Other)                         :1289</code></pre>
-<pre class="r"><code>str(restData)</code></pre>
-<pre><code>## 'data.frame':    1327 obs. of  6 variables:
-##  $ name           : Factor w/ 1277 levels &quot;#1 CHINESE KITCHEN&quot;,..: 9 3 992 1 2 4 5 6 7 8 ...
-##  $ zipCode        : int  21206 21231 21224 21211 21223 21218 21205 21211 21205 21231 ...
-##  $ neighborhood   : Factor w/ 173 levels &quot;Abell&quot;,&quot;Arlington&quot;,..: 53 52 18 66 104 33 98 133 98 157 ...
-##  $ councilDistrict: int  2 1 1 14 9 14 13 7 13 1 ...
-##  $ policeDistrict : Factor w/ 9 levels &quot;CENTRAL&quot;,&quot;EASTERN&quot;,..: 3 6 6 4 8 3 6 4 6 6 ...
-##  $ Location.1     : Factor w/ 1210 levels &quot;1 BIDDLE ST\nBaltimore, MD\n&quot;,..: 835 334 554 755 492 537 505 530 507 569 ...</code></pre>
-<pre class="r"><code>quantile(restData$councilDistrict,na.rm=TRUE)</code></pre>
-<pre><code>##   0%  25%  50%  75% 100% 
-##    1    2    9   11   14</code></pre>
-<pre class="r"><code>quantile(restData$councilDistrict,probs=c(0.5,0.75,0.9),na.rm=TRUE) # gets 50%, 75%, 90% quantile</code></pre>
-<pre><code>## 50% 75% 90% 
-##   9  11  12</code></pre>
-<pre class="r"><code>table(restData$zipCode,useNA=&quot;ifany&quot;) # useNA = &quot;ifany&quot; if there's any use NA, &quot;no&quot; is no, &quot;always&quot; always use it</code></pre>
-<pre><code>## 
-## -21226  21201  21202  21205  21206  21207  21208  21209  21210  21211 
-##      1    136    201     27     30      4      1      8     23     41 
-##  21212  21213  21214  21215  21216  21217  21218  21220  21222  21223 
-##     28     31     17     54     10     32     69      1      7     56 
-##  21224  21225  21226  21227  21229  21230  21231  21234  21237  21239 
-##    199     19     18      4     13    156    127      7      1      3 
-##  21251  21287 
-##      2      1</code></pre>
-<pre class="r"><code>table(restData$councilDistrict,restData$zipCode) # use councilDistrict as row and column as zipCode</code></pre>
-<pre><code>##     
-##      -21226 21201 21202 21205 21206 21207 21208 21209 21210 21211 21212
-##   1       0     0    37     0     0     0     0     0     0     0     0
-##   2       0     0     0     3    27     0     0     0     0     0     0
-##   3       0     0     0     0     0     0     0     0     0     0     0
-##   4       0     0     0     0     0     0     0     0     0     0    27
-##   5       0     0     0     0     0     3     0     6     0     0     0
-##   6       0     0     0     0     0     0     0     1    19     0     0
-##   7       0     0     0     0     0     0     0     1     0    27     0
-##   8       0     0     0     0     0     1     0     0     0     0     0
-##   9       0     1     0     0     0     0     0     0     0     0     0
-##   10      1     0     1     0     0     0     0     0     0     0     0
-##   11      0   115   139     0     0     0     1     0     0     0     1
-##   12      0    20    24     4     0     0     0     0     0     0     0
-##   13      0     0     0    20     3     0     0     0     0     0     0
-##   14      0     0     0     0     0     0     0     0     4    14     0
-##     
-##      21213 21214 21215 21216 21217 21218 21220 21222 21223 21224 21225
-##   1      2     0     0     0     0     0     0     7     0   140     1
-##   2      0     0     0     0     0     0     0     0     0    54     0
-##   3      2    17     0     0     0     3     0     0     0     0     0
-##   4      0     0     0     0     0     0     0     0     0     0     0
-##   5      0     0    31     0     0     0     0     0     0     0     0
-##   6      0     0    15     1     0     0     0     0     0     0     0
-##   7      0     0     6     7    15     6     0     0     0     0     0
-##   8      0     0     0     0     0     0     0     0     2     0     0
-##   9      0     0     0     2     8     0     0     0    53     0     0
-##   10     0     0     0     0     0     0     1     0     0     0    18
-##   11     0     0     0     0     9     0     0     0     1     0     0
-##   12    13     0     0     0     0    26     0     0     0     0     0
-##   13    13     0     1     0     0     0     0     0     0     5     0
-##   14     1     0     1     0     0    34     0     0     0     0     0
-##     
-##      21226 21227 21229 21230 21231 21234 21237 21239 21251 21287
-##   1      0     0     0     1   124     0     0     0     0     0
-##   2      0     0     0     0     0     0     1     0     0     0
-##   3      0     1     0     0     0     7     0     0     2     0
-##   4      0     0     0     0     0     0     0     3     0     0
-##   5      0     0     0     0     0     0     0     0     0     0
-##   6      0     0     0     0     0     0     0     0     0     0
-##   7      0     0     0     0     0     0     0     0     0     0
-##   8      0     2    13     0     0     0     0     0     0     0
-##   9      0     0     0    11     0     0     0     0     0     0
-##   10    18     0     0   133     0     0     0     0     0     0
-##   11     0     0     0    11     0     0     0     0     0     0
-##   12     0     0     0     0     2     0     0     0     0     0
-##   13     0     1     0     0     1     0     0     0     0     1
-##   14     0     0     0     0     0     0     0     0     0     0</code></pre>
-<pre class="r"><code># checking for missing values
-sum(is.na(restData$councilDistrict)) # sum of counts of missing values in councilDistrict</code></pre>
-<pre><code>## [1] 0</code></pre>
-<pre class="r"><code>any(is.na(restData$councilDistrict)) # is there any missing values in councilDistrict?</code></pre>
-<pre><code>## [1] FALSE</code></pre>
-<pre class="r"><code>all(restData$councilDistrict&gt;0) # all should be greater than 0</code></pre>
-<pre><code>## [1] TRUE</code></pre>
-<pre class="r"><code>all(restData$zipCode&gt;0) # there is at least one negative zip code (invalid) data</code></pre>
-<pre><code>## [1] FALSE</code></pre>
-<pre class="r"><code>colSums(is.na(restData)) # sum of all of the column of restData that has na values</code></pre>
-<pre><code>##            name         zipCode    neighborhood councilDistrict 
-##               0               0               0               0 
-##  policeDistrict      Location.1 
-##               0               0</code></pre>
-<pre class="r"><code>all(colSums(is.na(restData))==0) # all of the column should have 0 value for is.na check</code></pre>
-<pre><code>## [1] TRUE</code></pre>
-<pre class="r"><code>table(restData$zipCode %in% c(&quot;21212&quot;))</code></pre>
+
+### review ############################
+# creating sequences
+# skipping by 2 from 1 to 10 (1,3,5,7,9)
+s1&lt;-seq(1,10,by=2); s1 </code></pre>
+<pre><code>## [1] 1 3 5 7 9</code></pre>
+<pre class="r"><code># from 1 to 10, make it fit the length 3 (1.0, 5.5, 10.0)
+s2&lt;-seq(1,10,length=3);s2</code></pre>
+<pre><code>## [1]  1.0  5.5 10.0</code></pre>
+<pre class="r"><code># counts along the given list
+s3&lt;-seq(along=c(1,3,8,25,100)); s3</code></pre>
+<pre><code>## [1] 1 2 3 4 5</code></pre>
+<pre class="r"><code># subsetting variables (after creating variable)
+restData$nearMe&lt;-restData$neighborhood %in% c(&quot;Roland Park&quot;, &quot;Homeland&quot;)
+table(restData$nearMe)</code></pre>
 <pre><code>## 
 ## FALSE  TRUE 
-##  1299    28</code></pre>
-<pre class="r"><code>table(c(&quot;21212&quot;) %in% restData$zipCode)</code></pre>
+##  1314    13</code></pre>
+<pre class="r"><code>#######################################
+
+# creating binary variables
+restData$zipWrong&lt;-ifelse(restData$zipCode&lt;0,TRUE,FALSE)
+table(restData$zipWrong,restData$zipCode&lt;0)</code></pre>
+<pre><code>##        
+##         FALSE TRUE
+##   FALSE  1326    0
+##   TRUE      0    1</code></pre>
+<pre class="r"><code># creating categorical variables
+restData$zipGroups&lt;-cut(restData$zipCode,breaks&lt;-quantile(restData$zipCode))
+table(restData$zipGroups,restData$zipCode)</code></pre>
+<pre><code>##                        
+##                         -21226 21201 21202 21205 21206 21207 21208 21209
+##   (-2.123e+04,2.12e+04]      0   136   201     0     0     0     0     0
+##   (2.12e+04,2.122e+04]       0     0     0    27    30     4     1     8
+##   (2.122e+04,2.123e+04]      0     0     0     0     0     0     0     0
+##   (2.123e+04,2.129e+04]      0     0     0     0     0     0     0     0
+##                        
+##                         21210 21211 21212 21213 21214 21215 21216 21217
+##   (-2.123e+04,2.12e+04]     0     0     0     0     0     0     0     0
+##   (2.12e+04,2.122e+04]     23    41    28    31    17    54    10    32
+##   (2.122e+04,2.123e+04]     0     0     0     0     0     0     0     0
+##   (2.123e+04,2.129e+04]     0     0     0     0     0     0     0     0
+##                        
+##                         21218 21220 21222 21223 21224 21225 21226 21227
+##   (-2.123e+04,2.12e+04]     0     0     0     0     0     0     0     0
+##   (2.12e+04,2.122e+04]     69     0     0     0     0     0     0     0
+##   (2.122e+04,2.123e+04]     0     1     7    56   199    19     0     0
+##   (2.123e+04,2.129e+04]     0     0     0     0     0     0    18     4
+##                        
+##                         21229 21230 21231 21234 21237 21239 21251 21287
+##   (-2.123e+04,2.12e+04]     0     0     0     0     0     0     0     0
+##   (2.12e+04,2.122e+04]      0     0     0     0     0     0     0     0
+##   (2.122e+04,2.123e+04]     0     0     0     0     0     0     0     0
+##   (2.123e+04,2.129e+04]    13   156   127     7     1     3     2     1</code></pre>
+<pre class="r"><code># easier cutting
+if(!require(Hmisc)){
+  install.packages(&quot;Hmisc&quot;,repo=&quot;https://cran.rstudio.com/&quot;)
+}
+library(Hmisc)
+restData$zipGroups&lt;-cut2(restData$zipCode,g=4)
+table(restData$zipGroups)</code></pre>
 <pre><code>## 
-## TRUE 
-##    1</code></pre>
-</div>
+## [-21226,21205) [ 21205,21220) [ 21220,21227) [ 21227,21287] 
+##            338            375            300            314</code></pre>
+<pre class="r"><code># creating factor variables
+restData$zcf&lt;-factor(restData$zipCode)
+restData$zcf[1:10]</code></pre>
+<pre><code>##  [1] 21206 21231 21224 21211 21223 21218 21205 21211 21205 21231
+## 32 Levels: -21226 21201 21202 21205 21206 21207 21208 21209 ... 21287</code></pre>
+<pre class="r"><code>class(restData$zcf)</code></pre>
+<pre><code>## [1] &quot;factor&quot;</code></pre>
+<pre class="r"><code># levels of factor variables
+yesno&lt;-sample(c(&quot;yes&quot;,&quot;no&quot;),size=10,replace=TRUE)
+# by default, levels value-wise (alphanumeric value)
+yesnofac&lt;-factor(yesno,levels=c(&quot;yes&quot;,&quot;no&quot;))
+# can manually re-level based on reference value
+relevel(yesnofac,ref=&quot;yes&quot;)</code></pre>
+<pre><code>##  [1] no  yes no  yes yes yes yes no  yes no 
+## Levels: yes no</code></pre>
+<pre class="r"><code># Hmisc cutting produces factor variables
+restData$zipGroups&lt;-cut2(restData$zipCode,g=4)
+table(restData$zipGroups)</code></pre>
+<pre><code>## 
+## [-21226,21205) [ 21205,21220) [ 21220,21227) [ 21227,21287] 
+##            338            375            300            314</code></pre>
 </div>
 </div>
 
