@@ -426,7 +426,7 @@ print(object.size(fakeData),units="Mb")
 ```'''
 
 ###9) creating new variables
-```{r}
+```{r}'''
 ### creating new variables along with transformation of data
 ### variables to do the following:
 # 1) missingness indicators
@@ -484,6 +484,114 @@ relevel(yesnofac,ref="yes")
 # Hmisc cutting produces factor variables
 restData$zipGroups<-cut2(restData$zipCode,g=4)
 table(restData$zipGroups)
+
+# using mutate function (Hmisc & plyr) to create new version of the variable 
+# and simultaneously added to a data set
+
+if(!require(plyr)){
+  install.packages("plyr",repo="https://cran.rstudio.com/")
+}
+library(plyr)
+# mutate old dataframe by adding a new variable "zipGroups" that equals to the function of the original rest data frame
+restData2<-mutate(restData,zipGroups=cut2(zipCode,g=4))
+table(restData2$zipGroups)
+# mutate adds "function" such as ...
+#   abs(x)            absolute
+#   sqrt(x)           square root
+#   ceiling(x)        ceiling
+#   floor(x)          floor
+#   round(x,digits=n) rounding to digits
+#   signif(x,digits=n)rounding to sig fig
+#   cos(x),sin(x)     cosine, sine
+#   log(x), log2(x)   natural log, log base 2, et cetera
+#   exp(x)            exponential of x
+```'''
+
+###10) reshaping data
+```{r}'''
+# each variable forms a column
+# each observation forms a row
+# each table/file stores data regarding one KIND of observation
+
+if(!require(reshape2)){
+  install.packages("reshape2",repos = "https://cran.rstudio.com/")
+}
+library(reshape2)
+head(mtcars,n=3)
+
+# melting data frames
+mtcars$carname<-rownames(mtcars)
+# differentiation of id variables and measure variables
+carMelt<-melt(mtcars,id=c("carname","gear","cyl"),measure.vars=c("mpg","hp"))
+head(carMelt,n=3) # show mpg variables 
+tail(carMelt,n=3) # shows hp variables
+
+# recasting data frames
+# left hand is cyl and the variable is set as "mpg" and "hp" previously in melt function above
+# without any functions, it aggregates the data set, so 11 in mpg and 11 in hp means 11 measures of mpg and hp
+cylData<-dcast(carMelt,cyl~variable);cylData
+
+# by providing the function, it gets / applies the function 'mean' on to each variables
+cylData2<-dcast(carMelt,cyl~variable,mean);cylData2
+
+# averaging values
+# spray values range from A through F
+head(InsectSprays)
+# sums the spray counts
+tapply(X=InsectSprays$count,INDEX=InsectSprays$spray,FUN=sum)
+
+# another way - split
+spIns<-split(x=InsectSprays$count,f=InsectSprays$spray); spIns
+# another way - apply
+sprCount<-lapply(X=spIns,FUN=sum); sprCount
+# another way - combine
+unlist(x=sprCount)
+sapply(X=spIns,FUN=sum)
+
+# another way - plyr package
+if(!require(plyr)){
+  install.packages("plyr",repos = "https://cran.rstudio.com/")
+}
+library(plyr)
+# does not work for some reason on knitr; works on R console
+#ddply(InsectSprays,.(spray),summarize,sum=sum(count))
+
+# creating a new variable
+# same error as above
+#spraySums<-ddply(InsectSprays,.(spray),summarize,sum=ave(count,FUN=sum))
+#dim(spraySums)
+```'''
+
+###11) managing data frames with dplyr - using the tools
+```{r}
+if(!require(dplyr)){
+  install.packages("plyr",repos = "https://cran.rstudio.com/")
+}
+library(dplyr)
+
+options(width=105)
+
+if(!file.exists("./data")){dir.create("./data")}
+if(!file.exists("data/chicago.rds")){
+    fileUrl<-"https://github.com/DataScienceSpecialization/courses/blob/master/03_GettingData/dplyr/chicago.rds?raw=true"
+    download.file(fileUrl,destfile="./data/chicago.rds",mode="wb")
+}
+chicago<-readRDS("./data/chicago.rds")
+# selects from "city" column to "dptp" column
+head(select(chicago,city:dptp))
+# select everything BUT the city column to dptp column
+head(select(chicago,-(city:dptp)))
+
+i<-match("city",names(chicago)); i
+j<-match("dptp",names(chicago)); j
+# to do the same thing with default R functions...
+head(chicago[,-(i:j)])
+
+# filter out pm25tmean2 value that's greater than 30)
+chic.f<-filter(chicago,pm25tmean2>30); head(chic.f,3)
+
+# can filter multiple logical statements
+chic.f2<-filter(chicago,pm25tmean2>30 & tmpd>80); head(chic.f2,3)
 
 
 ```
