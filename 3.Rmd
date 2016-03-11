@@ -15,7 +15,7 @@ print(R.version.string)
 ```
 
 ###1) downloading/reading-local/reading-xls/reading-XML/XPath/JSON/data.table
-```{r}'''
+```{r}
 # downloading
 if(!file.exists("data")){ dir.create("data") }
 
@@ -167,10 +167,10 @@ library(microbenchmark)
 microbenchmark(fread(file),times=1)
 # normal read table
 microbenchmark(read.table(file,header=TRUE,sep="\t"),times=1)
-```'''
+```
 
 ###2) reading MySQL
-```{r}'''
+```{r}
 if(!require(RMySQL)){
   install.packages("RMySQL",repo="https://cran.rstudio.com/")
 }
@@ -199,10 +199,10 @@ affyMis<-fetch(query); quantile(affyMis$misMatches)
 affyMisSmall<-fetch(query,n=10); dbClearResult(query);
 dim(affyMisSmall)
 dbDisconnect(hg19)
-```'''
+```
 
 ###3) reading HDF5
-```{r}'''
+```{r}
 # heirarchical data format
 # groups contain zero or more data sets/metadata
 #       group header with grou name and list of attributes
@@ -251,10 +251,10 @@ readA
 # writing and reading chunks
 h5write(c(12,13,14),"example.h5","foo/A",index=list(1:3,1)) # write 12,13,14 into rows 1 through 3 column 1 of foo/A within example.h5
 h5read("example.h5","foo/A")
-```'''
+```
 
 ###4) reading from the web
-```{r}'''
+```{r}
 # just in case google blocks the ip for accessing too often
 if(!file.exists("data/google-scholar.html")){
     fileUrl<-"http://scholar.google.com/citations?user=HI-I6C0AAAAJ&hl=en"
@@ -291,7 +291,7 @@ google<-handle("http://www.google.com")
 pg1<-GET(handle=google,path="/") # cookies will be authenticated / maintained
 pg2<-GET(handle=google,path="search")
 
-```'''
+```
 
 # *********************** problem with 5th module *************************** #
 ###5) reading from APIs
@@ -313,7 +313,7 @@ json2[1,1:4]
 # *************************************************************************** #
 
 ###6) reading from other sources
-```{r}'''
+```{r}
 ### files
 # file - connection to text file
 # url - connection to url
@@ -342,10 +342,10 @@ json2[1,1:4]
 ### reading music data
 # tuneR package
 # seewave custom package?
-```'''
+```
 
 ###7) subsetting / scoring
-```{r}'''
+```{r}
 set.seed(13435)
 x<-data.frame("var1"=sample(1:5),"var2"=sample(6:10),"var3"=sample(11:15)) 
 x<-x[sample(1:5),]; # shuffle around rows 1 through 5
@@ -373,10 +373,10 @@ x$var4<-rnorm(5) # adds a new column to x as "var4" with rnorm(5) applied
 x
 x<-cbind(x,"var5"=rnorm(5)) # column bind also works
 x
-```'''
+```
 
 ###8) summarizing data
-```{r}'''
+```{r}
 if(!file.exists("./data")){dir.create("./data")}
 if(!file.exists("data/restaurants.csv")){
     fileUrl<-"https://data.baltimorecity.gov/api/views/k5ry-ef3g/rows.csv?accessType=DOWNLOAD"
@@ -428,10 +428,10 @@ ftable(xt)
 # size of a data set
 fakeData<-rnorm(1e6)
 print(object.size(fakeData),units="Mb")
-```'''
+```
 
 ###9) creating new variables
-```{r}'''
+```{r}
 ### creating new variables along with transformation of data
 ### variables to do the following:
 # 1) missingness indicators
@@ -510,10 +510,10 @@ table(restData2$zipGroups)
 #   cos(x),sin(x)     cosine, sine
 #   log(x), log2(x)   natural log, log base 2, et cetera
 #   exp(x)            exponential of x
-```'''
+```
 
 ###10) reshaping data
-```{r}'''
+```{r}
 # each variable forms a column
 # each observation forms a row
 # each table/file stores data regarding one KIND of observation
@@ -565,10 +565,10 @@ library(plyr)
 # same error as above
 #spraySums<-ddply(InsectSprays,.(spray),summarize,sum=ave(count,FUN=sum))
 #dim(spraySums)
-```'''
+```
 
 ###11) managing data frames with dplyr - using the tools
-```{r}'''
+```{r}
 if(!require(dplyr)){
   install.packages("dplyr",repos = "https://cran.rstudio.com/")
 }
@@ -641,10 +641,10 @@ summarize(hotcold,pm25=mean(pm25,na.rm=TRUE),o3=max(o3tmean2),no2=median(no2tmea
 # and then take the output of group_by and then run it through summarize
 chicago %>% mutate(month=as.POSIXlt(date)$mon + 1) %>% group_by(month) %>% summarize(pm25=mean(pm25,na.rm=TRUE),o3=max(o3tmean2),no2=median(no2tmean2))
 # very useful!
-```'''
+```
 
 ###12) merging data
-```{r}'''
+```{r}
 # downloading necessary files #
 if(!file.exists("./data")){dir.create("./data")}
 if(!file.exists("./data/reviews.csv")){
@@ -689,10 +689,10 @@ df3<-data.frame(id=sample(1:10),z=rnorm(10))
 dfList<-list(df1,df2,df3);dfList
 arrange(join_all(dfList),id)
 
-```'''
+```
 
 ###13) editing text variables
-```{r}'''
+```{r}
 # loading necessary data
 if(!file.exists("./data")){ dir.create("./data") }
 if(!file.exists("./data/cameras.csv")){
@@ -787,10 +787,10 @@ str_trim("     Jeff     ") #trims out whitespaces bidirectionally
 # 5) should be made into factor variables (case by case)
 # 6) should be descriptive (use T/F) as opposed to 0/1;
 #    and "Male/Female" as opposed to 0/1 and "M/F"
-```'''
+```
 
 ###14) working with dates
-```{r}'''
+```{r}
 # simple example
 d1<-date();d1;class(d1)
 
@@ -831,6 +831,67 @@ ymd_hms("2011-08-03 10:15:03",tz="Pacific/Auckland")
 # slightly different syntax for some functions
 x<-dmy(c("1jan2013","2jan2013","31mar2013","30jul2013"))
 wday(x[1]); wday(x[1],label=TRUE)
-```'''
+```
 
-###15) 
+###15) data resources
+```{r}
+# open government sites
+# United Nations:
+#   http://data.un.org
+# United States:
+#   http:/www.data.gov
+# United Kingdom:
+#   http://data.gov.uk
+# France:
+#   http://www.data.gouv.fr
+# Ghana:
+#   http://data.gov.gh
+# Australia:
+#   http://data.gov.au
+# Germany:
+#   https://www.govdata.de
+# Hong Kong:
+#   http://www.gov.hk/en/theme/psi/datasets
+# Japan:
+#   http://www.data.go.jp
+
+# Gapminder: data about development of human health
+# http://www.gapminder.org
+
+# Survey data from the United States
+# http://www.asdfree.com
+
+# Infochimps Marketplace -- some cost money
+# http://www.infochimps.com/marketplace
+
+# Kaggle -- data sets
+# http://www.kaggle.com
+
+# Collections by data scientists
+# Hilary Mason:
+#   http://bitly.com/bundles/hmason/1
+# Peter Skomoroch
+#   https://delicious.com/pksomoroch/datasets
+# Jeff Hammerbacher
+#   http://www.quora.com/Jeff-Hammerbacher/Introduction-to-Data-Science-Data-Sets
+# Gregory Piatetsky-Shapiro
+#   http://www.kdnuggets.com/gps.html
+# http://blog.mortardata.com/post/67652898761/6-dataset-lists-curated-by-data-scientists
+
+# More specialized collections:
+# Stanford Large Network Data
+# UCI Machine Learning
+# KDD Nuggets Datasets
+# CMU Statlib
+# Gene Expression Omnibus
+# ArXiv Data
+# Public Data Sets on Amazon Web Services
+
+# Some API's with R Interfaces
+# twitter / twitterR pkg
+# figshare / rfigshare
+# PLoS / rplos
+# rOpenSci
+# Facebook / RFacebook
+# Google Maps / RGoogleMaps
+```

@@ -122,137 +122,625 @@ $(document).ready(function () {
 </div>
 <div id="downloadingreading-localreading-xlsreading-xmlxpathjsondata.table" class="section level3">
 <h3>1) downloading/reading-local/reading-xls/reading-XML/XPath/JSON/data.table</h3>
-<p>```{r}‘’’ # downloading if(!file.exists(“data”)){ dir.create(“data”) }</p>
+<pre class="r"><code># downloading
+if(!file.exists(&quot;data&quot;)){ dir.create(&quot;data&quot;) }
+
+# reading local
+if(!file.exists(&quot;data/cameras.csv&quot;)){
+    fileUrl&lt;-&quot;https://data.baltimorecity.gov/api/views/dz54-2aru/rows.csv?accessType=DOWNLOAD&quot;
+    download.file(fileUrl,destfile=&quot;./data/cameras.csv&quot;,method=&quot;curl&quot;)
+}
+cameraData&lt;-read.table(&quot;./data/cameras.csv&quot;,sep=&quot;,&quot;,header=TRUE)
+head(cameraData,2)</code></pre>
+<pre><code>##                    address direction    street crossStreet
+## 1 S CATON AVE &amp; BENSON AVE       N/B Caton Ave  Benson Ave
+## 2 S CATON AVE &amp; BENSON AVE       S/B Caton Ave  Benson Ave
+##             intersection                      Location.1
+## 1 Caton Ave &amp; Benson Ave (39.2693779962, -76.6688185297)
+## 2 Caton Ave &amp; Benson Ave (39.2693157898, -76.6689698176)</code></pre>
+<pre class="r"><code>str(cameraData)</code></pre>
+<pre><code>## 'data.frame':    80 obs. of  6 variables:
+##  $ address     : Factor w/ 71 levels &quot;E 33RD ST &amp; THE ALAMEDA&quot;,..: 49 49 70 57 1 14 14 31 5 35 ...
+##  $ direction   : Factor w/ 4 levels &quot;E/B&quot;,&quot;N/B&quot;,&quot;S/B&quot;,..: 2 3 1 3 1 1 4 3 4 1 ...
+##  $ street      : Factor w/ 55 levels &quot;Caton Ave&quot;,&quot;Charles&quot;,..: 1 1 54 50 4 8 8 2 26 33 ...
+##  $ crossStreet : Factor w/ 66 levels &quot;33rd St&quot;,&quot;4th St&quot;,..: 6 6 49 1 58 40 40 36 7 38 ...
+##  $ intersection: Factor w/ 74 levels &quot; &amp;&quot;,&quot;Caton Ave &amp; Benson Ave&quot;,..: 2 2 73 69 7 13 13 3 35 47 ...
+##  $ Location.1  : Factor w/ 76 levels &quot;(39.1999130165, -76.5559766825)&quot;,..: 7 6 8 49 48 35 36 74 32 29 ...</code></pre>
+<pre class="r"><code># reading xls
+if(!file.exists(&quot;data/cameras.xlsx&quot;)){
+    fileUrl&lt;-&quot;https://data.baltimorecity.gov/api/views/dz54-2aru/rows.xlsx?accessType=DOWNLOAD&quot;
+    download.file(fileUrl,destfile=&quot;./data/cameras.xlsx&quot;,method=&quot;curl&quot;)
+}
+
+if(!require(xlsx)){
+  install.packages(&quot;xlsx&quot;,repo=&quot;https://cran.rstudio.com/&quot;)
+}
+library(xlsx)
+cameraData&lt;-read.xlsx(&quot;./data/cameras.xlsx&quot;,sheetIndex=1,header=TRUE)
+head(cameraData,2)</code></pre>
+<pre><code>##                    address direction    street crossStreet
+## 1 S CATON AVE &amp; BENSON AVE       N/B Caton Ave  Benson Ave
+## 2 S CATON AVE &amp; BENSON AVE       S/B Caton Ave  Benson Ave
+##             intersection                      Location.1
+## 1 Caton Ave &amp; Benson Ave (39.2693779962, -76.6688185297)
+## 2 Caton Ave &amp; Benson Ave (39.2693157898, -76.6689698176)</code></pre>
+<pre class="r"><code>str(cameraData)</code></pre>
+<pre><code>## 'data.frame':    80 obs. of  6 variables:
+##  $ address     : Factor w/ 71 levels &quot;E 33RD ST &amp; THE ALAMEDA&quot;,..: 49 49 70 57 1 14 14 31 5 35 ...
+##  $ direction   : Factor w/ 4 levels &quot;E/B&quot;,&quot;N/B&quot;,&quot;S/B&quot;,..: 2 3 1 3 1 1 4 3 4 1 ...
+##  $ street      : Factor w/ 55 levels &quot;Caton Ave&quot;,&quot;Charles&quot;,..: 1 1 54 50 4 8 8 2 26 33 ...
+##  $ crossStreet : Factor w/ 66 levels &quot;33rd St&quot;,&quot;4th St&quot;,..: 6 6 49 1 58 40 40 36 7 38 ...
+##  $ intersection: Factor w/ 74 levels &quot; &amp;&quot;,&quot;Caton Ave &amp; Benson Ave&quot;,..: 2 2 73 69 7 13 13 3 35 47 ...
+##  $ Location.1  : Factor w/ 76 levels &quot;(39.1999130165, -76.5559766825)&quot;,..: 7 6 8 49 48 35 36 74 32 29 ...</code></pre>
+<pre class="r"><code>cameraDataSubset&lt;-read.xlsx(&quot;./data/cameras.xlsx&quot;,sheetIndex=1,colIndex=2:3,rowIndex=1:4)
+head(cameraDataSubset,2)</code></pre>
+<pre><code>##   direction    street
+## 1       N/B Caton Ave
+## 2       S/B Caton Ave</code></pre>
+<pre class="r"><code>str(cameraDataSubset)</code></pre>
+<pre><code>## 'data.frame':    3 obs. of  2 variables:
+##  $ direction: Factor w/ 3 levels &quot;E/B&quot;,&quot;N/B&quot;,&quot;S/B&quot;: 2 3 1
+##  $ street   : Factor w/ 2 levels &quot;Caton Ave&quot;,&quot;Wilkens Ave&quot;: 1 1 2</code></pre>
+<pre class="r"><code># reading XML
+if(!file.exists(&quot;data/simple.xml&quot;)){
+    fileUrl&lt;-&quot;http://www.w3schools.com/xml/simple.xml&quot;
+    download.file(fileUrl,destfile=&quot;./data/simple.xml&quot;,method=&quot;curl&quot;)
+}
+if(!require(XML)){
+  install.packages(&quot;XML&quot;,repo=&quot;https://cran.rstudio.com/&quot;)
+}
+library(XML)
+doc&lt;-xmlTreeParse(&quot;./data/simple.xml&quot;,useInternal=TRUE)
+rootNode&lt;-xmlRoot(doc)
+names(rootNode[[1]])</code></pre>
+<pre><code>##          name         price   description      calories 
+##        &quot;name&quot;       &quot;price&quot; &quot;description&quot;    &quot;calories&quot;</code></pre>
+<pre class="r"><code>rootNode[[1]]</code></pre>
+<pre><code>## &lt;food&gt;
+##   &lt;name&gt;Belgian Waffles&lt;/name&gt;
+##   &lt;price&gt;$5.95&lt;/price&gt;
+##   &lt;description&gt;Two of our famous Belgian Waffles with plenty of real maple syrup&lt;/description&gt;
+##   &lt;calories&gt;650&lt;/calories&gt;
+## &lt;/food&gt;</code></pre>
+<pre class="r"><code>rootNode[[1]][[2]]</code></pre>
+<pre><code>## &lt;price&gt;$5.95&lt;/price&gt;</code></pre>
+<pre class="r"><code># programmatically extracting parts of file
+xmlSApply(rootNode,xmlValue)</code></pre>
+<pre><code>##                                                                                                                     food 
+##                               &quot;Belgian Waffles$5.95Two of our famous Belgian Waffles with plenty of real maple syrup650&quot; 
+##                                                                                                                     food 
+##                    &quot;Strawberry Belgian Waffles$7.95Light Belgian waffles covered with strawberries and whipped cream900&quot; 
+##                                                                                                                     food 
+## &quot;Berry-Berry Belgian Waffles$8.95Light Belgian waffles covered with an assortment of fresh berries and whipped cream900&quot; 
+##                                                                                                                     food 
+##                                                &quot;French Toast$4.50Thick slices made from our homemade sourdough bread600&quot; 
+##                                                                                                                     food 
+##                         &quot;Homestyle Breakfast$6.95Two eggs, bacon or sausage, toast, and our ever-popular hash browns950&quot;</code></pre>
+<pre class="r"><code># get the item menu/price using XPath
+xpathSApply(rootNode,&quot;//name&quot;,xmlValue)</code></pre>
+<pre><code>## [1] &quot;Belgian Waffles&quot;             &quot;Strawberry Belgian Waffles&quot; 
+## [3] &quot;Berry-Berry Belgian Waffles&quot; &quot;French Toast&quot;               
+## [5] &quot;Homestyle Breakfast&quot;</code></pre>
+<pre class="r"><code>xpathSApply(rootNode,&quot;//price&quot;,xmlValue)</code></pre>
+<pre><code>## [1] &quot;$5.95&quot; &quot;$7.95&quot; &quot;$8.95&quot; &quot;$4.50&quot; &quot;$6.95&quot;</code></pre>
+<pre class="r"><code># extract content by attributes using XPath
+if(!file.exists(&quot;data/baltimore-ravens.html&quot;)){
+    fileUrl&lt;-&quot;http://espn.go.com/nfl/team/_/name/bal/baltimore-ravens&quot;
+    download.file(fileUrl,destfile=&quot;./data/baltimore-ravens.html&quot;,method=&quot;curl&quot;)
+}
+doc&lt;-htmlTreeParse(&quot;./data/baltimore-ravens.html&quot;,useInternal=TRUE)
+xpathSApply(doc,&quot;//li[@class='team-name']&quot;,xmlValue)</code></pre>
+<pre><code>## [1] &quot;Baltimore RavensRavens&quot; &quot;Baltimore RavensRavens&quot;</code></pre>
+<pre class="r"><code># reading JSON
+if(!file.exists(&quot;data/jtleek.json&quot;)){
+    fileUrl&lt;-&quot;https://api.github.com/users/jtleek/repos&quot;
+    download.file(fileUrl,destfile=&quot;./data/jtleek.json&quot;,method=&quot;curl&quot;)
+}
+if(!require(jsonlite)){
+  install.packages(&quot;jsonlite&quot;,repo=&quot;https://cran.rstudio.com/&quot;)
+}
+library(jsonlite)
+jsonData&lt;-fromJSON(&quot;./data/jtleek.json&quot;)
+names(jsonData)</code></pre>
+<pre><code>##  [1] &quot;id&quot;                &quot;name&quot;              &quot;full_name&quot;        
+##  [4] &quot;owner&quot;             &quot;private&quot;           &quot;html_url&quot;         
+##  [7] &quot;description&quot;       &quot;fork&quot;              &quot;url&quot;              
+## [10] &quot;forks_url&quot;         &quot;keys_url&quot;          &quot;collaborators_url&quot;
+## [13] &quot;teams_url&quot;         &quot;hooks_url&quot;         &quot;issue_events_url&quot; 
+## [16] &quot;events_url&quot;        &quot;assignees_url&quot;     &quot;branches_url&quot;     
+## [19] &quot;tags_url&quot;          &quot;blobs_url&quot;         &quot;git_tags_url&quot;     
+## [22] &quot;git_refs_url&quot;      &quot;trees_url&quot;         &quot;statuses_url&quot;     
+## [25] &quot;languages_url&quot;     &quot;stargazers_url&quot;    &quot;contributors_url&quot; 
+## [28] &quot;subscribers_url&quot;   &quot;subscription_url&quot;  &quot;commits_url&quot;      
+## [31] &quot;git_commits_url&quot;   &quot;comments_url&quot;      &quot;issue_comment_url&quot;
+## [34] &quot;contents_url&quot;      &quot;compare_url&quot;       &quot;merges_url&quot;       
+## [37] &quot;archive_url&quot;       &quot;downloads_url&quot;     &quot;issues_url&quot;       
+## [40] &quot;pulls_url&quot;         &quot;milestones_url&quot;    &quot;notifications_url&quot;
+## [43] &quot;labels_url&quot;        &quot;releases_url&quot;      &quot;deployments_url&quot;  
+## [46] &quot;created_at&quot;        &quot;updated_at&quot;        &quot;pushed_at&quot;        
+## [49] &quot;git_url&quot;           &quot;ssh_url&quot;           &quot;clone_url&quot;        
+## [52] &quot;svn_url&quot;           &quot;homepage&quot;          &quot;size&quot;             
+## [55] &quot;stargazers_count&quot;  &quot;watchers_count&quot;    &quot;language&quot;         
+## [58] &quot;has_issues&quot;        &quot;has_downloads&quot;     &quot;has_wiki&quot;         
+## [61] &quot;has_pages&quot;         &quot;forks_count&quot;       &quot;mirror_url&quot;       
+## [64] &quot;open_issues_count&quot; &quot;forks&quot;             &quot;open_issues&quot;      
+## [67] &quot;watchers&quot;          &quot;default_branch&quot;</code></pre>
+<pre class="r"><code>#nested objects JSON
+library(datasets)
+names(jsonData$owner)</code></pre>
+<pre><code>##  [1] &quot;login&quot;               &quot;id&quot;                  &quot;avatar_url&quot;         
+##  [4] &quot;gravatar_id&quot;         &quot;url&quot;                 &quot;html_url&quot;           
+##  [7] &quot;followers_url&quot;       &quot;following_url&quot;       &quot;gists_url&quot;          
+## [10] &quot;starred_url&quot;         &quot;subscriptions_url&quot;   &quot;organizations_url&quot;  
+## [13] &quot;repos_url&quot;           &quot;events_url&quot;          &quot;received_events_url&quot;
+## [16] &quot;type&quot;                &quot;site_admin&quot;</code></pre>
+<pre class="r"><code>testjson&lt;-toJSON(data.frame(foo=1:4,bar=c(T,T,F,F)),pretty=TRUE)
+testjson</code></pre>
+<pre><code>## [
+##   {
+##     &quot;foo&quot;: 1,
+##     &quot;bar&quot;: true
+##   },
+##   {
+##     &quot;foo&quot;: 2,
+##     &quot;bar&quot;: true
+##   },
+##   {
+##     &quot;foo&quot;: 3,
+##     &quot;bar&quot;: false
+##   },
+##   {
+##     &quot;foo&quot;: 4,
+##     &quot;bar&quot;: false
+##   }
+## ]</code></pre>
+<pre class="r"><code>head(fromJSON(testjson))</code></pre>
+<pre><code>##   foo   bar
+## 1   1  TRUE
+## 2   2  TRUE
+## 3   3 FALSE
+## 4   4 FALSE</code></pre>
+<pre class="r"><code># data.table (written in C / VERY FAST)
+# inherits from data.frame
+if(!require(data.table)){
+  install.packages(&quot;data.table&quot;,repo=&quot;https://cran.rstudio.com/&quot;)
+}
+library(data.table)
+set.seed(37)
+df=data.frame(x=rbinom(5,2,0.5),y=rep(c(&quot;a&quot;,&quot;b&quot;,&quot;c&quot;,&quot;d&quot;,&quot;e&quot;)))
+dt=data.table(x=rbinom(5,2,0.5),y=rep(c(&quot;a&quot;,&quot;b&quot;,&quot;c&quot;,&quot;d&quot;,&quot;e&quot;)))
+dt</code></pre>
+<pre><code>##    x y
+## 1: 2 a
+## 2: 1 b
+## 3: 1 c
+## 4: 0 d
+## 5: 0 e</code></pre>
+<pre class="r"><code># subset of data.table
+dt[2,] # dt where row is 2 and all of column</code></pre>
+<pre><code>##    x y
+## 1: 1 b</code></pre>
+<pre class="r"><code>dt[dt$y==&quot;a&quot;,] # dt where row is where dt's y value equals to &quot;a&quot; and all of col</code></pre>
+<pre><code>##    x y
+## 1: 2 a</code></pre>
+<pre class="r"><code>dt[c(2,3)] # dt where row is 2 and 3 and all of col</code></pre>
+<pre><code>##    x y
+## 1: 1 b
+## 2: 1 c</code></pre>
+<pre class="r"><code>dt[,c(2,3)] # subsetting col doesn't work the same as for dataframe</code></pre>
+<pre><code>## [1] 2 3</code></pre>
+<pre class="r"><code>dt[,list(mean(x),sum(x))] # obtains a list of mean of x values of dt, and sum of x</code></pre>
+<pre><code>##     V1 V2
+## 1: 0.8  4</code></pre>
+<pre class="r"><code>dt[,table(y)] # ~table(dt$y); obtains a table of y values in dt</code></pre>
+<pre><code>## y
+## a b c d e 
+## 1 1 1 1 1</code></pre>
+<pre class="r"><code>dt[,z:=x^2] # creates a new col z that is x ^ 2 
+dt2&lt;-dt # this does not actually create a new/separate copy
+dt2[,y:=2]</code></pre>
+<pre><code>## Warning in `[.data.table`(dt2, , `:=`(y, 2)): Coerced 'double' RHS to
+## 'character' to match the column's type; may have truncated precision.
+## Either change the target column to 'double' first (by creating a new
+## 'double' vector length 5 (nrows of entire table) and assign that; i.e.
+## 'replace' column), or coerce RHS to 'character' (e.g. 1L, NA_[real|
+## integer]_, as.*, etc) to make your intent clear and for speed. Or, set the
+## column type correctly up front when you create the table and stick to it,
+## please.</code></pre>
+<pre class="r"><code>head(dt2)</code></pre>
+<pre><code>##    x y z
+## 1: 2 2 4
+## 2: 1 2 1
+## 3: 1 2 1
+## 4: 0 2 0
+## 5: 0 2 0</code></pre>
+<pre class="r"><code>head(dt) # dt2&lt;-dt does not actually create a new copy</code></pre>
+<pre><code>##    x y z
+## 1: 2 2 4
+## 2: 1 2 1
+## 3: 1 2 1
+## 4: 0 2 0
+## 5: 0 2 0</code></pre>
+<pre class="r"><code># multiple operations within creating a new col
+dt[,m:={tmp&lt;-(x+z);log2(tmp+5)}]
+head(dt)</code></pre>
+<pre><code>##    x y z        m
+## 1: 2 2 4 3.459432
+## 2: 1 2 1 2.807355
+## 3: 1 2 1 2.807355
+## 4: 0 2 0 2.321928
+## 5: 0 2 0 2.321928</code></pre>
+<pre class="r"><code># plyr like operations
+dt[,a:=x&gt;0]
+head(dt)</code></pre>
+<pre><code>##    x y z        m     a
+## 1: 2 2 4 3.459432  TRUE
+## 2: 1 2 1 2.807355  TRUE
+## 3: 1 2 1 2.807355  TRUE
+## 4: 0 2 0 2.321928 FALSE
+## 5: 0 2 0 2.321928 FALSE</code></pre>
+<pre class="r"><code># by a means where a condition is TRUE, it takes the mean of x and z
+# and when a is false, collect those values and perform the func
+dt[,b:=sum(x+z),by=a]
+head(dt)</code></pre>
+<pre><code>##    x y z        m     a  b
+## 1: 2 2 4 3.459432  TRUE 10
+## 2: 1 2 1 2.807355  TRUE 10
+## 3: 1 2 1 2.807355  TRUE 10
+## 4: 0 2 0 2.321928 FALSE  0
+## 5: 0 2 0 2.321928 FALSE  0</code></pre>
+<pre class="r"><code># special variables: .N
+set.seed(123)
+dt&lt;-data.table(x=sample(letters[1:2],5,TRUE))
+head(dt)</code></pre>
+<pre><code>##    x
+## 1: a
+## 2: b
+## 3: a
+## 4: b
+## 5: b</code></pre>
+<pre class="r"><code>dt[,.N,by=x] # .N counts by x</code></pre>
+<pre><code>##    x N
+## 1: a 2
+## 2: b 3</code></pre>
+<pre class="r"><code># special variables: Keys
+dt&lt;-data.table(x=rep(c(&quot;a&quot;,&quot;b&quot;,&quot;c&quot;),each=3),y=rnorm(3))
+setkey(dt,x) # set x as the key so that it can be extracted as below
+dt</code></pre>
+<pre><code>##    x         y
+## 1: a -1.689556
+## 2: a  1.239496
+## 3: a -0.108966
+## 4: b -1.689556
+## 5: b  1.239496
+## 6: b -0.108966
+## 7: c -1.689556
+## 8: c  1.239496
+## 9: c -0.108966</code></pre>
+<pre class="r"><code>dt[&quot;a&quot;]</code></pre>
+<pre><code>##    x         y
+## 1: a -1.689556
+## 2: a  1.239496
+## 3: a -0.108966</code></pre>
+<pre class="r"><code>dt1&lt;-data.table(x=c(&quot;a&quot;,&quot;a&quot;,&quot;b&quot;,&quot;dt1&quot;),y=1:4)
+dt2&lt;-data.table(x=c(&quot;a&quot;,&quot;b&quot;,&quot;dt2&quot;),z=5:7)
+setkey(dt1,x); setkey(dt2,x)
+dt1</code></pre>
+<pre><code>##      x y
+## 1:   a 1
+## 2:   a 2
+## 3:   b 3
+## 4: dt1 4</code></pre>
+<pre class="r"><code>dt2</code></pre>
+<pre><code>##      x z
+## 1:   a 5
+## 2:   b 6
+## 3: dt2 7</code></pre>
+<pre class="r"><code># hard to interpret, but when x = a, y = 1 and 2 (dt1) and z = 5 (dt2), hence
+# x=a;y=1;z=5
+# x=a;y=2;z=5
+# when x = b, y = 3 (dt1) and z = 6 hence
+# x = b;y=3;z=6
+# since there is no common x key value for dt1 and dt2 for dt1 and dt2, it is omitted
+merge(dt1,dt2) </code></pre>
+<pre><code>##    x y z
+## 1: a 1 5
+## 2: a 2 5
+## 3: b 3 6</code></pre>
+<pre class="r"><code># fast reading
+big_df&lt;-data.frame(x=rnorm(1E6),y=rnorm(1E6))
+file&lt;-tempfile()
+write.table(big_df,file=file,row.names=FALSE,col.names=TRUE,sep=&quot;\t&quot;,quote=FALSE)
+if(!require(microbenchmark)){
+  install.packages(&quot;microbenchmark&quot;,repo=&quot;https://cran.rstudio.com/&quot;)
+}
+library(microbenchmark)
+#fast reading
+microbenchmark(fread(file),times=1)</code></pre>
+<pre><code>## Unit: milliseconds
+##         expr      min       lq     mean   median       uq      max neval
+##  fread(file) 503.2824 503.2824 503.2824 503.2824 503.2824 503.2824     1</code></pre>
+<pre class="r"><code># normal read table
+microbenchmark(read.table(file,header=TRUE,sep=&quot;\t&quot;),times=1)</code></pre>
+<pre><code>## Unit: seconds
+##                                          expr      min       lq     mean
+##  read.table(file, header = TRUE, sep = &quot;\\t&quot;) 10.48997 10.48997 10.48997
+##    median       uq      max neval
+##  10.48997 10.48997 10.48997     1</code></pre>
 </div>
-</div>
-</div>
-<div id="reading-local" class="section level1">
-<h1>reading local</h1>
-<p>if(!file.exists(“data/cameras.csv”)){ fileUrl&lt;-“<a href="https://data.baltimorecity.gov/api/views/dz54-2aru/rows.csv?accessType=DOWNLOAD" class="uri">https://data.baltimorecity.gov/api/views/dz54-2aru/rows.csv?accessType=DOWNLOAD</a>” download.file(fileUrl,destfile=“./data/cameras.csv”,method=“curl”) } cameraData&lt;-read.table(“./data/cameras.csv”,sep=“,”,header=TRUE) head(cameraData,2) str(cameraData)</p>
-</div>
-<div id="reading-xls" class="section level1">
-<h1>reading xls</h1>
-<p>if(!file.exists(“data/cameras.xlsx”)){ fileUrl&lt;-“<a href="https://data.baltimorecity.gov/api/views/dz54-2aru/rows.xlsx?accessType=DOWNLOAD" class="uri">https://data.baltimorecity.gov/api/views/dz54-2aru/rows.xlsx?accessType=DOWNLOAD</a>” download.file(fileUrl,destfile=“./data/cameras.xlsx”,method=“curl”) }</p>
-<p>if(!require(xlsx)){ install.packages(“xlsx”,repo=“<a href="https://cran.rstudio.com/" class="uri">https://cran.rstudio.com/</a>”) } library(xlsx) cameraData&lt;-read.xlsx(“./data/cameras.xlsx”,sheetIndex=1,header=TRUE) head(cameraData,2) str(cameraData) cameraDataSubset&lt;-read.xlsx(“./data/cameras.xlsx”,sheetIndex=1,colIndex=2:3,rowIndex=1:4) head(cameraDataSubset,2) str(cameraDataSubset)</p>
-</div>
-<div id="reading-xml" class="section level1">
-<h1>reading XML</h1>
-<p>if(!file.exists(“data/simple.xml”)){ fileUrl&lt;-“<a href="http://www.w3schools.com/xml/simple.xml" class="uri">http://www.w3schools.com/xml/simple.xml</a>” download.file(fileUrl,destfile=“./data/simple.xml”,method=“curl”) } if(!require(XML)){ install.packages(“XML”,repo=“<a href="https://cran.rstudio.com/" class="uri">https://cran.rstudio.com/</a>”) } library(XML) doc&lt;-xmlTreeParse(“./data/simple.xml”,useInternal=TRUE) rootNode&lt;-xmlRoot(doc) names(rootNode[[1]]) rootNode[[1]] rootNode[[1]][[2]]</p>
-</div>
-<div id="programmatically-extracting-parts-of-file" class="section level1">
-<h1>programmatically extracting parts of file</h1>
-<p>xmlSApply(rootNode,xmlValue) # get the item menu/price using XPath xpathSApply(rootNode,“//name”,xmlValue) xpathSApply(rootNode,“//price”,xmlValue)</p>
-</div>
-<div id="extract-content-by-attributes-using-xpath" class="section level1">
-<h1>extract content by attributes using XPath</h1>
-<p>if(!file.exists(“data/baltimore-ravens.html”)){ fileUrl&lt;-“<a href="http://espn.go.com/nfl/team/_/name/bal/baltimore-ravens" class="uri">http://espn.go.com/nfl/team/_/name/bal/baltimore-ravens</a>” download.file(fileUrl,destfile=“./data/baltimore-ravens.html”,method=“curl”) } doc&lt;-htmlTreeParse(“./data/baltimore-ravens.html”,useInternal=TRUE) xpathSApply(doc,“//li<span class="citation">[@class='team-name']</span>”,xmlValue)</p>
-</div>
-<div id="reading-json" class="section level1">
-<h1>reading JSON</h1>
-<p>if(!file.exists(“data/jtleek.json”)){ fileUrl&lt;-“<a href="https://api.github.com/users/jtleek/repos" class="uri">https://api.github.com/users/jtleek/repos</a>” download.file(fileUrl,destfile=“./data/jtleek.json”,method=“curl”) } if(!require(jsonlite)){ install.packages(“jsonlite”,repo=“<a href="https://cran.rstudio.com/" class="uri">https://cran.rstudio.com/</a>”) } library(jsonlite) jsonData&lt;-fromJSON(“./data/jtleek.json”) names(jsonData)</p>
-</div>
-<div id="nested-objects-json" class="section level1">
-<h1>nested objects JSON</h1>
-<p>library(datasets) names(jsonData$owner) testjson&lt;-toJSON(data.frame(foo=1:4,bar=c(T,T,F,F)),pretty=TRUE) testjson head(fromJSON(testjson))</p>
-</div>
-<div id="data.table-written-in-c-very-fast" class="section level1">
-<h1>data.table (written in C / VERY FAST)</h1>
-</div>
-<div id="inherits-from-data.frame" class="section level1">
-<h1>inherits from data.frame</h1>
-<p>if(!require(data.table)){ install.packages(“data.table”,repo=“<a href="https://cran.rstudio.com/" class="uri">https://cran.rstudio.com/</a>”) } library(data.table) set.seed(37) df=data.frame(x=rbinom(5,2,0.5),y=rep(c(“a”,“b”,“c”,“d”,“e”))) dt=data.table(x=rbinom(5,2,0.5),y=rep(c(“a”,“b”,“c”,“d”,“e”))) dt # subset of data.table dt[2,] # dt where row is 2 and all of column dt[dt$y==“a”,] # dt where row is where dt’s y value equals to “a” and all of col dt[c(2,3)] # dt where row is 2 and 3 and all of col dt[,c(2,3)] # subsetting col doesn’t work the same as for dataframe</p>
-<p>dt[,list(mean(x),sum(x))] # obtains a list of mean of x values of dt, and sum of x dt[,table(y)] # ~table(dt$y); obtains a table of y values in dt dt[,z:=x^2] # creates a new col z that is x ^ 2 dt2&lt;-dt # this does not actually create a new/separate copy dt2[,y:=2] head(dt2) head(dt) # dt2&lt;-dt does not actually create a new copy</p>
-</div>
-<div id="multiple-operations-within-creating-a-new-col" class="section level1">
-<h1>multiple operations within creating a new col</h1>
-<p>dt[,m:={tmp&lt;-(x+z);log2(tmp+5)}] head(dt)</p>
-</div>
-<div id="plyr-like-operations" class="section level1">
-<h1>plyr like operations</h1>
-<p>dt[,a:=x&gt;0] head(dt)</p>
-</div>
-<div id="by-a-means-where-a-condition-is-true-it-takes-the-mean-of-x-and-z" class="section level1">
-<h1>by a means where a condition is TRUE, it takes the mean of x and z</h1>
-</div>
-<div id="and-when-a-is-false-collect-those-values-and-perform-the-func" class="section level1">
-<h1>and when a is false, collect those values and perform the func</h1>
-<p>dt[,b:=sum(x+z),by=a] head(dt)</p>
-</div>
-<div id="special-variables-.n" class="section level1">
-<h1>special variables: .N</h1>
-<p>set.seed(123) dt&lt;-data.table(x=sample(letters[1:2],5,TRUE)) head(dt) dt[,.N,by=x] # .N counts by x</p>
-</div>
-<div id="special-variables-keys" class="section level1">
-<h1>special variables: Keys</h1>
-<p>dt&lt;-data.table(x=rep(c(“a”,“b”,“c”),each=3),y=rnorm(3)) setkey(dt,x) # set x as the key so that it can be extracted as below dt dt[“a”]</p>
-<p>dt1&lt;-data.table(x=c(“a”,“a”,“b”,“dt1”),y=1:4) dt2&lt;-data.table(x=c(“a”,“b”,“dt2”),z=5:7) setkey(dt1,x); setkey(dt2,x) dt1 dt2 # hard to interpret, but when x = a, y = 1 and 2 (dt1) and z = 5 (dt2), hence # x=a;y=1;z=5 # x=a;y=2;z=5 # when x = b, y = 3 (dt1) and z = 6 hence # x = b;y=3;z=6 # since there is no common x key value for dt1 and dt2 for dt1 and dt2, it is omitted merge(dt1,dt2)</p>
-</div>
-<div id="fast-reading" class="section level1">
-<h1>fast reading</h1>
-<p>big_df&lt;-data.frame(x=rnorm(1E6),y=rnorm(1E6)) file&lt;-tempfile() write.table(big_df,file=file,row.names=FALSE,col.names=TRUE,sep=“”,quote=FALSE) if(!require(microbenchmark)){ install.packages(“microbenchmark”,repo=“<a href="https://cran.rstudio.com/" class="uri">https://cran.rstudio.com/</a>”) } library(microbenchmark) #fast reading microbenchmark(fread(file),times=1) # normal read table microbenchmark(read.table(file,header=TRUE,sep=“”),times=1) ```‘’’</p>
 <div id="reading-mysql" class="section level3">
 <h3>2) reading MySQL</h3>
-<p>```{r}‘’’ if(!require(RMySQL)){ install.packages(“RMySQL”,repo=“<a href="https://cran.rstudio.com/" class="uri">https://cran.rstudio.com/</a>”) } library(RMySQL) # connect and obtain result ucscDb&lt;-dbConnect(MySQL(),user=“genome”,host=“genome-mysql.cse.ucsc.edu”) result&lt;-dbGetQuery(ucscDb,“show databases;”); dbDisconnect(ucscDb);</p>
+<pre class="r"><code>if(!require(RMySQL)){
+  install.packages(&quot;RMySQL&quot;,repo=&quot;https://cran.rstudio.com/&quot;)
+}
+library(RMySQL)
+# connect and obtain result
+ucscDb&lt;-dbConnect(MySQL(),user=&quot;genome&quot;,host=&quot;genome-mysql.cse.ucsc.edu&quot;)
+result&lt;-dbGetQuery(ucscDb,&quot;show databases;&quot;); dbDisconnect(ucscDb);</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+<pre class="r"><code># connecting to hg19 db and listing all the tables
+hg19&lt;-dbConnect(MySQL(),user=&quot;genome&quot;,db=&quot;hg19&quot;,host=&quot;genome-mysql.cse.ucsc.edu&quot;)
+allTables&lt;-dbListTables(hg19)
+length(allTables)</code></pre>
+<pre><code>## [1] 11027</code></pre>
+<pre class="r"><code>allTables[1:5]</code></pre>
+<pre><code>## [1] &quot;HInv&quot;         &quot;HInvGeneMrna&quot; &quot;acembly&quot;      &quot;acemblyClass&quot;
+## [5] &quot;acemblyPep&quot;</code></pre>
+<pre class="r"><code># get dimensions of specific table
+dbListFields(hg19,&quot;affyU133Plus2&quot;)</code></pre>
+<pre><code>##  [1] &quot;bin&quot;         &quot;matches&quot;     &quot;misMatches&quot;  &quot;repMatches&quot;  &quot;nCount&quot;     
+##  [6] &quot;qNumInsert&quot;  &quot;qBaseInsert&quot; &quot;tNumInsert&quot;  &quot;tBaseInsert&quot; &quot;strand&quot;     
+## [11] &quot;qName&quot;       &quot;qSize&quot;       &quot;qStart&quot;      &quot;qEnd&quot;        &quot;tName&quot;      
+## [16] &quot;tSize&quot;       &quot;tStart&quot;      &quot;tEnd&quot;        &quot;blockCount&quot;  &quot;blockSizes&quot; 
+## [21] &quot;qStarts&quot;     &quot;tStarts&quot;</code></pre>
+<pre class="r"><code>dbGetQuery(hg19,&quot;select count(*) from affyU133Plus2&quot;)</code></pre>
+<pre><code>##   count(*)
+## 1    58463</code></pre>
+<pre class="r"><code># read from a table
+affyData&lt;-dbReadTable(hg19,&quot;affyU133Plus2&quot;)</code></pre>
+<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 0 imported
+## as numeric</code></pre>
+<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 1 imported
+## as numeric</code></pre>
+<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 2 imported
+## as numeric</code></pre>
+<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 3 imported
+## as numeric</code></pre>
+<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 4 imported
+## as numeric</code></pre>
+<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 5 imported
+## as numeric</code></pre>
+<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 6 imported
+## as numeric</code></pre>
+<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 7 imported
+## as numeric</code></pre>
+<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 8 imported
+## as numeric</code></pre>
+<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 11
+## imported as numeric</code></pre>
+<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 12
+## imported as numeric</code></pre>
+<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 13
+## imported as numeric</code></pre>
+<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 15
+## imported as numeric</code></pre>
+<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 16
+## imported as numeric</code></pre>
+<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 17
+## imported as numeric</code></pre>
+<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 18
+## imported as numeric</code></pre>
+<pre class="r"><code>str(affyData)</code></pre>
+<pre><code>## 'data.frame':    58463 obs. of  22 variables:
+##  $ bin        : num  585 585 585 585 585 585 585 585 73 585 ...
+##  $ matches    : num  530 3355 4156 4667 5180 ...
+##  $ misMatches : num  4 17 14 9 14 5 3 0 21 23 ...
+##  $ repMatches : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ nCount     : num  23 109 83 68 167 14 6 8 56 75 ...
+##  $ qNumInsert : num  3 9 16 21 10 0 1 1 2 22 ...
+##  $ qBaseInsert: num  41 67 18 42 38 0 1 1 2 41 ...
+##  $ tNumInsert : num  3 9 2 3 1 0 1 2 1 3 ...
+##  $ tBaseInsert: num  898 11621 93 5743 29 ...
+##  $ strand     : chr  &quot;-&quot; &quot;-&quot; &quot;-&quot; &quot;-&quot; ...
+##  $ qName      : chr  &quot;225995_x_at&quot; &quot;225035_x_at&quot; &quot;226340_x_at&quot; &quot;1557034_s_at&quot; ...
+##  $ qSize      : num  637 3635 4318 4834 5399 ...
+##  $ qStart     : num  5 0 3 48 0 0 0 1 12 3 ...
+##  $ qEnd       : num  603 3548 4274 4834 5399 ...
+##  $ tName      : chr  &quot;chr1&quot; &quot;chr1&quot; &quot;chr1&quot; &quot;chr1&quot; ...
+##  $ tSize      : num  2.49e+08 2.49e+08 2.49e+08 2.49e+08 2.49e+08 ...
+##  $ tStart     : num  14361 14381 14399 14406 19688 ...
+##  $ tEnd       : num  15816 29483 18745 24893 25078 ...
+##  $ blockCount : num  5 17 18 23 11 1 3 4 4 24 ...
+##  $ blockSizes : chr  &quot;93,144,229,70,21,&quot; &quot;73,375,71,165,303,360,198,661,201,1,260,250,74,73,98,155,163,&quot; &quot;690,10,32,33,376,4,5,15,5,11,7,41,277,859,141,51,443,1253,&quot; &quot;99,352,286,24,49,14,6,5,8,149,14,44,98,12,10,355,837,59,8,1500,133,624,58,&quot; ...
+##  $ qStarts    : chr  &quot;34,132,278,541,611,&quot; &quot;87,165,540,647,818,1123,1484,1682,2343,2545,2546,2808,3058,3133,3206,3317,3472,&quot; &quot;44,735,746,779,813,1190,1195,1201,1217,1223,1235,1243,1285,1564,2423,2565,2617,3062,&quot; &quot;0,99,452,739,764,814,829,836,842,851,1001,1016,1061,1160,1173,1184,1540,2381,2441,2450,3951,4103,4728,&quot; ...
+##  $ tStarts    : chr  &quot;14361,14454,14599,14968,15795,&quot; &quot;14381,14454,14969,15075,15240,15543,15903,16104,16853,17054,17232,17492,17914,17988,18267,24736,29320,&quot; &quot;14399,15089,15099,15131,15164,15540,15544,15549,15564,15569,15580,15587,15628,15906,16857,16998,17049,17492,&quot; &quot;14406,20227,20579,20865,20889,20938,20952,20958,20963,20971,21120,21134,21178,21276,21288,21298,21653,22492,22551,22559,24059,2&quot;| __truncated__ ...</code></pre>
+<pre class="r"><code># select a specific subset
+query&lt;-dbSendQuery(hg19, &quot;select * from affyU133Plus2 where misMatches between 1 and 3&quot;)</code></pre>
+<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 0 imported
+## as numeric</code></pre>
+<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 1 imported
+## as numeric</code></pre>
+<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 2 imported
+## as numeric</code></pre>
+<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 3 imported
+## as numeric</code></pre>
+<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 4 imported
+## as numeric</code></pre>
+<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 5 imported
+## as numeric</code></pre>
+<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 6 imported
+## as numeric</code></pre>
+<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 7 imported
+## as numeric</code></pre>
+<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 8 imported
+## as numeric</code></pre>
+<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 11
+## imported as numeric</code></pre>
+<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 12
+## imported as numeric</code></pre>
+<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 13
+## imported as numeric</code></pre>
+<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 15
+## imported as numeric</code></pre>
+<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 16
+## imported as numeric</code></pre>
+<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 17
+## imported as numeric</code></pre>
+<pre><code>## Warning in .local(conn, statement, ...): Unsigned INTEGER in col 18
+## imported as numeric</code></pre>
+<pre class="r"><code>affyMis&lt;-fetch(query); quantile(affyMis$misMatches)</code></pre>
+<pre><code>##   0%  25%  50%  75% 100% 
+##    1    1    2    2    3</code></pre>
+<pre class="r"><code>affyMisSmall&lt;-fetch(query,n=10); dbClearResult(query);</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+<pre class="r"><code>dim(affyMisSmall)</code></pre>
+<pre><code>## [1] 10 22</code></pre>
+<pre class="r"><code>dbDisconnect(hg19)</code></pre>
+<pre><code>## [1] TRUE</code></pre>
 </div>
-</div>
-<div id="connecting-to-hg19-db-and-listing-all-the-tables" class="section level1">
-<h1>connecting to hg19 db and listing all the tables</h1>
-<p>hg19&lt;-dbConnect(MySQL(),user=“genome”,db=“hg19”,host=“genome-mysql.cse.ucsc.edu”) allTables&lt;-dbListTables(hg19) length(allTables) allTables[1:5]</p>
-</div>
-<div id="get-dimensions-of-specific-table" class="section level1">
-<h1>get dimensions of specific table</h1>
-<p>dbListFields(hg19,“affyU133Plus2”) dbGetQuery(hg19,“select count(*) from affyU133Plus2“)</p>
-</div>
-<div id="read-from-a-table" class="section level1">
-<h1>read from a table</h1>
-<p>affyData&lt;-dbReadTable(hg19,“affyU133Plus2”) str(affyData)</p>
-</div>
-<div id="select-a-specific-subset" class="section level1">
-<h1>select a specific subset</h1>
-<p>query&lt;-dbSendQuery(hg19, “select * from affyU133Plus2 where misMatches between 1 and 3”) affyMis&lt;-fetch(query); quantile(affyMis$misMatches) affyMisSmall&lt;-fetch(query,n=10); dbClearResult(query); dim(affyMisSmall) dbDisconnect(hg19) ```‘’’</p>
 <div id="reading-hdf5" class="section level3">
 <h3>3) reading HDF5</h3>
-<p>```{r}‘’’ # heirarchical data format # groups contain zero or more data sets/metadata # group header with grou name and list of attributes # group symbol table with list of objects in group # datasets multidimensional array of data elements with metadata # have header with name,datatype,dataspace,storage layout # have data array with data # <a href="http:/www.hdfgroup.org" class="uri">http:/www.hdfgroup.org</a></p>
-<p>if(!file.exists(“/data/biocLite.R”)){ fileUrl&lt;-“<a href="http://bioconductor.org/biocLite.R" class="uri">http://bioconductor.org/biocLite.R</a>” download.file(fileUrl,“./data/biocLite.R”,method=“curl”) } source(“<a href="http://bioconductor.org/biocLite.R" class="uri">http://bioconductor.org/biocLite.R</a>”) if(!require(rhdf5)){ biocLite(“rhdf5”) } library(rhdf5) if(file.exists(“example.h5”)){ file.remove(“example.h5”) }</p>
-<p>created&lt;-h5createFile(“example.h5”) created</p>
+<pre class="r"><code># heirarchical data format
+# groups contain zero or more data sets/metadata
+#       group header with grou name and list of attributes
+#       group symbol table with list of objects in group
+# datasets multidimensional array of data elements with metadata
+#       have header with name,datatype,dataspace,storage layout
+#       have data array with data
+#  http:/www.hdfgroup.org
+
+if(!file.exists(&quot;/data/biocLite.R&quot;)){
+    fileUrl&lt;-&quot;http://bioconductor.org/biocLite.R&quot;
+    download.file(fileUrl,&quot;./data/biocLite.R&quot;,method=&quot;curl&quot;)
+}
+source(&quot;http://bioconductor.org/biocLite.R&quot;)</code></pre>
+<pre><code>## Bioconductor version 3.2 (BiocInstaller 1.20.1), ?biocLite for help</code></pre>
+<pre class="r"><code>if(!require(rhdf5)){
+  biocLite(&quot;rhdf5&quot;)
+}
+library(rhdf5)
+if(file.exists(&quot;example.h5&quot;)){
+    file.remove(&quot;example.h5&quot;)
+}</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+<pre class="r"><code>created&lt;-h5createFile(&quot;example.h5&quot;)
+created</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+<pre class="r"><code># create groups
+created&lt;-h5createGroup(&quot;example.h5&quot;,&quot;foo&quot;)
+created&lt;-h5createGroup(&quot;example.h5&quot;,&quot;baa&quot;)
+created&lt;-h5createGroup(&quot;example.h5&quot;,&quot;foo/foobaa&quot;)
+h5ls(&quot;example.h5&quot;)</code></pre>
+<pre><code>##   group   name     otype dclass dim
+## 0     /    baa H5I_GROUP           
+## 1     /    foo H5I_GROUP           
+## 2  /foo foobaa H5I_GROUP</code></pre>
+<pre class="r"><code># write to groups
+A&lt;-matrix(1:10,nr=5,nc=2)
+h5write(A,&quot;example.h5&quot;,&quot;foo/A&quot;)
+B&lt;-array(seq(0.1,2.0,by=0.1),dim=c(5,2,2))
+attr(B,&quot;scale&quot;)&lt;-&quot;liter&quot;
+h5write(B,&quot;example.h5&quot;,&quot;foo/foobaa/B&quot;)
+h5ls(&quot;example.h5&quot;)</code></pre>
+<pre><code>##         group   name       otype  dclass       dim
+## 0           /    baa   H5I_GROUP                  
+## 1           /    foo   H5I_GROUP                  
+## 2        /foo      A H5I_DATASET INTEGER     5 x 2
+## 3        /foo foobaa   H5I_GROUP                  
+## 4 /foo/foobaa      B H5I_DATASET   FLOAT 5 x 2 x 2</code></pre>
+<pre class="r"><code># reading data
+readA&lt;-h5read(&quot;example.h5&quot;,&quot;foo/A&quot;)
+readA</code></pre>
+<pre><code>##      [,1] [,2]
+## [1,]    1    6
+## [2,]    2    7
+## [3,]    3    8
+## [4,]    4    9
+## [5,]    5   10</code></pre>
+<pre class="r"><code>readA&lt;-h5read(&quot;example.h5&quot;,&quot;foo/foobaa/B&quot;)
+readA</code></pre>
+<pre><code>## , , 1
+## 
+##      [,1] [,2]
+## [1,]  0.1  0.6
+## [2,]  0.2  0.7
+## [3,]  0.3  0.8
+## [4,]  0.4  0.9
+## [5,]  0.5  1.0
+## 
+## , , 2
+## 
+##      [,1] [,2]
+## [1,]  1.1  1.6
+## [2,]  1.2  1.7
+## [3,]  1.3  1.8
+## [4,]  1.4  1.9
+## [5,]  1.5  2.0</code></pre>
+<pre class="r"><code># writing and reading chunks
+h5write(c(12,13,14),&quot;example.h5&quot;,&quot;foo/A&quot;,index=list(1:3,1)) # write 12,13,14 into rows 1 through 3 column 1 of foo/A within example.h5
+h5read(&quot;example.h5&quot;,&quot;foo/A&quot;)</code></pre>
+<pre><code>##      [,1] [,2]
+## [1,]   12    6
+## [2,]   13    7
+## [3,]   14    8
+## [4,]    4    9
+## [5,]    5   10</code></pre>
 </div>
-</div>
-<div id="create-groups" class="section level1">
-<h1>create groups</h1>
-<p>created&lt;-h5createGroup(“example.h5”,“foo”) created&lt;-h5createGroup(“example.h5”,“baa”) created&lt;-h5createGroup(“example.h5”,“foo/foobaa”) h5ls(“example.h5”)</p>
-</div>
-<div id="write-to-groups" class="section level1">
-<h1>write to groups</h1>
-<p>A&lt;-matrix(1:10,nr=5,nc=2) h5write(A,“example.h5”,“foo/A”) B&lt;-array(seq(0.1,2.0,by=0.1),dim=c(5,2,2)) attr(B,“scale”)&lt;-“liter” h5write(B,“example.h5”,“foo/foobaa/B”) h5ls(“example.h5”)</p>
-</div>
-<div id="reading-data" class="section level1">
-<h1>reading data</h1>
-<p>readA&lt;-h5read(“example.h5”,“foo/A”) readA readA&lt;-h5read(“example.h5”,“foo/foobaa/B”) readA</p>
-</div>
-<div id="writing-and-reading-chunks" class="section level1">
-<h1>writing and reading chunks</h1>
-<p>h5write(c(12,13,14),“example.h5”,“foo/A”,index=list(1:3,1)) # write 12,13,14 into rows 1 through 3 column 1 of foo/A within example.h5 h5read(“example.h5”,“foo/A”) ```‘’’</p>
 <div id="reading-from-the-web" class="section level3">
 <h3>4) reading from the web</h3>
-<p>```{r}‘’’ # just in case google blocks the ip for accessing too often if(!file.exists(“data/google-scholar.html”)){ fileUrl&lt;-“<a href="http://scholar.google.com/citations?user=HI-I6C0AAAAJ&amp;hl=en" class="uri">http://scholar.google.com/citations?user=HI-I6C0AAAAJ&amp;hl=en</a>” download.file(fileUrl,“./data/google-scholar.html”,method=“curl”) } htmlurl&lt;-“<a href="http://scholar.google.com/citations?user=HI-I6C0AAAAJ&amp;hl=en" class="uri">http://scholar.google.com/citations?user=HI-I6C0AAAAJ&amp;hl=en</a>” con = url(htmlurl) htmlCode&lt;-readLines(con) close(con)</p>
+<pre class="r"><code># just in case google blocks the ip for accessing too often
+if(!file.exists(&quot;data/google-scholar.html&quot;)){
+    fileUrl&lt;-&quot;http://scholar.google.com/citations?user=HI-I6C0AAAAJ&amp;hl=en&quot;
+    download.file(fileUrl,&quot;./data/google-scholar.html&quot;,method=&quot;curl&quot;)
+}
+htmlurl&lt;-&quot;http://scholar.google.com/citations?user=HI-I6C0AAAAJ&amp;hl=en&quot;
+con = url(htmlurl)
+htmlCode&lt;-readLines(con)</code></pre>
+<pre><code>## Warning in readLines(con): incomplete final line found on 'http://
+## scholar.google.com/citations?user=HI-I6C0AAAAJ&amp;hl=en'</code></pre>
+<pre class="r"><code>close(con)
+
+# parsing with XML
+library(XML)
+html&lt;-htmlTreeParse(htmlurl,useInternalNodes=TRUE)
+xpathSApply(html,&quot;//title&quot;,xmlValue)</code></pre>
+<pre><code>## [1] &quot;Jeff Leek - Google Scholar Citations&quot;</code></pre>
+<pre class="r"><code># GET from httr package
+if(!require(httr)){
+  install.packages(&quot;httr&quot;,repo=&quot;https://cran.rstudio.com/&quot;)
+}
+library(httr)
+html2=GET(htmlurl)
+content2&lt;-content(html2,as=&quot;text&quot;)
+parsedHtml&lt;-htmlParse(content2,asText=TRUE)
+xpathSApply(parsedHtml,&quot;//title&quot;,xmlValue)</code></pre>
+<pre><code>## [1] &quot;Jeff Leek - Google Scholar Citations&quot;</code></pre>
+<pre class="r"><code># accessing websites with password
+pg1&lt;-GET(&quot;http://httpbin.org/basic-auth/user/passwd&quot;) # denied due to authentication block
+pg1</code></pre>
+<pre><code>## Response [http://httpbin.org/basic-auth/user/passwd]
+##   Date: 2016-03-11 00:32
+##   Status: 401
+##   Content-Type: &lt;unknown&gt;
+## &lt;EMPTY BODY&gt;</code></pre>
+<pre class="r"><code>pg2&lt;-GET(&quot;http://httpbin.org/basic-auth/user/passwd&quot;,authenticate(&quot;user&quot;,&quot;passwd&quot;)) # authenticated
+pg2</code></pre>
+<pre><code>## Response [http://httpbin.org/basic-auth/user/passwd]
+##   Date: 2016-03-11 00:32
+##   Status: 200
+##   Content-Type: application/json
+##   Size: 47 B</code></pre>
+<pre><code>## No encoding supplied: defaulting to UTF-8.</code></pre>
+<pre><code>## {
+##   &quot;authenticated&quot;: true, 
+##   &quot;user&quot;: &quot;user&quot;
+## }</code></pre>
+<pre class="r"><code># using handles
+google&lt;-handle(&quot;http://www.google.com&quot;)
+pg1&lt;-GET(handle=google,path=&quot;/&quot;) # cookies will be authenticated / maintained
+pg2&lt;-GET(handle=google,path=&quot;search&quot;)</code></pre>
 </div>
 </div>
-<div id="parsing-with-xml" class="section level1">
-<h1>parsing with XML</h1>
-<p>library(XML) html&lt;-htmlTreeParse(htmlurl,useInternalNodes=TRUE) xpathSApply(html,“//title”,xmlValue)</p>
-</div>
-<div id="get-from-httr-package" class="section level1">
-<h1>GET from httr package</h1>
-<p>if(!require(httr)){ install.packages(“httr”,repo=“<a href="https://cran.rstudio.com/" class="uri">https://cran.rstudio.com/</a>”) } library(httr) html2=GET(htmlurl) content2&lt;-content(html2,as=“text”) parsedHtml&lt;-htmlParse(content2,asText=TRUE) xpathSApply(parsedHtml,“//title”,xmlValue)</p>
-</div>
-<div id="accessing-websites-with-password" class="section level1">
-<h1>accessing websites with password</h1>
-<p>pg1&lt;-GET(“<a href="http://httpbin.org/basic-auth/user/passwd" class="uri">http://httpbin.org/basic-auth/user/passwd</a>”) # denied due to authentication block pg1 pg2&lt;-GET(“<a href="http://httpbin.org/basic-auth/user/passwd" class="uri">http://httpbin.org/basic-auth/user/passwd</a>”,authenticate(“user”,“passwd”)) # authenticated pg2</p>
-</div>
-<div id="using-handles" class="section level1">
-<h1>using handles</h1>
-<p>google&lt;-handle(“<a href="http://www.google.com" class="uri">http://www.google.com</a>”) pg1&lt;-GET(handle=google,path=“/”) # cookies will be authenticated / maintained pg2&lt;-GET(handle=google,path=“search”)</p>
-<p>```‘’’</p>
 </div>
 <div id="problem-with-5th-module" class="section level1">
 <h1>*********************** problem with 5th module ***************************</h1>
@@ -265,467 +753,1170 @@ $(document).ready(function () {
 <h1>***************************************************************************</h1>
 <div id="reading-from-other-sources" class="section level3">
 <h3>6) reading from other sources</h3>
-<p>```{r}‘’’ ### files # file - connection to text file # url - connection to url # gzfile - connection to .gz file # bzfile - connection to .bz2 file</p>
+<pre class="r"><code>### files
+# file - connection to text file
+# url - connection to url
+# gzfile - connection to .gz file
+# bzfile - connection to .bz2 file
+
+### loads data from Minitab, S, SAS, SPSS, Stata, Systat
+# read.arff (Weka)
+# read.dta (Stata)
+# read.mtp (minitab)
+# read.octave (octave)
+# read.spss (SPSS)
+# read.xport (SAS)
+
+### reading images
+# jpeg package
+# readbitmap package
+# png package
+# bioconductor package - EBImage
+
+### reading GIS data
+# rgdal package
+# rgeos package
+# raster package
+
+### reading music data
+# tuneR package
+# seewave custom package?</code></pre>
 </div>
-<div id="loads-data-from-minitab-s-sas-spss-stata-systat" class="section level3">
-<h3>loads data from Minitab, S, SAS, SPSS, Stata, Systat</h3>
-</div>
-</div>
-<div id="read.arff-weka" class="section level1">
-<h1>read.arff (Weka)</h1>
-</div>
-<div id="read.dta-stata" class="section level1">
-<h1>read.dta (Stata)</h1>
-</div>
-<div id="read.mtp-minitab" class="section level1">
-<h1>read.mtp (minitab)</h1>
-</div>
-<div id="read.octave-octave" class="section level1">
-<h1>read.octave (octave)</h1>
-</div>
-<div id="read.spss-spss" class="section level1">
-<h1>read.spss (SPSS)</h1>
-</div>
-<div id="read.xport-sas" class="section level1">
-<h1>read.xport (SAS)</h1>
-<div id="reading-images" class="section level3">
-<h3>reading images</h3>
-</div>
-</div>
-<div id="jpeg-package" class="section level1">
-<h1>jpeg package</h1>
-</div>
-<div id="readbitmap-package" class="section level1">
-<h1>readbitmap package</h1>
-</div>
-<div id="png-package" class="section level1">
-<h1>png package</h1>
-</div>
-<div id="bioconductor-package---ebimage" class="section level1">
-<h1>bioconductor package - EBImage</h1>
-<div id="reading-gis-data" class="section level3">
-<h3>reading GIS data</h3>
-</div>
-</div>
-<div id="rgdal-package" class="section level1">
-<h1>rgdal package</h1>
-</div>
-<div id="rgeos-package" class="section level1">
-<h1>rgeos package</h1>
-</div>
-<div id="raster-package" class="section level1">
-<h1>raster package</h1>
-<div id="reading-music-data" class="section level3">
-<h3>reading music data</h3>
-</div>
-</div>
-<div id="tuner-package" class="section level1">
-<h1>tuneR package</h1>
-</div>
-<div id="seewave-custom-package" class="section level1">
-<h1>seewave custom package?</h1>
-<p>```‘’’</p>
 <div id="subsetting-scoring" class="section level3">
 <h3>7) subsetting / scoring</h3>
-<p>```{r}‘’’ set.seed(13435) x&lt;-data.frame(“var1”=sample(1:5),“var2”=sample(6:10),“var3”=sample(11:15)) x&lt;-x[sample(1:5),]; # shuffle around rows 1 through 5 x<span class="math inline">\(var2[c(1,3)]&lt;-NA # mark 1st and 3rd row value of var2 as NA (after shuffling above) x x[,1] # subsets column 1 x[,&quot;var3&quot;] # subsets column that matches the name &quot;var3&quot; (3rd col) x[1:2,&quot;var2&quot;] # subsets row 1,2 of column &quot;var2&quot; x[(x\)</span>var1&lt;=3 &amp; x<span class="math inline">\(var3 &gt; 11),] # select rows that match the var1 value &lt;= 3 and var3&gt;11 (and all cols) x[(x\)</span>var1&lt;=3 | x<span class="math inline">\(var3 &gt; 15),] # select rows that match the var1 value &lt;= 3 OR var3&gt;11 (and all cols) x[which(x\)</span>var2&gt;8),] # subset of x where var2 value is greater than 8 (DEALS WITH MISSING VALUES) sort(x<span class="math inline">\(var1) # get var1 column and sort it sort(x\)</span>var1,decreasing=TRUE) # same as above but descending sort(x<span class="math inline">\(var2,na.last=TRUE) # by default (or NA) removes NA, TRUE puts last, FALSE puts first x[order(x\)</span>var1),] # subset of x where it’s ordered by var1 value x[order(x<span class="math inline">\(var1,x\)</span>var3),] # same as above, but ordered by var1 and then by var3 (if var1 has ties, var3 is the tiebreaker)</p>
-</div>
-<div id="plyr" class="section level3">
-<h3>PLYR</h3>
-<p>library(plyr) arrange(x,var1) # same as above above, but simpler (and notice lack of “”) arrange(x,desc(var1)) # descending “x[order(x$var1,decreasing=TRUE),]” #############</p>
-<p>x$var4&lt;-rnorm(5) # adds a new column to x as “var4” with rnorm(5) applied x x&lt;-cbind(x,“var5”=rnorm(5)) # column bind also works x ```‘’’</p>
+<pre class="r"><code>set.seed(13435)
+x&lt;-data.frame(&quot;var1&quot;=sample(1:5),&quot;var2&quot;=sample(6:10),&quot;var3&quot;=sample(11:15)) 
+x&lt;-x[sample(1:5),]; # shuffle around rows 1 through 5
+x$var2[c(1,3)]&lt;-NA # mark 1st and 3rd row value of var2 as NA (after shuffling above)
+x</code></pre>
+<pre><code>##   var1 var2 var3
+## 1    2   NA   15
+## 4    1   10   11
+## 2    3   NA   12
+## 3    5    6   14
+## 5    4    9   13</code></pre>
+<pre class="r"><code>x[,1] # subsets column 1</code></pre>
+<pre><code>## [1] 2 1 3 5 4</code></pre>
+<pre class="r"><code>x[,&quot;var3&quot;] # subsets column that matches the name &quot;var3&quot; (3rd col)</code></pre>
+<pre><code>## [1] 15 11 12 14 13</code></pre>
+<pre class="r"><code>x[1:2,&quot;var2&quot;] # subsets row 1,2 of column &quot;var2&quot;</code></pre>
+<pre><code>## [1] NA 10</code></pre>
+<pre class="r"><code>x[(x$var1&lt;=3 &amp; x$var3 &gt; 11),] # select rows that match the var1 value &lt;= 3 and var3&gt;11 (and all cols)</code></pre>
+<pre><code>##   var1 var2 var3
+## 1    2   NA   15
+## 2    3   NA   12</code></pre>
+<pre class="r"><code>x[(x$var1&lt;=3 | x$var3 &gt; 15),] # select rows that match the var1 value &lt;= 3 OR var3&gt;11 (and all cols)</code></pre>
+<pre><code>##   var1 var2 var3
+## 1    2   NA   15
+## 4    1   10   11
+## 2    3   NA   12</code></pre>
+<pre class="r"><code>x[which(x$var2&gt;8),] # subset of x where var2 value is greater than 8 (DEALS WITH MISSING VALUES)</code></pre>
+<pre><code>##   var1 var2 var3
+## 4    1   10   11
+## 5    4    9   13</code></pre>
+<pre class="r"><code>sort(x$var1) # get var1 column and sort it</code></pre>
+<pre><code>## [1] 1 2 3 4 5</code></pre>
+<pre class="r"><code>sort(x$var1,decreasing=TRUE) # same as above but descending</code></pre>
+<pre><code>## [1] 5 4 3 2 1</code></pre>
+<pre class="r"><code>sort(x$var2,na.last=TRUE) # by default (or NA) removes NA, TRUE puts last, FALSE puts first</code></pre>
+<pre><code>## [1]  6  9 10 NA NA</code></pre>
+<pre class="r"><code>x[order(x$var1),] # subset of x where it's ordered by var1 value</code></pre>
+<pre><code>##   var1 var2 var3
+## 4    1   10   11
+## 1    2   NA   15
+## 2    3   NA   12
+## 5    4    9   13
+## 3    5    6   14</code></pre>
+<pre class="r"><code>x[order(x$var1,x$var3),] # same as above, but ordered by var1 and then by var3 (if var1 has ties, var3 is the tiebreaker)</code></pre>
+<pre><code>##   var1 var2 var3
+## 4    1   10   11
+## 1    2   NA   15
+## 2    3   NA   12
+## 5    4    9   13
+## 3    5    6   14</code></pre>
+<pre class="r"><code>### PLYR ###
+library(plyr)
+arrange(x,var1) # same as above above, but simpler (and notice lack of &quot;&quot;)</code></pre>
+<pre><code>##   var1 var2 var3
+## 1    1   10   11
+## 2    2   NA   15
+## 3    3   NA   12
+## 4    4    9   13
+## 5    5    6   14</code></pre>
+<pre class="r"><code>arrange(x,desc(var1)) # descending &quot;x[order(x$var1,decreasing=TRUE),]&quot;</code></pre>
+<pre><code>##   var1 var2 var3
+## 1    5    6   14
+## 2    4    9   13
+## 3    3   NA   12
+## 4    2   NA   15
+## 5    1   10   11</code></pre>
+<pre class="r"><code>#############
+
+x$var4&lt;-rnorm(5) # adds a new column to x as &quot;var4&quot; with rnorm(5) applied
+x</code></pre>
+<pre><code>##   var1 var2 var3       var4
+## 1    2   NA   15  0.1875960
+## 4    1   10   11  1.7869764
+## 2    3   NA   12  0.4966936
+## 3    5    6   14  0.0631830
+## 5    4    9   13 -0.5361329</code></pre>
+<pre class="r"><code>x&lt;-cbind(x,&quot;var5&quot;=rnorm(5)) # column bind also works
+x</code></pre>
+<pre><code>##   var1 var2 var3       var4        var5
+## 1    2   NA   15  0.1875960  0.62578490
+## 4    1   10   11  1.7869764 -2.45083750
+## 2    3   NA   12  0.4966936  0.08909424
+## 3    5    6   14  0.0631830  0.47838570
+## 5    4    9   13 -0.5361329  1.00053336</code></pre>
 </div>
 <div id="summarizing-data" class="section level3">
 <h3>8) summarizing data</h3>
-<p>```{r}‘’’ if(!file.exists(“./data”)){dir.create(“./data”)} if(!file.exists(“data/restaurants.csv”)){ fileUrl&lt;-“<a href="https://data.baltimorecity.gov/api/views/k5ry-ef3g/rows.csv?accessType=DOWNLOAD" class="uri">https://data.baltimorecity.gov/api/views/k5ry-ef3g/rows.csv?accessType=DOWNLOAD</a>” download.file(fileUrl,destfile=“./data/restaurants.csv”,method=“curl”) } restData&lt;-read.csv(“./data/restaurants.csv”) head(restData,n=1) tail(restData,n=1) summary(restData) str(restData) quantile(restData<span class="math inline">\(councilDistrict,na.rm=TRUE) quantile(restData\)</span>councilDistrict,probs=c(0.5,0.75,0.9),na.rm=TRUE) # gets 50%, 75%, 90% quantile table(restData<span class="math inline">\(zipCode,useNA=&quot;ifany&quot;) # useNA = &quot;ifany&quot; if there's any use NA, &quot;no&quot; is no, &quot;always&quot; always use it table(restData\)</span>councilDistrict,restData<span class="math inline">\(zipCode) # use councilDistrict as row and column as zipCode # checking for missing values sum(is.na(restData\)</span>councilDistrict)) # sum of counts of missing values in councilDistrict any(is.na(restData<span class="math inline">\(councilDistrict)) # is there any missing values in councilDistrict? all(restData\)</span>councilDistrict&gt;0) # all should be greater than 0 all(restData$zipCode&gt;0) # there is at least one negative zip code (invalid) data colSums(is.na(restData)) # sum of all of the column of restData that has na values all(colSums(is.na(restData))==0) # all of the column should have 0 value for is.na check</p>
+<pre class="r"><code>if(!file.exists(&quot;./data&quot;)){dir.create(&quot;./data&quot;)}
+if(!file.exists(&quot;data/restaurants.csv&quot;)){
+    fileUrl&lt;-&quot;https://data.baltimorecity.gov/api/views/k5ry-ef3g/rows.csv?accessType=DOWNLOAD&quot;
+    download.file(fileUrl,destfile=&quot;./data/restaurants.csv&quot;,method=&quot;curl&quot;)
+}
+restData&lt;-read.csv(&quot;./data/restaurants.csv&quot;)
+head(restData,n=1)</code></pre>
+<pre><code>##   name zipCode neighborhood councilDistrict policeDistrict
+## 1  410   21206    Frankford               2   NORTHEASTERN
+##                          Location.1
+## 1 4509 BELAIR ROAD\nBaltimore, MD\n</code></pre>
+<pre class="r"><code>tail(restData,n=1)</code></pre>
+<pre><code>##        name zipCode neighborhood councilDistrict policeDistrict
+## 1327 ZORBAS   21224    Greektown               2   SOUTHEASTERN
+##                             Location.1
+## 1327 4710 EASTERN Ave\nBaltimore, MD\n</code></pre>
+<pre class="r"><code>summary(restData)</code></pre>
+<pre><code>##                            name         zipCode             neighborhood
+##  MCDONALD'S                  :   8   Min.   :-21226   Downtown    :128  
+##  POPEYES FAMOUS FRIED CHICKEN:   7   1st Qu.: 21202   Fells Point : 91  
+##  SUBWAY                      :   6   Median : 21218   Inner Harbor: 89  
+##  KENTUCKY FRIED CHICKEN      :   5   Mean   : 21185   Canton      : 81  
+##  BURGER KING                 :   4   3rd Qu.: 21226   Federal Hill: 42  
+##  DUNKIN DONUTS               :   4   Max.   : 21287   Mount Vernon: 33  
+##  (Other)                     :1293                    (Other)     :863  
+##  councilDistrict       policeDistrict
+##  Min.   : 1.000   SOUTHEASTERN:385   
+##  1st Qu.: 2.000   CENTRAL     :288   
+##  Median : 9.000   SOUTHERN    :213   
+##  Mean   : 7.191   NORTHERN    :157   
+##  3rd Qu.:11.000   NORTHEASTERN: 72   
+##  Max.   :14.000   EASTERN     : 67   
+##                   (Other)     :145   
+##                           Location.1    
+##  1101 RUSSELL ST\nBaltimore, MD\n:   9  
+##  201 PRATT ST\nBaltimore, MD\n   :   8  
+##  2400 BOSTON ST\nBaltimore, MD\n :   8  
+##  300 LIGHT ST\nBaltimore, MD\n   :   5  
+##  300 CHARLES ST\nBaltimore, MD\n :   4  
+##  301 LIGHT ST\nBaltimore, MD\n   :   4  
+##  (Other)                         :1289</code></pre>
+<pre class="r"><code>str(restData)</code></pre>
+<pre><code>## 'data.frame':    1327 obs. of  6 variables:
+##  $ name           : Factor w/ 1277 levels &quot;#1 CHINESE KITCHEN&quot;,..: 9 3 992 1 2 4 5 6 7 8 ...
+##  $ zipCode        : int  21206 21231 21224 21211 21223 21218 21205 21211 21205 21231 ...
+##  $ neighborhood   : Factor w/ 173 levels &quot;Abell&quot;,&quot;Arlington&quot;,..: 53 52 18 66 104 33 98 133 98 157 ...
+##  $ councilDistrict: int  2 1 1 14 9 14 13 7 13 1 ...
+##  $ policeDistrict : Factor w/ 9 levels &quot;CENTRAL&quot;,&quot;EASTERN&quot;,..: 3 6 6 4 8 3 6 4 6 6 ...
+##  $ Location.1     : Factor w/ 1210 levels &quot;1 BIDDLE ST\nBaltimore, MD\n&quot;,..: 835 334 554 755 492 537 505 530 507 569 ...</code></pre>
+<pre class="r"><code>quantile(restData$councilDistrict,na.rm=TRUE)</code></pre>
+<pre><code>##   0%  25%  50%  75% 100% 
+##    1    2    9   11   14</code></pre>
+<pre class="r"><code>quantile(restData$councilDistrict,probs=c(0.5,0.75,0.9),na.rm=TRUE) # gets 50%, 75%, 90% quantile</code></pre>
+<pre><code>## 50% 75% 90% 
+##   9  11  12</code></pre>
+<pre class="r"><code>table(restData$zipCode,useNA=&quot;ifany&quot;) # useNA = &quot;ifany&quot; if there's any use NA, &quot;no&quot; is no, &quot;always&quot; always use it</code></pre>
+<pre><code>## 
+## -21226  21201  21202  21205  21206  21207  21208  21209  21210  21211 
+##      1    136    201     27     30      4      1      8     23     41 
+##  21212  21213  21214  21215  21216  21217  21218  21220  21222  21223 
+##     28     31     17     54     10     32     69      1      7     56 
+##  21224  21225  21226  21227  21229  21230  21231  21234  21237  21239 
+##    199     19     18      4     13    156    127      7      1      3 
+##  21251  21287 
+##      2      1</code></pre>
+<pre class="r"><code>table(restData$councilDistrict,restData$zipCode) # use councilDistrict as row and column as zipCode</code></pre>
+<pre><code>##     
+##      -21226 21201 21202 21205 21206 21207 21208 21209 21210 21211 21212
+##   1       0     0    37     0     0     0     0     0     0     0     0
+##   2       0     0     0     3    27     0     0     0     0     0     0
+##   3       0     0     0     0     0     0     0     0     0     0     0
+##   4       0     0     0     0     0     0     0     0     0     0    27
+##   5       0     0     0     0     0     3     0     6     0     0     0
+##   6       0     0     0     0     0     0     0     1    19     0     0
+##   7       0     0     0     0     0     0     0     1     0    27     0
+##   8       0     0     0     0     0     1     0     0     0     0     0
+##   9       0     1     0     0     0     0     0     0     0     0     0
+##   10      1     0     1     0     0     0     0     0     0     0     0
+##   11      0   115   139     0     0     0     1     0     0     0     1
+##   12      0    20    24     4     0     0     0     0     0     0     0
+##   13      0     0     0    20     3     0     0     0     0     0     0
+##   14      0     0     0     0     0     0     0     0     4    14     0
+##     
+##      21213 21214 21215 21216 21217 21218 21220 21222 21223 21224 21225
+##   1      2     0     0     0     0     0     0     7     0   140     1
+##   2      0     0     0     0     0     0     0     0     0    54     0
+##   3      2    17     0     0     0     3     0     0     0     0     0
+##   4      0     0     0     0     0     0     0     0     0     0     0
+##   5      0     0    31     0     0     0     0     0     0     0     0
+##   6      0     0    15     1     0     0     0     0     0     0     0
+##   7      0     0     6     7    15     6     0     0     0     0     0
+##   8      0     0     0     0     0     0     0     0     2     0     0
+##   9      0     0     0     2     8     0     0     0    53     0     0
+##   10     0     0     0     0     0     0     1     0     0     0    18
+##   11     0     0     0     0     9     0     0     0     1     0     0
+##   12    13     0     0     0     0    26     0     0     0     0     0
+##   13    13     0     1     0     0     0     0     0     0     5     0
+##   14     1     0     1     0     0    34     0     0     0     0     0
+##     
+##      21226 21227 21229 21230 21231 21234 21237 21239 21251 21287
+##   1      0     0     0     1   124     0     0     0     0     0
+##   2      0     0     0     0     0     0     1     0     0     0
+##   3      0     1     0     0     0     7     0     0     2     0
+##   4      0     0     0     0     0     0     0     3     0     0
+##   5      0     0     0     0     0     0     0     0     0     0
+##   6      0     0     0     0     0     0     0     0     0     0
+##   7      0     0     0     0     0     0     0     0     0     0
+##   8      0     2    13     0     0     0     0     0     0     0
+##   9      0     0     0    11     0     0     0     0     0     0
+##   10    18     0     0   133     0     0     0     0     0     0
+##   11     0     0     0    11     0     0     0     0     0     0
+##   12     0     0     0     0     2     0     0     0     0     0
+##   13     0     1     0     0     1     0     0     0     0     1
+##   14     0     0     0     0     0     0     0     0     0     0</code></pre>
+<pre class="r"><code># checking for missing values
+sum(is.na(restData$councilDistrict)) # sum of counts of missing values in councilDistrict</code></pre>
+<pre><code>## [1] 0</code></pre>
+<pre class="r"><code>any(is.na(restData$councilDistrict)) # is there any missing values in councilDistrict?</code></pre>
+<pre><code>## [1] FALSE</code></pre>
+<pre class="r"><code>all(restData$councilDistrict&gt;0) # all should be greater than 0</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+<pre class="r"><code>all(restData$zipCode&gt;0) # there is at least one negative zip code (invalid) data</code></pre>
+<pre><code>## [1] FALSE</code></pre>
+<pre class="r"><code>colSums(is.na(restData)) # sum of all of the column of restData that has na values</code></pre>
+<pre><code>##            name         zipCode    neighborhood councilDistrict 
+##               0               0               0               0 
+##  policeDistrict      Location.1 
+##               0               0</code></pre>
+<pre class="r"><code>all(colSums(is.na(restData))==0) # all of the column should have 0 value for is.na check</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+<pre class="r"><code># tally a table of counts when the zipcode matches 21212
+table(restData$zipCode %in% c(&quot;21212&quot;))</code></pre>
+<pre><code>## 
+## FALSE  TRUE 
+##  1299    28</code></pre>
+<pre class="r"><code># opposite is not as useful (when 21212 matches the zipcode)
+table(c(&quot;21212&quot;) %in% restData$zipCode)</code></pre>
+<pre><code>## 
+## TRUE 
+##    1</code></pre>
+<pre class="r"><code># also multiple matches work (match 21212 or 21213)
+table(restData$zipCode %in% c(&quot;21212&quot;,&quot;21213&quot;))</code></pre>
+<pre><code>## 
+## FALSE  TRUE 
+##  1268    59</code></pre>
+<pre class="r"><code># subsetting values with specific characteristics
+head(restData[restData$zipCode %in% c(&quot;21212&quot;,&quot;21213&quot;),],3)</code></pre>
+<pre><code>##                 name zipCode              neighborhood councilDistrict
+## 29 BAY ATLANTIC CLUB   21212                  Downtown              11
+## 39       BERMUDA BAR   21213             Broadway East              12
+## 92         ATWATER'S   21212 Chinquapin Park-Belvedere               4
+##    policeDistrict                         Location.1
+## 29        CENTRAL    206 REDWOOD ST\nBaltimore, MD\n
+## 39        EASTERN    1801 NORTH AVE\nBaltimore, MD\n
+## 92       NORTHERN 529 BELVEDERE AVE\nBaltimore, MD\n</code></pre>
+<pre class="r"><code>data(UCBAdmissions)
+DF&lt;-as.data.frame(UCBAdmissions)
+head(DF)</code></pre>
+<pre><code>##      Admit Gender Dept Freq
+## 1 Admitted   Male    A  512
+## 2 Rejected   Male    A  313
+## 3 Admitted Female    A   89
+## 4 Rejected Female    A   19
+## 5 Admitted   Male    B  353
+## 6 Rejected   Male    B  207</code></pre>
+<pre class="r"><code># cross tabs; Freq is what actually is displayed; Broken down by Gender (row) and Admit (col) 
+xt&lt;-xtabs(Freq ~ Gender + Admit,data=DF)
+xt</code></pre>
+<pre><code>##         Admit
+## Gender   Admitted Rejected
+##   Male       1198     1493
+##   Female      557     1278</code></pre>
+<pre class="r"><code># cross tabs for a larger number of variables are hard to see
+warpbreaks$replicate&lt;-rep(1:9,len=54)
+head(warpbreaks,3)</code></pre>
+<pre><code>##   breaks wool tension replicate
+## 1     26    A       L         1
+## 2     30    A       L         2
+## 3     54    A       L         3</code></pre>
+<pre class="r"><code># break down breaks by all the variables &quot;.&quot; within
+xt&lt;-xtabs(breaks~.,data=warpbreaks)
+# flat tables;makes it easier to read many variables
+# by summarizing/formatting the data in a much smaller and
+# compact form
+ftable(xt)</code></pre>
+<pre><code>##              replicate  1  2  3  4  5  6  7  8  9
+## wool tension                                     
+## A    L                 26 30 54 25 70 52 51 26 67
+##      M                 18 21 29 17 12 18 35 30 36
+##      H                 36 21 24 18 10 43 28 15 26
+## B    L                 27 14 29 19 29 31 41 20 44
+##      M                 42 26 19 16 39 28 21 39 29
+##      H                 20 21 24 17 13 15 15 16 28</code></pre>
+<pre class="r"><code># size of a data set
+fakeData&lt;-rnorm(1e6)
+print(object.size(fakeData),units=&quot;Mb&quot;)</code></pre>
+<pre><code>## 7.6 Mb</code></pre>
 </div>
-</div>
-<div id="tally-a-table-of-counts-when-the-zipcode-matches-21212" class="section level1">
-<h1>tally a table of counts when the zipcode matches 21212</h1>
-<p>table(restData<span class="math inline">\(zipCode %in% c(&quot;21212&quot;)) # opposite is not as useful (when 21212 matches the zipcode) table(c(&quot;21212&quot;) %in% restData\)</span>zipCode) # also multiple matches work (match 21212 or 21213) table(restData$zipCode %in% c(“21212”,“21213”))</p>
-</div>
-<div id="subsetting-values-with-specific-characteristics" class="section level1">
-<h1>subsetting values with specific characteristics</h1>
-<p>head(restData[restData$zipCode %in% c(“21212”,“21213”),],3)</p>
-<p>data(UCBAdmissions) DF&lt;-as.data.frame(UCBAdmissions) head(DF) # cross tabs; Freq is what actually is displayed; Broken down by Gender (row) and Admit (col) xt&lt;-xtabs(Freq ~ Gender + Admit,data=DF) xt # cross tabs for a larger number of variables are hard to see warpbreaks$replicate&lt;-rep(1:9,len=54) head(warpbreaks,3) # break down breaks by all the variables “.” within xt&lt;-xtabs(breaks~.,data=warpbreaks) # flat tables;makes it easier to read many variables # by summarizing/formatting the data in a much smaller and # compact form ftable(xt)</p>
-</div>
-<div id="size-of-a-data-set" class="section level1">
-<h1>size of a data set</h1>
-<p>fakeData&lt;-rnorm(1e6) print(object.size(fakeData),units=“Mb”) ```‘’’</p>
 <div id="creating-new-variables" class="section level3">
 <h3>9) creating new variables</h3>
-<p>```{r}‘’’ ### creating new variables along with transformation of data ### variables to do the following: # 1) missingness indicators # 2) “cutting up” quantitative variables # 3) applying transforms</p>
-<p>if(!file.exists(“./data”)){dir.create(“./data”)} if(!file.exists(“data/restaurants.csv”)){ fileUrl&lt;-“<a href="https://data.baltimorecity.gov/api/views/k5ry-ef3g/rows.csv?accessType=DOWNLOAD" class="uri">https://data.baltimorecity.gov/api/views/k5ry-ef3g/rows.csv?accessType=DOWNLOAD</a>” download.file(fileUrl,destfile=“./data/restaurants.csv”,method=“curl”) } restData&lt;-read.csv(“./data/restaurants.csv”)</p>
+<pre class="r"><code>### creating new variables along with transformation of data
+### variables to do the following:
+# 1) missingness indicators
+# 2) &quot;cutting up&quot; quantitative variables
+# 3) applying transforms
+
+if(!file.exists(&quot;./data&quot;)){dir.create(&quot;./data&quot;)}
+if(!file.exists(&quot;data/restaurants.csv&quot;)){
+    fileUrl&lt;-&quot;https://data.baltimorecity.gov/api/views/k5ry-ef3g/rows.csv?accessType=DOWNLOAD&quot;
+    download.file(fileUrl,destfile=&quot;./data/restaurants.csv&quot;,method=&quot;curl&quot;)
+}
+restData&lt;-read.csv(&quot;./data/restaurants.csv&quot;)
+
+### review ############################
+# creating sequences
+# skipping by 2 from 1 to 10 (1,3,5,7,9)
+s1&lt;-seq(1,10,by=2); s1 </code></pre>
+<pre><code>## [1] 1 3 5 7 9</code></pre>
+<pre class="r"><code># from 1 to 10, make it fit the length 3 (1.0, 5.5, 10.0)
+s2&lt;-seq(1,10,length=3);s2</code></pre>
+<pre><code>## [1]  1.0  5.5 10.0</code></pre>
+<pre class="r"><code># counts along the given list
+s3&lt;-seq(along=c(1,3,8,25,100)); s3</code></pre>
+<pre><code>## [1] 1 2 3 4 5</code></pre>
+<pre class="r"><code># subsetting variables (after creating variable)
+restData$nearMe&lt;-restData$neighborhood %in% c(&quot;Roland Park&quot;, &quot;Homeland&quot;)
+table(restData$nearMe)</code></pre>
+<pre><code>## 
+## FALSE  TRUE 
+##  1314    13</code></pre>
+<pre class="r"><code>#######################################
+
+# creating binary variables
+restData$zipWrong&lt;-ifelse(restData$zipCode&lt;0,TRUE,FALSE)
+table(restData$zipWrong,restData$zipCode&lt;0)</code></pre>
+<pre><code>##        
+##         FALSE TRUE
+##   FALSE  1326    0
+##   TRUE      0    1</code></pre>
+<pre class="r"><code># creating categorical variables
+restData$zipGroups&lt;-cut(restData$zipCode,breaks&lt;-quantile(restData$zipCode))
+table(restData$zipGroups,restData$zipCode)</code></pre>
+<pre><code>##                        
+##                         -21226 21201 21202 21205 21206 21207 21208 21209
+##   (-2.123e+04,2.12e+04]      0   136   201     0     0     0     0     0
+##   (2.12e+04,2.122e+04]       0     0     0    27    30     4     1     8
+##   (2.122e+04,2.123e+04]      0     0     0     0     0     0     0     0
+##   (2.123e+04,2.129e+04]      0     0     0     0     0     0     0     0
+##                        
+##                         21210 21211 21212 21213 21214 21215 21216 21217
+##   (-2.123e+04,2.12e+04]     0     0     0     0     0     0     0     0
+##   (2.12e+04,2.122e+04]     23    41    28    31    17    54    10    32
+##   (2.122e+04,2.123e+04]     0     0     0     0     0     0     0     0
+##   (2.123e+04,2.129e+04]     0     0     0     0     0     0     0     0
+##                        
+##                         21218 21220 21222 21223 21224 21225 21226 21227
+##   (-2.123e+04,2.12e+04]     0     0     0     0     0     0     0     0
+##   (2.12e+04,2.122e+04]     69     0     0     0     0     0     0     0
+##   (2.122e+04,2.123e+04]     0     1     7    56   199    19     0     0
+##   (2.123e+04,2.129e+04]     0     0     0     0     0     0    18     4
+##                        
+##                         21229 21230 21231 21234 21237 21239 21251 21287
+##   (-2.123e+04,2.12e+04]     0     0     0     0     0     0     0     0
+##   (2.12e+04,2.122e+04]      0     0     0     0     0     0     0     0
+##   (2.122e+04,2.123e+04]     0     0     0     0     0     0     0     0
+##   (2.123e+04,2.129e+04]    13   156   127     7     1     3     2     1</code></pre>
+<pre class="r"><code># easier cutting
+if(!require(Hmisc)){
+  install.packages(&quot;Hmisc&quot;,repo=&quot;https://cran.rstudio.com/&quot;)
+}
+library(Hmisc)
+restData$zipGroups&lt;-cut2(restData$zipCode,g=4)
+table(restData$zipGroups)</code></pre>
+<pre><code>## 
+## [-21226,21205) [ 21205,21220) [ 21220,21227) [ 21227,21287] 
+##            338            375            300            314</code></pre>
+<pre class="r"><code># creating factor variables
+restData$zcf&lt;-factor(restData$zipCode)
+restData$zcf[1:10]</code></pre>
+<pre><code>##  [1] 21206 21231 21224 21211 21223 21218 21205 21211 21205 21231
+## 32 Levels: -21226 21201 21202 21205 21206 21207 21208 21209 ... 21287</code></pre>
+<pre class="r"><code>class(restData$zcf)</code></pre>
+<pre><code>## [1] &quot;factor&quot;</code></pre>
+<pre class="r"><code># levels of factor variables
+yesno&lt;-sample(c(&quot;yes&quot;,&quot;no&quot;),size=10,replace=TRUE)
+# by default, levels value-wise (alphanumeric value)
+yesnofac&lt;-factor(yesno,levels=c(&quot;yes&quot;,&quot;no&quot;))
+# can manually re-level based on reference value
+relevel(yesnofac,ref=&quot;yes&quot;)</code></pre>
+<pre><code>##  [1] yes no  no  yes no  yes no  no  yes yes
+## Levels: yes no</code></pre>
+<pre class="r"><code># Hmisc cutting produces factor variables
+restData$zipGroups&lt;-cut2(restData$zipCode,g=4)
+table(restData$zipGroups)</code></pre>
+<pre><code>## 
+## [-21226,21205) [ 21205,21220) [ 21220,21227) [ 21227,21287] 
+##            338            375            300            314</code></pre>
+<pre class="r"><code># using mutate function (Hmisc &amp; plyr) to create new version of the variable 
+# and simultaneously added to a data set
+
+if(!require(plyr)){
+  install.packages(&quot;plyr&quot;,repo=&quot;https://cran.rstudio.com/&quot;)
+}
+library(plyr)
+# mutate old dataframe by adding a new variable &quot;zipGroups&quot; that equals to the function of the original rest data frame
+restData2&lt;-mutate(restData,zipGroups=cut2(zipCode,g=4))
+table(restData2$zipGroups)</code></pre>
+<pre><code>## 
+## [-21226,21205) [ 21205,21220) [ 21220,21227) [ 21227,21287] 
+##            338            375            300            314</code></pre>
+<pre class="r"><code># mutate adds &quot;function&quot; such as ...
+#   abs(x)            absolute
+#   sqrt(x)           square root
+#   ceiling(x)        ceiling
+#   floor(x)          floor
+#   round(x,digits=n) rounding to digits
+#   signif(x,digits=n)rounding to sig fig
+#   cos(x),sin(x)     cosine, sine
+#   log(x), log2(x)   natural log, log base 2, et cetera
+#   exp(x)            exponential of x</code></pre>
 </div>
-<div id="review" class="section level3">
-<h3>review</h3>
-</div>
-</div>
-<div id="creating-sequences" class="section level1">
-<h1>creating sequences</h1>
-</div>
-<div id="skipping-by-2-from-1-to-10-13579" class="section level1">
-<h1>skipping by 2 from 1 to 10 (1,3,5,7,9)</h1>
-<p>s1&lt;-seq(1,10,by=2); s1 # from 1 to 10, make it fit the length 3 (1.0, 5.5, 10.0) s2&lt;-seq(1,10,length=3);s2 # counts along the given list s3&lt;-seq(along=c(1,3,8,25,100)); s3 # subsetting variables (after creating variable) restData<span class="math inline">\(nearMe&lt;-restData\)</span>neighborhood %in% c(“Roland Park”, “Homeland”) table(restData$nearMe) #######################################</p>
-</div>
-<div id="creating-binary-variables" class="section level1">
-<h1>creating binary variables</h1>
-<p>restData<span class="math inline">\(zipWrong&lt;-ifelse(restData\)</span>zipCode&lt;0,TRUE,FALSE) table(restData<span class="math inline">\(zipWrong,restData\)</span>zipCode&lt;0)</p>
-</div>
-<div id="creating-categorical-variables" class="section level1">
-<h1>creating categorical variables</h1>
-<p>restData<span class="math inline">\(zipGroups&lt;-cut(restData\)</span>zipCode,breaks&lt;-quantile(restData<span class="math inline">\(zipCode)) table(restData\)</span>zipGroups,restData$zipCode)</p>
-</div>
-<div id="easier-cutting" class="section level1">
-<h1>easier cutting</h1>
-<p>if(!require(Hmisc)){ install.packages(“Hmisc”,repo=“<a href="https://cran.rstudio.com/" class="uri">https://cran.rstudio.com/</a>”) } library(Hmisc) restData<span class="math inline">\(zipGroups&lt;-cut2(restData\)</span>zipCode,g=4) table(restData$zipGroups)</p>
-</div>
-<div id="creating-factor-variables" class="section level1">
-<h1>creating factor variables</h1>
-<p>restData<span class="math inline">\(zcf&lt;-factor(restData\)</span>zipCode) restData<span class="math inline">\(zcf[1:10] class(restData\)</span>zcf)</p>
-</div>
-<div id="levels-of-factor-variables" class="section level1">
-<h1>levels of factor variables</h1>
-<p>yesno&lt;-sample(c(“yes”,“no”),size=10,replace=TRUE) # by default, levels value-wise (alphanumeric value) yesnofac&lt;-factor(yesno,levels=c(“yes”,“no”)) # can manually re-level based on reference value relevel(yesnofac,ref=“yes”)</p>
-</div>
-<div id="hmisc-cutting-produces-factor-variables" class="section level1">
-<h1>Hmisc cutting produces factor variables</h1>
-<p>restData<span class="math inline">\(zipGroups&lt;-cut2(restData\)</span>zipCode,g=4) table(restData$zipGroups)</p>
-</div>
-<div id="using-mutate-function-hmisc-plyr-to-create-new-version-of-the-variable" class="section level1">
-<h1>using mutate function (Hmisc &amp; plyr) to create new version of the variable</h1>
-</div>
-<div id="and-simultaneously-added-to-a-data-set" class="section level1">
-<h1>and simultaneously added to a data set</h1>
-<p>if(!require(plyr)){ install.packages(“plyr”,repo=“<a href="https://cran.rstudio.com/" class="uri">https://cran.rstudio.com/</a>”) } library(plyr) # mutate old dataframe by adding a new variable “zipGroups” that equals to the function of the original rest data frame restData2&lt;-mutate(restData,zipGroups=cut2(zipCode,g=4)) table(restData2$zipGroups) # mutate adds “function” such as … # abs(x) absolute # sqrt(x) square root # ceiling(x) ceiling # floor(x) floor # round(x,digits=n) rounding to digits # signif(x,digits=n)rounding to sig fig # cos(x),sin(x) cosine, sine # log(x), log2(x) natural log, log base 2, et cetera # exp(x) exponential of x ```‘’’</p>
 <div id="reshaping-data" class="section level3">
 <h3>10) reshaping data</h3>
-<p>```{r}‘’’ # each variable forms a column # each observation forms a row # each table/file stores data regarding one KIND of observation</p>
-<p>if(!require(reshape2)){ install.packages(“reshape2”,repos = “<a href="https://cran.rstudio.com/" class="uri">https://cran.rstudio.com/</a>”) } library(reshape2) head(mtcars,n=3)</p>
+<pre class="r"><code># each variable forms a column
+# each observation forms a row
+# each table/file stores data regarding one KIND of observation
+
+if(!require(reshape2)){
+  install.packages(&quot;reshape2&quot;,repos = &quot;https://cran.rstudio.com/&quot;)
+}
+library(reshape2)
+head(mtcars,n=3)</code></pre>
+<pre><code>##                mpg cyl disp  hp drat    wt  qsec vs am gear carb
+## Mazda RX4     21.0   6  160 110 3.90 2.620 16.46  0  1    4    4
+## Mazda RX4 Wag 21.0   6  160 110 3.90 2.875 17.02  0  1    4    4
+## Datsun 710    22.8   4  108  93 3.85 2.320 18.61  1  1    4    1</code></pre>
+<pre class="r"><code># melting data frames
+mtcars$carname&lt;-rownames(mtcars)
+# differentiation of id variables and measure variables
+carMelt&lt;-melt(mtcars,id=c(&quot;carname&quot;,&quot;gear&quot;,&quot;cyl&quot;),measure.vars=c(&quot;mpg&quot;,&quot;hp&quot;))
+head(carMelt,n=3) # show mpg variables </code></pre>
+<pre><code>##         carname gear cyl variable value
+## 1     Mazda RX4    4   6      mpg  21.0
+## 2 Mazda RX4 Wag    4   6      mpg  21.0
+## 3    Datsun 710    4   4      mpg  22.8</code></pre>
+<pre class="r"><code>tail(carMelt,n=3) # shows hp variables</code></pre>
+<pre><code>##          carname gear cyl variable value
+## 62  Ferrari Dino    5   6       hp   175
+## 63 Maserati Bora    5   8       hp   335
+## 64    Volvo 142E    4   4       hp   109</code></pre>
+<pre class="r"><code># recasting data frames
+# left hand is cyl and the variable is set as &quot;mpg&quot; and &quot;hp&quot; previously in melt function above
+# without any functions, it aggregates the data set, so 11 in mpg and 11 in hp means 11 measures of mpg and hp
+cylData&lt;-dcast(carMelt,cyl~variable);cylData</code></pre>
+<pre><code>## Aggregation function missing: defaulting to length</code></pre>
+<pre><code>##   cyl mpg hp
+## 1   4  11 11
+## 2   6   7  7
+## 3   8  14 14</code></pre>
+<pre class="r"><code># by providing the function, it gets / applies the function 'mean' on to each variables
+cylData2&lt;-dcast(carMelt,cyl~variable,mean);cylData2</code></pre>
+<pre><code>##   cyl      mpg        hp
+## 1   4 26.66364  82.63636
+## 2   6 19.74286 122.28571
+## 3   8 15.10000 209.21429</code></pre>
+<pre class="r"><code># averaging values
+# spray values range from A through F
+head(InsectSprays)</code></pre>
+<pre><code>##   count spray
+## 1    10     A
+## 2     7     A
+## 3    20     A
+## 4    14     A
+## 5    14     A
+## 6    12     A</code></pre>
+<pre class="r"><code># sums the spray counts
+tapply(X=InsectSprays$count,INDEX=InsectSprays$spray,FUN=sum)</code></pre>
+<pre><code>##   A   B   C   D   E   F 
+## 174 184  25  59  42 200</code></pre>
+<pre class="r"><code># another way - split
+spIns&lt;-split(x=InsectSprays$count,f=InsectSprays$spray); spIns</code></pre>
+<pre><code>## $A
+##  [1] 10  7 20 14 14 12 10 23 17 20 14 13
+## 
+## $B
+##  [1] 11 17 21 11 16 14 17 17 19 21  7 13
+## 
+## $C
+##  [1] 0 1 7 2 3 1 2 1 3 0 1 4
+## 
+## $D
+##  [1]  3  5 12  6  4  3  5  5  5  5  2  4
+## 
+## $E
+##  [1] 3 5 3 5 3 6 1 1 3 2 6 4
+## 
+## $F
+##  [1] 11  9 15 22 15 16 13 10 26 26 24 13</code></pre>
+<pre class="r"><code># another way - apply
+sprCount&lt;-lapply(X=spIns,FUN=sum); sprCount</code></pre>
+<pre><code>## $A
+## [1] 174
+## 
+## $B
+## [1] 184
+## 
+## $C
+## [1] 25
+## 
+## $D
+## [1] 59
+## 
+## $E
+## [1] 42
+## 
+## $F
+## [1] 200</code></pre>
+<pre class="r"><code># another way - combine
+unlist(x=sprCount)</code></pre>
+<pre><code>##   A   B   C   D   E   F 
+## 174 184  25  59  42 200</code></pre>
+<pre class="r"><code>sapply(X=spIns,FUN=sum)</code></pre>
+<pre><code>##   A   B   C   D   E   F 
+## 174 184  25  59  42 200</code></pre>
+<pre class="r"><code># another way - plyr package
+if(!require(plyr)){
+  install.packages(&quot;plyr&quot;,repos = &quot;https://cran.rstudio.com/&quot;)
+}
+library(plyr)
+# does not work for some reason on knitr; works on R console
+#ddply(InsectSprays,.(spray),summarize,sum=sum(count))
+
+# creating a new variable
+# same error as above
+#spraySums&lt;-ddply(InsectSprays,.(spray),summarize,sum=ave(count,FUN=sum))
+#dim(spraySums)</code></pre>
 </div>
-</div>
-<div id="melting-data-frames" class="section level1">
-<h1>melting data frames</h1>
-<p>mtcars$carname&lt;-rownames(mtcars) # differentiation of id variables and measure variables carMelt&lt;-melt(mtcars,id=c(“carname”,“gear”,“cyl”),measure.vars=c(“mpg”,“hp”)) head(carMelt,n=3) # show mpg variables tail(carMelt,n=3) # shows hp variables</p>
-</div>
-<div id="recasting-data-frames" class="section level1">
-<h1>recasting data frames</h1>
-</div>
-<div id="left-hand-is-cyl-and-the-variable-is-set-as-mpg-and-hp-previously-in-melt-function-above" class="section level1">
-<h1>left hand is cyl and the variable is set as “mpg” and “hp” previously in melt function above</h1>
-</div>
-<div id="without-any-functions-it-aggregates-the-data-set-so-11-in-mpg-and-11-in-hp-means-11-measures-of-mpg-and-hp" class="section level1">
-<h1>without any functions, it aggregates the data set, so 11 in mpg and 11 in hp means 11 measures of mpg and hp</h1>
-<p>cylData&lt;-dcast(carMelt,cyl~variable);cylData</p>
-</div>
-<div id="by-providing-the-function-it-gets-applies-the-function-mean-on-to-each-variables" class="section level1">
-<h1>by providing the function, it gets / applies the function ‘mean’ on to each variables</h1>
-<p>cylData2&lt;-dcast(carMelt,cyl~variable,mean);cylData2</p>
-</div>
-<div id="averaging-values" class="section level1">
-<h1>averaging values</h1>
-</div>
-<div id="spray-values-range-from-a-through-f" class="section level1">
-<h1>spray values range from A through F</h1>
-<p>head(InsectSprays) # sums the spray counts tapply(X=InsectSprays<span class="math inline">\(count,INDEX=InsectSprays\)</span>spray,FUN=sum)</p>
-</div>
-<div id="another-way---split" class="section level1">
-<h1>another way - split</h1>
-<p>spIns&lt;-split(x=InsectSprays<span class="math inline">\(count,f=InsectSprays\)</span>spray); spIns # another way - apply sprCount&lt;-lapply(X=spIns,FUN=sum); sprCount # another way - combine unlist(x=sprCount) sapply(X=spIns,FUN=sum)</p>
-</div>
-<div id="another-way---plyr-package" class="section level1">
-<h1>another way - plyr package</h1>
-<p>if(!require(plyr)){ install.packages(“plyr”,repos = “<a href="https://cran.rstudio.com/" class="uri">https://cran.rstudio.com/</a>”) } library(plyr) # does not work for some reason on knitr; works on R console #ddply(InsectSprays,.(spray),summarize,sum=sum(count))</p>
-</div>
-<div id="creating-a-new-variable" class="section level1">
-<h1>creating a new variable</h1>
-</div>
-<div id="same-error-as-above" class="section level1">
-<h1>same error as above</h1>
-</div>
-<div id="spraysums-ddplyinsectsprays.spraysummarizesumavecountfunsum" class="section level1">
-<h1>spraySums&lt;-ddply(InsectSprays,.(spray),summarize,sum=ave(count,FUN=sum))</h1>
-</div>
-<div id="dimspraysums" class="section level1">
-<h1>dim(spraySums)</h1>
-<p>```‘’’</p>
 <div id="managing-data-frames-with-dplyr---using-the-tools" class="section level3">
 <h3>11) managing data frames with dplyr - using the tools</h3>
-<p>```{r}‘’’ if(!require(dplyr)){ install.packages(“dplyr”,repos = “<a href="https://cran.rstudio.com/" class="uri">https://cran.rstudio.com/</a>”) } library(dplyr)</p>
-<p>options(width=105)</p>
-<p>if(!file.exists(“./data”)){dir.create(“./data”)} if(!file.exists(“data/chicago.rds”)){ fileUrl&lt;-“<a href="https://github.com/DataScienceSpecialization/courses/blob/master/03_GettingData/dplyr/chicago.rds?raw=true" class="uri">https://github.com/DataScienceSpecialization/courses/blob/master/03_GettingData/dplyr/chicago.rds?raw=true</a>” download.file(fileUrl,destfile=“./data/chicago.rds”,mode=“wb”) } chicago&lt;-readRDS(“./data/chicago.rds”) # selects from “city” column to “dptp” column head(select(chicago,city:dptp))</p>
+<pre class="r"><code>if(!require(dplyr)){
+  install.packages(&quot;dplyr&quot;,repos = &quot;https://cran.rstudio.com/&quot;)
+}
+library(dplyr)
+
+options(width=105)
+
+if(!file.exists(&quot;./data&quot;)){dir.create(&quot;./data&quot;)}
+if(!file.exists(&quot;data/chicago.rds&quot;)){
+    fileUrl&lt;-&quot;https://github.com/DataScienceSpecialization/courses/blob/master/03_GettingData/dplyr/chicago.rds?raw=true&quot;
+    download.file(fileUrl,destfile=&quot;./data/chicago.rds&quot;,mode=&quot;wb&quot;)
+}
+chicago&lt;-readRDS(&quot;./data/chicago.rds&quot;)
+# selects from &quot;city&quot; column to &quot;dptp&quot; column
+head(select(chicago,city:dptp))</code></pre>
+<pre><code>##   city tmpd   dptp
+## 1 chic 31.5 31.500
+## 2 chic 33.0 29.875
+## 3 chic 33.0 27.375
+## 4 chic 29.0 28.625
+## 5 chic 32.0 28.875
+## 6 chic 40.0 35.125</code></pre>
+<pre class="r"><code># select everything BUT the city column to dptp column
+head(select(chicago,-(city:dptp)))</code></pre>
+<pre><code>##         date pm25tmean2 pm10tmean2 o3tmean2 no2tmean2
+## 1 1987-01-01         NA   34.00000 4.250000  19.98810
+## 2 1987-01-02         NA         NA 3.304348  23.19099
+## 3 1987-01-03         NA   34.16667 3.333333  23.81548
+## 4 1987-01-04         NA   47.00000 4.375000  30.43452
+## 5 1987-01-05         NA         NA 4.750000  30.33333
+## 6 1987-01-06         NA   48.00000 5.833333  25.77233</code></pre>
+<pre class="r"><code>i&lt;-match(&quot;city&quot;,names(chicago)); i</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>j&lt;-match(&quot;dptp&quot;,names(chicago)); j</code></pre>
+<pre><code>## [1] 3</code></pre>
+<pre class="r"><code># to do the same thing with default R functions...
+head(chicago[,-(i:j)])</code></pre>
+<pre><code>##         date pm25tmean2 pm10tmean2 o3tmean2 no2tmean2
+## 1 1987-01-01         NA   34.00000 4.250000  19.98810
+## 2 1987-01-02         NA         NA 3.304348  23.19099
+## 3 1987-01-03         NA   34.16667 3.333333  23.81548
+## 4 1987-01-04         NA   47.00000 4.375000  30.43452
+## 5 1987-01-05         NA         NA 4.750000  30.33333
+## 6 1987-01-06         NA   48.00000 5.833333  25.77233</code></pre>
+<pre class="r"><code># filter out pm25tmean2 value that's greater than 30)
+chic.f&lt;-filter(chicago,pm25tmean2&gt;30); head(chic.f,3)</code></pre>
+<pre><code>##   city tmpd dptp       date pm25tmean2 pm10tmean2  o3tmean2 no2tmean2
+## 1 chic   23 21.9 1998-01-17      38.10   32.46154  3.180556   25.3000
+## 2 chic   28 25.8 1998-01-23      33.95   38.69231  1.750000   29.3763
+## 3 chic   55 51.3 1998-04-30      39.40   34.00000 10.786232   25.3131</code></pre>
+<pre class="r"><code># can filter multiple logical statements
+chic.f2&lt;-filter(chicago,pm25tmean2&gt;30 &amp; tmpd&gt;80); head(chic.f2,3)</code></pre>
+<pre><code>##   city tmpd dptp       date pm25tmean2 pm10tmean2 o3tmean2 no2tmean2
+## 1 chic   81 71.2 1998-08-23       39.6       59.0 45.86364  14.32639
+## 2 chic   81 70.4 1998-09-06       31.5       50.5 50.66250  20.31250
+## 3 chic   82 72.2 2001-07-20       32.3       58.5 33.00380  33.67500</code></pre>
+<pre class="r"><code># arrange by date (default: ascending)
+chicago&lt;-arrange(chicago, date); head(chicago,3)</code></pre>
+<pre><code>##   city tmpd   dptp       date pm25tmean2 pm10tmean2 o3tmean2 no2tmean2
+## 1 chic 31.5 31.500 1987-01-01         NA   34.00000 4.250000  19.98810
+## 2 chic 33.0 29.875 1987-01-02         NA         NA 3.304348  23.19099
+## 3 chic 33.0 27.375 1987-01-03         NA   34.16667 3.333333  23.81548</code></pre>
+<pre class="r"><code>chicago&lt;-arrange(chicago, desc(date)); head(chicago,3)</code></pre>
+<pre><code>##   city tmpd dptp       date pm25tmean2 pm10tmean2 o3tmean2 no2tmean2
+## 1 chic   35 30.1 2005-12-31   15.00000       23.5 2.531250  13.25000
+## 2 chic   36 31.0 2005-12-30   15.05714       19.2 3.034420  22.80556
+## 3 chic   35 29.4 2005-12-29    7.45000       23.5 6.794837  19.97222</code></pre>
+<pre class="r"><code># renaming column (variable); which is annoying to do with vanilla package(s)
+# new = old
+chicago&lt;-rename(chicago, pm25=pm25tmean2, dewpoint=dptp); head(chicago,3)</code></pre>
+<pre><code>##   city tmpd dewpoint       date     pm25 pm10tmean2 o3tmean2 no2tmean2
+## 1 chic   35     30.1 2005-12-31 15.00000       23.5 2.531250  13.25000
+## 2 chic   36     31.0 2005-12-30 15.05714       19.2 3.034420  22.80556
+## 3 chic   35     29.4 2005-12-29  7.45000       23.5 6.794837  19.97222</code></pre>
+<pre class="r"><code># mutate; transform existing variable or create a new variable
+chicago&lt;-mutate(chicago, pm25detrend=pm25-mean(pm25,na.rm=TRUE)); head(select(chicago,pm25,pm25detrend))</code></pre>
+<pre><code>##       pm25 pm25detrend
+## 1 15.00000   -1.230958
+## 2 15.05714   -1.173815
+## 3  7.45000   -8.780958
+## 4 17.75000    1.519042
+## 5 23.56000    7.329042
+## 6  8.40000   -7.830958</code></pre>
+<pre class="r"><code># group_by; first mutated to include a factor (&gt;80 = hot, &lt;=80 = cold)
+chicago&lt;-mutate(chicago, tempcat=factor(1*(tmpd&gt;80),labels=c(&quot;cold&quot;,&quot;hot&quot;)))
+head(chicago,3);tail(chicago,3)</code></pre>
+<pre><code>##   city tmpd dewpoint       date     pm25 pm10tmean2 o3tmean2 no2tmean2 pm25detrend tempcat
+## 1 chic   35     30.1 2005-12-31 15.00000       23.5 2.531250  13.25000   -1.230958    cold
+## 2 chic   36     31.0 2005-12-30 15.05714       19.2 3.034420  22.80556   -1.173815    cold
+## 3 chic   35     29.4 2005-12-29  7.45000       23.5 6.794837  19.97222   -8.780958    cold</code></pre>
+<pre><code>##      city tmpd dewpoint       date pm25 pm10tmean2 o3tmean2 no2tmean2 pm25detrend tempcat
+## 6938 chic 33.0   27.375 1987-01-03   NA   34.16667 3.333333  23.81548          NA    cold
+## 6939 chic 33.0   29.875 1987-01-02   NA         NA 3.304348  23.19099          NA    cold
+## 6940 chic 31.5   31.500 1987-01-01   NA   34.00000 4.250000  19.98810          NA    cold</code></pre>
+<pre class="r"><code>hotcold&lt;-group_by(chicago,tempcat);hotcold</code></pre>
+<pre><code>## Source: local data frame [6,940 x 10]
+## Groups: tempcat [3]
+## 
+##     city  tmpd dewpoint       date     pm25 pm10tmean2  o3tmean2 no2tmean2 pm25detrend tempcat
+##    (chr) (dbl)    (dbl)     (date)    (dbl)      (dbl)     (dbl)     (dbl)       (dbl)  (fctr)
+## 1   chic    35     30.1 2005-12-31 15.00000       23.5  2.531250  13.25000   -1.230958    cold
+## 2   chic    36     31.0 2005-12-30 15.05714       19.2  3.034420  22.80556   -1.173815    cold
+## 3   chic    35     29.4 2005-12-29  7.45000       23.5  6.794837  19.97222   -8.780958    cold
+## 4   chic    37     34.5 2005-12-28 17.75000       27.5  3.260417  19.28563    1.519042    cold
+## 5   chic    40     33.6 2005-12-27 23.56000       27.0  4.468750  23.50000    7.329042    cold
+## 6   chic    35     29.6 2005-12-26  8.40000        8.5 14.041667  16.81944   -7.830958    cold
+## 7   chic    35     32.1 2005-12-25  6.70000        8.0 14.354167  13.79167   -9.530958    cold
+## 8   chic    37     35.2 2005-12-24 30.77143       25.2  1.770833  31.98611   14.540471    cold
+## 9   chic    41     32.6 2005-12-23 32.90000       34.5  6.906250  29.08333   16.669042    cold
+## 10  chic    22     23.3 2005-12-22 36.65000       42.5  5.385417  33.73026   20.419042    cold
+## ..   ...   ...      ...        ...      ...        ...       ...       ...         ...     ...</code></pre>
+<pre class="r"><code># average of pm25, maximum value of o3 mean, median of no2 mean
+summarize(hotcold,pm25=mean(pm25),o3=max(o3tmean2),no2=median(no2tmean2))</code></pre>
+<pre><code>## Source: local data frame [3 x 4]
+## 
+##   tempcat    pm25        o3      no2
+##    (fctr)   (dbl)     (dbl)    (dbl)
+## 1    cold      NA 66.587500 24.54924
+## 2     hot      NA 62.969656 24.93870
+## 3      NA 47.7375  9.416667 37.44444</code></pre>
+<pre class="r"><code># fix na values for mean
+summarize(hotcold,pm25=mean(pm25,na.rm=TRUE),o3=max(o3tmean2),no2=median(no2tmean2))</code></pre>
+<pre><code>## Source: local data frame [3 x 4]
+## 
+##   tempcat     pm25        o3      no2
+##    (fctr)    (dbl)     (dbl)    (dbl)
+## 1    cold 15.97807 66.587500 24.54924
+## 2     hot 26.48118 62.969656 24.93870
+## 3      NA 47.73750  9.416667 37.44444</code></pre>
+<pre class="r"><code># ********************************************************************************************* #
+# another usage of mutate &amp; group_by;
+# for some reason on knitr the following is broken. (dplyr function error); works on console
+#chicago&lt;-mutate(chicago,year=as.POSIXlt(date)$year+1900)
+#years&lt;-group_by(chicago,year)
+# yields the following: 
+# Source: local data frame [19 x 4]
+
+#    year     pm25       o3      no2
+#   (dbl)    (dbl)    (dbl)    (dbl)
+#1   1987      NaN 62.96966 23.49369
+#2   1988      NaN 61.67708 24.52296
+#3   1989      NaN 59.72727 26.14062
+#summarize(years,pm25=mean(pm25,na.rm=TRUE),o3=max(o3tmean2),no2=median(no2tmean2))
+# ********************************************************************************************* #
+
+# dplyr pipeline operator:
+# take the chicago, pipeline into mutate function, create a new variable &quot;month&quot;
+# and then take the output of &quot;mutate&quot;, group_by the &quot;month&quot;,
+# and then take the output of group_by and then run it through summarize
+chicago %&gt;% mutate(month=as.POSIXlt(date)$mon + 1) %&gt;% group_by(month) %&gt;% summarize(pm25=mean(pm25,na.rm=TRUE),o3=max(o3tmean2),no2=median(no2tmean2))</code></pre>
+<pre><code>## Source: local data frame [12 x 4]
+## 
+##    month     pm25       o3      no2
+##    (dbl)    (dbl)    (dbl)    (dbl)
+## 1      1 17.76996 28.22222 25.35417
+## 2      2 20.37513 37.37500 26.78034
+## 3      3 17.40818 39.05000 26.76984
+## 4      4 13.85879 47.94907 25.03125
+## 5      5 14.07420 52.75000 24.22222
+## 6      6 15.86461 66.58750 25.01140
+## 7      7 16.57087 59.54167 22.38442
+## 8      8 16.93380 53.96701 22.98333
+## 9      9 15.91279 57.48864 24.47917
+## 10    10 14.23557 47.09275 24.15217
+## 11    11 15.15794 29.45833 23.56537
+## 12    12 17.52221 27.70833 24.45773</code></pre>
+<pre class="r"><code># very useful!</code></pre>
 </div>
-</div>
-<div id="select-everything-but-the-city-column-to-dptp-column" class="section level1">
-<h1>select everything BUT the city column to dptp column</h1>
-<p>head(select(chicago,-(city:dptp))) i&lt;-match(“city”,names(chicago)); i j&lt;-match(“dptp”,names(chicago)); j</p>
-</div>
-<div id="to-do-the-same-thing-with-default-r-functions" class="section level1">
-<h1>to do the same thing with default R functions…</h1>
-<p>head(chicago[,-(i:j)])</p>
-</div>
-<div id="filter-out-pm25tmean2-value-thats-greater-than-30" class="section level1">
-<h1>filter out pm25tmean2 value that’s greater than 30)</h1>
-<p>chic.f&lt;-filter(chicago,pm25tmean2&gt;30); head(chic.f,3)</p>
-</div>
-<div id="can-filter-multiple-logical-statements" class="section level1">
-<h1>can filter multiple logical statements</h1>
-<p>chic.f2&lt;-filter(chicago,pm25tmean2&gt;30 &amp; tmpd&gt;80); head(chic.f2,3)</p>
-</div>
-<div id="arrange-by-date-default-ascending" class="section level1">
-<h1>arrange by date (default: ascending)</h1>
-<p>chicago&lt;-arrange(chicago, date); head(chicago,3) chicago&lt;-arrange(chicago, desc(date)); head(chicago,3)</p>
-</div>
-<div id="renaming-column-variable-which-is-annoying-to-do-with-vanilla-packages" class="section level1">
-<h1>renaming column (variable); which is annoying to do with vanilla package(s)</h1>
-</div>
-<div id="new-old" class="section level1">
-<h1>new = old</h1>
-<p>chicago&lt;-rename(chicago, pm25=pm25tmean2, dewpoint=dptp); head(chicago,3)</p>
-</div>
-<div id="mutate-transform-existing-variable-or-create-a-new-variable" class="section level1">
-<h1>mutate; transform existing variable or create a new variable</h1>
-<p>chicago&lt;-mutate(chicago, pm25detrend=pm25-mean(pm25,na.rm=TRUE)); head(select(chicago,pm25,pm25detrend))</p>
-</div>
-<div id="group_by-first-mutated-to-include-a-factor-80-hot-80-cold" class="section level1">
-<h1>group_by; first mutated to include a factor (&gt;80 = hot, &lt;=80 = cold)</h1>
-<p>chicago&lt;-mutate(chicago, tempcat=factor(1*(tmpd&gt;80),labels=c(“cold”,“hot”))) head(chicago,3);tail(chicago,3) hotcold&lt;-group_by(chicago,tempcat);hotcold # average of pm25, maximum value of o3 mean, median of no2 mean summarize(hotcold,pm25=mean(pm25),o3=max(o3tmean2),no2=median(no2tmean2)) # fix na values for mean summarize(hotcold,pm25=mean(pm25,na.rm=TRUE),o3=max(o3tmean2),no2=median(no2tmean2))</p>
-</div>
-<div id="section-1" class="section level1">
-<h1>*********************************************************************************************</h1>
-</div>
-<div id="another-usage-of-mutate-group_by" class="section level1">
-<h1>another usage of mutate &amp; group_by;</h1>
-</div>
-<div id="for-some-reason-on-knitr-the-following-is-broken.-dplyr-function-error-works-on-console" class="section level1">
-<h1>for some reason on knitr the following is broken. (dplyr function error); works on console</h1>
-</div>
-<div id="chicago-mutatechicagoyearas.posixltdateyear1900" class="section level1">
-<h1>chicago&lt;-mutate(chicago,year=as.POSIXlt(date)$year+1900)</h1>
-</div>
-<div id="years-group_bychicagoyear" class="section level1">
-<h1>years&lt;-group_by(chicago,year)</h1>
-</div>
-<div id="yields-the-following" class="section level1">
-<h1>yields the following:</h1>
-</div>
-<div id="source-local-data-frame-19-x-4" class="section level1">
-<h1>Source: local data frame [19 x 4]</h1>
-</div>
-<div id="year-pm25-o3-no2" class="section level1">
-<h1>year pm25 o3 no2</h1>
-</div>
-<div id="dbl-dbl-dbl-dbl" class="section level1">
-<h1>(dbl) (dbl) (dbl) (dbl)</h1>
-</div>
-<div id="nan-62.96966-23.49369" class="section level1">
-<h1>1 1987 NaN 62.96966 23.49369</h1>
-</div>
-<div id="nan-61.67708-24.52296" class="section level1">
-<h1>2 1988 NaN 61.67708 24.52296</h1>
-</div>
-<div id="nan-59.72727-26.14062" class="section level1">
-<h1>3 1989 NaN 59.72727 26.14062</h1>
-</div>
-<div id="summarizeyearspm25meanpm25na.rmtrueo3maxo3tmean2no2medianno2tmean2" class="section level1">
-<h1>summarize(years,pm25=mean(pm25,na.rm=TRUE),o3=max(o3tmean2),no2=median(no2tmean2))</h1>
-</div>
-<div id="section-2" class="section level1">
-<h1>*********************************************************************************************</h1>
-</div>
-<div id="dplyr-pipeline-operator" class="section level1">
-<h1>dplyr pipeline operator:</h1>
-</div>
-<div id="take-the-chicago-pipeline-into-mutate-function-create-a-new-variable-month" class="section level1">
-<h1>take the chicago, pipeline into mutate function, create a new variable “month”</h1>
-</div>
-<div id="and-then-take-the-output-of-mutate-group_by-the-month" class="section level1">
-<h1>and then take the output of “mutate”, group_by the “month”,</h1>
-</div>
-<div id="and-then-take-the-output-of-group_by-and-then-run-it-through-summarize" class="section level1">
-<h1>and then take the output of group_by and then run it through summarize</h1>
-<p>chicago %&gt;% mutate(month=as.POSIXlt(date)$mon + 1) %&gt;% group_by(month) %&gt;% summarize(pm25=mean(pm25,na.rm=TRUE),o3=max(o3tmean2),no2=median(no2tmean2)) # very useful! ```‘’’</p>
 <div id="merging-data" class="section level3">
 <h3>12) merging data</h3>
-<p>```{r}‘’’ # downloading necessary files # if(!file.exists(“./data”)){dir.create(“./data”)} if(!file.exists(“./data/reviews.csv”)){ fileUrl1=“<a href="https://dl.dropboxusercontent.com/u/7710864/data/reviews-apr29.csv" class="uri">https://dl.dropboxusercontent.com/u/7710864/data/reviews-apr29.csv</a>” download.file(fileUrl1,destfile=“./data/reviews.csv”,method=“curl”) } if(!file.exists(“./data/solutions.csv”)){ fileUrl2=“<a href="https://dl.dropboxusercontent.com/u/7710864/data/solutions-apr29.csv" class="uri">https://dl.dropboxusercontent.com/u/7710864/data/solutions-apr29.csv</a>” download.file(fileUrl2,destfile=“./data/solutions.csv”,method=“curl”) }</p>
-<p>reviews=read.csv(“./data/reviews.csv”); solutions&lt;-read.csv(“./data/solutions.csv”)</p>
+<pre class="r"><code># downloading necessary files #
+if(!file.exists(&quot;./data&quot;)){dir.create(&quot;./data&quot;)}
+if(!file.exists(&quot;./data/reviews.csv&quot;)){
+  fileUrl1=&quot;https://dl.dropboxusercontent.com/u/7710864/data/reviews-apr29.csv&quot;
+  download.file(fileUrl1,destfile=&quot;./data/reviews.csv&quot;,method=&quot;curl&quot;)
+}
+if(!file.exists(&quot;./data/solutions.csv&quot;)){
+  fileUrl2=&quot;https://dl.dropboxusercontent.com/u/7710864/data/solutions-apr29.csv&quot;
+  download.file(fileUrl2,destfile=&quot;./data/solutions.csv&quot;,method=&quot;curl&quot;)
+}
+
+reviews=read.csv(&quot;./data/reviews.csv&quot;); solutions&lt;-read.csv(&quot;./data/solutions.csv&quot;)
+
+# checking the data are there
+head(reviews,3)</code></pre>
+<pre><code>##   id solution_id reviewer_id      start       stop time_left accept
+## 1  1           3          27 1304095698 1304095758      1754      1
+## 2  2           4          22 1304095188 1304095206      2306      1
+## 3  3           5          28 1304095276 1304095320      2192      1</code></pre>
+<pre class="r"><code>head(solutions,3)</code></pre>
+<pre><code>##   id problem_id subject_id      start       stop time_left answer
+## 1  1        156         29 1304095119 1304095169      2343      B
+## 2  2        269         25 1304095119 1304095183      2329      C
+## 3  3         34         22 1304095127 1304095146      2366      C</code></pre>
+<pre class="r"><code># merging data - merge()
+# import parameters: x, y, by, by.x, by.y, all
+names(reviews); names(solutions)</code></pre>
+<pre><code>## [1] &quot;id&quot;          &quot;solution_id&quot; &quot;reviewer_id&quot; &quot;start&quot;       &quot;stop&quot;       
+## [6] &quot;time_left&quot;   &quot;accept&quot;</code></pre>
+<pre><code>## [1] &quot;id&quot;         &quot;problem_id&quot; &quot;subject_id&quot; &quot;start&quot;      &quot;stop&quot;      
+## [6] &quot;time_left&quot;  &quot;answer&quot;</code></pre>
+<pre class="r"><code># merges 'reviews' &amp; 'solutions'
+mergedData&lt;-merge(reviews,solutions,by.x=&quot;solution_id&quot;,by.y=&quot;id&quot;,all=TRUE)
+head(mergedData,3)</code></pre>
+<pre><code>##   solution_id id reviewer_id    start.x     stop.x time_left.x accept
+## 1           1  4          26 1304095267 1304095423        2089      1
+## 2           2  6          29 1304095471 1304095513        1999      1
+## 3           3  1          27 1304095698 1304095758        1754      1
+##   problem_id subject_id    start.y     stop.y time_left.y answer
+## 1        156         29 1304095119 1304095169        2343      B
+## 2        269         25 1304095119 1304095183        2329      C
+## 3         34         22 1304095127 1304095146        2366      C</code></pre>
+<pre class="r"><code># default - merge all common column names
+# intersect shows all intersecting column names (default pkg)
+intersect(names(solutions),names(reviews))</code></pre>
+<pre><code>## [1] &quot;id&quot;        &quot;start&quot;     &quot;stop&quot;      &quot;time_left&quot;</code></pre>
+<pre class="r"><code># merging all common column names 
+mergedData2&lt;-merge(reviews,solutions,all=TRUE)
+head(mergedData2)</code></pre>
+<pre><code>##   id      start       stop time_left solution_id reviewer_id accept
+## 1  1 1304095119 1304095169      2343          NA          NA     NA
+## 2  1 1304095698 1304095758      1754           3          27      1
+## 3  2 1304095119 1304095183      2329          NA          NA     NA
+## 4  2 1304095188 1304095206      2306           4          22      1
+## 5  3 1304095127 1304095146      2366          NA          NA     NA
+## 6  3 1304095276 1304095320      2192           5          28      1
+##   problem_id subject_id answer
+## 1        156         29      B
+## 2         NA         NA   &lt;NA&gt;
+## 3        269         25      C
+## 4         NA         NA   &lt;NA&gt;
+## 5         34         22      C
+## 6         NA         NA   &lt;NA&gt;</code></pre>
+<pre class="r"><code># using &quot;join&quot; in the &quot;plyr&quot; package
+df1&lt;-data.frame(id=sample(1:10),x=rnorm(10))
+df2&lt;-data.frame(id=sample(1:10),y=rnorm(10))
+arrange(join(df1,df2),id)</code></pre>
+<pre><code>## Joining by: id</code></pre>
+<pre><code>##    id           x          y
+## 1   1  1.80724280 -1.0356159
+## 2   2 -1.28531483  0.5351612
+## 3   3 -0.32160219 -0.1693730
+## 4   4 -0.45027787  1.8427056
+## 5   5 -0.01943862  2.0314284
+## 6   6  0.24730847 -2.3127374
+## 7   7  0.77304686  0.7990271
+## 8   8 -1.34462418  1.0341373
+## 9   9 -0.19787792 -1.0193167
+## 10 10 -0.72433867  0.8355025</code></pre>
+<pre class="r"><code># if you have multiple data frames; join_all()
+# this facilitates a function that is challenging (relatively) with merge()
+df3&lt;-data.frame(id=sample(1:10),z=rnorm(10))
+dfList&lt;-list(df1,df2,df3);dfList</code></pre>
+<pre><code>## [[1]]
+##    id           x
+## 1   9 -0.19787792
+## 2   6  0.24730847
+## 3   1  1.80724280
+## 4   7  0.77304686
+## 5   2 -1.28531483
+## 6   5 -0.01943862
+## 7   4 -0.45027787
+## 8  10 -0.72433867
+## 9   3 -0.32160219
+## 10  8 -1.34462418
+## 
+## [[2]]
+##    id          y
+## 1   2  0.5351612
+## 2  10  0.8355025
+## 3   4  1.8427056
+## 4   6 -2.3127374
+## 5   9 -1.0193167
+## 6   5  2.0314284
+## 7   7  0.7990271
+## 8   8  1.0341373
+## 9   3 -0.1693730
+## 10  1 -1.0356159
+## 
+## [[3]]
+##    id          z
+## 1   7 -1.0364760
+## 2   4 -0.6773836
+## 3   9  1.4272538
+## 4   3  1.2990209
+## 5   1 -0.7264671
+## 6   8  0.8832502
+## 7   6  0.8278714
+## 8   2 -0.1262739
+## 9   5 -1.9793637
+## 10 10 -0.9609792</code></pre>
+<pre class="r"><code>arrange(join_all(dfList),id)</code></pre>
+<pre><code>## Joining by: id
+## Joining by: id</code></pre>
+<pre><code>##    id           x          y          z
+## 1   1  1.80724280 -1.0356159 -0.7264671
+## 2   2 -1.28531483  0.5351612 -0.1262739
+## 3   3 -0.32160219 -0.1693730  1.2990209
+## 4   4 -0.45027787  1.8427056 -0.6773836
+## 5   5 -0.01943862  2.0314284 -1.9793637
+## 6   6  0.24730847 -2.3127374  0.8278714
+## 7   7  0.77304686  0.7990271 -1.0364760
+## 8   8 -1.34462418  1.0341373  0.8832502
+## 9   9 -0.19787792 -1.0193167  1.4272538
+## 10 10 -0.72433867  0.8355025 -0.9609792</code></pre>
 </div>
-</div>
-<div id="checking-the-data-are-there" class="section level1">
-<h1>checking the data are there</h1>
-<p>head(reviews,3) head(solutions,3)</p>
-</div>
-<div id="merging-data---merge" class="section level1">
-<h1>merging data - merge()</h1>
-</div>
-<div id="import-parameters-x-y-by-by.x-by.y-all" class="section level1">
-<h1>import parameters: x, y, by, by.x, by.y, all</h1>
-<p>names(reviews); names(solutions)</p>
-</div>
-<div id="merges-reviews-solutions" class="section level1">
-<h1>merges ‘reviews’ &amp; ‘solutions’</h1>
-<p>mergedData&lt;-merge(reviews,solutions,by.x=“solution_id”,by.y=“id”,all=TRUE) head(mergedData,3)</p>
-</div>
-<div id="default---merge-all-common-column-names" class="section level1">
-<h1>default - merge all common column names</h1>
-</div>
-<div id="intersect-shows-all-intersecting-column-names-default-pkg" class="section level1">
-<h1>intersect shows all intersecting column names (default pkg)</h1>
-<p>intersect(names(solutions),names(reviews))</p>
-</div>
-<div id="merging-all-common-column-names" class="section level1">
-<h1>merging all common column names</h1>
-<p>mergedData2&lt;-merge(reviews,solutions,all=TRUE) head(mergedData2)</p>
-</div>
-<div id="using-join-in-the-plyr-package" class="section level1">
-<h1>using “join” in the “plyr” package</h1>
-<p>df1&lt;-data.frame(id=sample(1:10),x=rnorm(10)) df2&lt;-data.frame(id=sample(1:10),y=rnorm(10)) arrange(join(df1,df2),id)</p>
-</div>
-<div id="if-you-have-multiple-data-frames-join_all" class="section level1">
-<h1>if you have multiple data frames; join_all()</h1>
-</div>
-<div id="this-facilitates-a-function-that-is-challenging-relatively-with-merge" class="section level1">
-<h1>this facilitates a function that is challenging (relatively) with merge()</h1>
-<p>df3&lt;-data.frame(id=sample(1:10),z=rnorm(10)) dfList&lt;-list(df1,df2,df3);dfList arrange(join_all(dfList),id)</p>
-<p>```‘’’</p>
 <div id="editing-text-variables" class="section level3">
 <h3>13) editing text variables</h3>
-<p>```{r}‘’’ # loading necessary data if(!file.exists(“./data”)){ dir.create(“./data”) } if(!file.exists(“./data/cameras.csv”)){ fileUrl&lt;-“<a href="https://data.baltimorecity.gov/api/views/dz54-2aru/rows.csv?accessType=DOWNLOAD" class="uri">https://data.baltimorecity.gov/api/views/dz54-2aru/rows.csv?accessType=DOWNLOAD</a>” download.file(fileUrl,destfile=“./data/cameras.csv”,method=“curl”) } cameraData&lt;-read.csv(“./data/cameras.csv”)</p>
+<pre class="r"><code># loading necessary data
+if(!file.exists(&quot;./data&quot;)){ dir.create(&quot;./data&quot;) }
+if(!file.exists(&quot;./data/cameras.csv&quot;)){
+  fileUrl&lt;-&quot;https://data.baltimorecity.gov/api/views/dz54-2aru/rows.csv?accessType=DOWNLOAD&quot;
+  download.file(fileUrl,destfile=&quot;./data/cameras.csv&quot;,method=&quot;curl&quot;)
+}
+cameraData&lt;-read.csv(&quot;./data/cameras.csv&quot;)
+
+# toupper() &amp; tolower() to fix character vectors
+names(cameraData)</code></pre>
+<pre><code>## [1] &quot;address&quot;      &quot;direction&quot;    &quot;street&quot;       &quot;crossStreet&quot; 
+## [5] &quot;intersection&quot; &quot;Location.1&quot;</code></pre>
+<pre class="r"><code>toupper(names(cameraData))</code></pre>
+<pre><code>## [1] &quot;ADDRESS&quot;      &quot;DIRECTION&quot;    &quot;STREET&quot;       &quot;CROSSSTREET&quot; 
+## [5] &quot;INTERSECTION&quot; &quot;LOCATION.1&quot;</code></pre>
+<pre class="r"><code>tolower(names(cameraData))</code></pre>
+<pre><code>## [1] &quot;address&quot;      &quot;direction&quot;    &quot;street&quot;       &quot;crossstreet&quot; 
+## [5] &quot;intersection&quot; &quot;location.1&quot;</code></pre>
+<pre class="r"><code># splitting character vectors - strsplit()
+# this splits by period &quot;.&quot;
+# escape characters necessary since &quot;.&quot; is a reserved character
+splitNames&lt;-strsplit(names(cameraData),&quot;\\.&quot;);splitNames</code></pre>
+<pre><code>## [[1]]
+## [1] &quot;address&quot;
+## 
+## [[2]]
+## [1] &quot;direction&quot;
+## 
+## [[3]]
+## [1] &quot;street&quot;
+## 
+## [[4]]
+## [1] &quot;crossStreet&quot;
+## 
+## [[5]]
+## [1] &quot;intersection&quot;
+## 
+## [[6]]
+## [1] &quot;Location&quot; &quot;1&quot;</code></pre>
+<pre class="r"><code># quick aside - lists
+mylist&lt;-list(letters=c(&quot;A&quot;,&quot;b&quot;,&quot;c&quot;),numbers=1:3,matrix(1:25,ncol=5));mylist</code></pre>
+<pre><code>## $letters
+## [1] &quot;A&quot; &quot;b&quot; &quot;c&quot;
+## 
+## $numbers
+## [1] 1 2 3
+## 
+## [[3]]
+##      [,1] [,2] [,3] [,4] [,5]
+## [1,]    1    6   11   16   21
+## [2,]    2    7   12   17   22
+## [3,]    3    8   13   18   23
+## [4,]    4    9   14   19   24
+## [5,]    5   10   15   20   25</code></pre>
+<pre class="r"><code>mylist[1]</code></pre>
+<pre><code>## $letters
+## [1] &quot;A&quot; &quot;b&quot; &quot;c&quot;</code></pre>
+<pre class="r"><code>mylist$letters</code></pre>
+<pre><code>## [1] &quot;A&quot; &quot;b&quot; &quot;c&quot;</code></pre>
+<pre class="r"><code>mylist[[1]]</code></pre>
+<pre><code>## [1] &quot;A&quot; &quot;b&quot; &quot;c&quot;</code></pre>
+<pre class="r"><code># fixing character vectors via sapply()
+# to remove the period characters (&quot;Location.1&quot; --&gt; &quot;Location&quot; &quot;1&quot;)
+splitNames[[6]][1]</code></pre>
+<pre><code>## [1] &quot;Location&quot;</code></pre>
+<pre class="r"><code>splitNames</code></pre>
+<pre><code>## [[1]]
+## [1] &quot;address&quot;
+## 
+## [[2]]
+## [1] &quot;direction&quot;
+## 
+## [[3]]
+## [1] &quot;street&quot;
+## 
+## [[4]]
+## [1] &quot;crossStreet&quot;
+## 
+## [[5]]
+## [1] &quot;intersection&quot;
+## 
+## [[6]]
+## [1] &quot;Location&quot; &quot;1&quot;</code></pre>
+<pre class="r"><code># this only collects / returns the first element if there are multiple elements
+firstElement&lt;-function(x){x[1]}
+sapply(splitNames,firstElement)</code></pre>
+<pre><code>## [1] &quot;address&quot;      &quot;direction&quot;    &quot;street&quot;       &quot;crossStreet&quot; 
+## [5] &quot;intersection&quot; &quot;Location&quot;</code></pre>
+<pre class="r"><code># downloading necessary files again... and loading
+if(!file.exists(&quot;./data&quot;)){dir.create(&quot;./data&quot;)}
+if(!file.exists(&quot;./data/reviews.csv&quot;)){
+  fileUrl1=&quot;https://dl.dropboxusercontent.com/u/7710864/data/reviews-apr29.csv&quot;
+  download.file(fileUrl1,destfile=&quot;./data/reviews.csv&quot;,method=&quot;curl&quot;)
+}
+if(!file.exists(&quot;./data/solutions.csv&quot;)){
+  fileUrl2=&quot;https://dl.dropboxusercontent.com/u/7710864/data/solutions-apr29.csv&quot;
+  download.file(fileUrl2,destfile=&quot;./data/solutions.csv&quot;,method=&quot;curl&quot;)
+}
+reviews&lt;-read.csv(&quot;./data/reviews.csv&quot;);solutions&lt;-read.csv(&quot;./data/solutions.csv&quot;)
+head(reviews,2);head(solutions,2)</code></pre>
+<pre><code>##   id solution_id reviewer_id      start       stop time_left accept
+## 1  1           3          27 1304095698 1304095758      1754      1
+## 2  2           4          22 1304095188 1304095206      2306      1</code></pre>
+<pre><code>##   id problem_id subject_id      start       stop time_left answer
+## 1  1        156         29 1304095119 1304095169      2343      B
+## 2  2        269         25 1304095119 1304095183      2329      C</code></pre>
+<pre class="r"><code># fixing character vectors - sub()
+# substituting out character (replace &quot;_&quot; with &quot;&quot;)
+names(reviews)</code></pre>
+<pre><code>## [1] &quot;id&quot;          &quot;solution_id&quot; &quot;reviewer_id&quot; &quot;start&quot;       &quot;stop&quot;       
+## [6] &quot;time_left&quot;   &quot;accept&quot;</code></pre>
+<pre class="r"><code>sub(&quot;_&quot;,&quot;&quot;,names(reviews))</code></pre>
+<pre><code>## [1] &quot;id&quot;         &quot;solutionid&quot; &quot;reviewerid&quot; &quot;start&quot;      &quot;stop&quot;      
+## [6] &quot;timeleft&quot;   &quot;accept&quot;</code></pre>
+<pre class="r"><code># fixing character vectors - gsub()
+# gsub replaces multiple instances (not just the first ocurrence)
+testName&lt;-&quot;this_is_a_test&quot;
+sub(&quot;_&quot;,&quot;&quot;,testName)</code></pre>
+<pre><code>## [1] &quot;thisis_a_test&quot;</code></pre>
+<pre class="r"><code>gsub(&quot;_&quot;,&quot;&quot;,testName)</code></pre>
+<pre><code>## [1] &quot;thisisatest&quot;</code></pre>
+<pre class="r"><code># finding values - grep(), grepl()
+# look for &quot;Alameda&quot; in cameraData$intersection
+# appears in the 4th, 5th, and 36th element of intersection variable
+grep(&quot;Alameda&quot;,cameraData$intersection)</code></pre>
+<pre><code>## [1]  4  5 36</code></pre>
+<pre class="r"><code># grepl returns a vector that's true whenever Alameda appears, false otherwise
+table(grepl(&quot;Alameda&quot;,cameraData$intersection))</code></pre>
+<pre><code>## 
+## FALSE  TRUE 
+##    77     3</code></pre>
+<pre class="r"><code># subsetting using grepl;
+# successfully removes out when intersection variable is &quot;Alameda&quot;
+cameraData2&lt;-cameraData[!grepl(&quot;Alameda&quot;,cameraData$intersection),];head(cameraData2)</code></pre>
+<pre><code>##                          address direction      street  crossStreet
+## 1       S CATON AVE &amp; BENSON AVE       N/B   Caton Ave   Benson Ave
+## 2       S CATON AVE &amp; BENSON AVE       S/B   Caton Ave   Benson Ave
+## 3 WILKENS AVE &amp; PINE HEIGHTS AVE       E/B Wilkens Ave Pine Heights
+## 6        ERDMAN AVE &amp; N MACON ST       E/B      Erdman     Macon St
+## 7        ERDMAN AVE &amp; N MACON ST       W/B      Erdman     Macon St
+## 8      N CHARLES ST &amp; E LAKE AVE       S/B     Charles     Lake Ave
+##                 intersection                      Location.1
+## 1     Caton Ave &amp; Benson Ave (39.2693779962, -76.6688185297)
+## 2     Caton Ave &amp; Benson Ave (39.2693157898, -76.6689698176)
+## 3 Wilkens Ave &amp; Pine Heights  (39.2720252302, -76.676960806)
+## 6         Erdman  &amp; Macon St (39.3068045671, -76.5593167803)
+## 7         Erdman  &amp; Macon St  (39.306966535, -76.5593122365)
+## 8         Charles &amp; Lake Ave  (39.3690535299, -76.625826716)</code></pre>
+<pre class="r"><code># more utilites of grep();
+# value=TRUE gets the value instead of the index when GREP matches
+grep(&quot;Alameda&quot;,cameraData$intersection,value=TRUE)</code></pre>
+<pre><code>## [1] &quot;The Alameda  &amp; 33rd St&quot;   &quot;E 33rd  &amp; The Alameda&quot;   
+## [3] &quot;Harford \n &amp; The Alameda&quot;</code></pre>
+<pre class="r"><code># looking for when the search query does not appear in a variable;
+# &quot;JeffStreet&quot; is not found, hence outputs integer 0
+grep(&quot;JeffStreet&quot;,cameraData$intersection)</code></pre>
+<pre><code>## integer(0)</code></pre>
+<pre class="r"><code># and such output is also length zero (which makes it easier to search for)
+length(grep(&quot;JeffStreet&quot;,cameraData$intersection))</code></pre>
+<pre><code>## [1] 0</code></pre>
+<pre class="r"><code># more useful string functions
+library(stringr)
+nchar(&quot;Jeffrey Leek&quot;) # number of characters in the input string</code></pre>
+<pre><code>## [1] 12</code></pre>
+<pre class="r"><code>substr(&quot;Jeffrey Leek&quot;,1,7) # substring out the input string from 1st index to 7th</code></pre>
+<pre><code>## [1] &quot;Jeffrey&quot;</code></pre>
+<pre class="r"><code>paste(&quot;Jeffrey&quot;,&quot;Leek&quot;) # pastes two strings together</code></pre>
+<pre><code>## [1] &quot;Jeffrey Leek&quot;</code></pre>
+<pre class="r"><code>paste0(&quot;Jeffrey&quot;,&quot;Leek&quot;) # pastes together with no whitespace between</code></pre>
+<pre><code>## [1] &quot;JeffreyLeek&quot;</code></pre>
+<pre class="r"><code>str_trim(&quot;     Jeff     &quot;) #trims out whitespaces bidirectionally</code></pre>
+<pre><code>## [1] &quot;Jeff&quot;</code></pre>
+<pre class="r"><code># important points about string/texts:
+# 1) should be lowercase if possible
+# 2) descriptive as opposed to mysterious variables
+# 3) non-duplicative
+# 4) not have &quot;_&quot;, &quot;.&quot;, &quot; &quot; if possible
+# 5) should be made into factor variables (case by case)
+# 6) should be descriptive (use T/F) as opposed to 0/1;
+#    and &quot;Male/Female&quot; as opposed to 0/1 and &quot;M/F&quot;</code></pre>
 </div>
-</div>
-<div id="toupper-tolower-to-fix-character-vectors" class="section level1">
-<h1>toupper() &amp; tolower() to fix character vectors</h1>
-<p>names(cameraData) toupper(names(cameraData)) tolower(names(cameraData))</p>
-</div>
-<div id="splitting-character-vectors---strsplit" class="section level1">
-<h1>splitting character vectors - strsplit()</h1>
-</div>
-<div id="this-splits-by-period-." class="section level1">
-<h1>this splits by period “.”</h1>
-</div>
-<div id="escape-characters-necessary-since-.-is-a-reserved-character" class="section level1">
-<h1>escape characters necessary since “.” is a reserved character</h1>
-<p>splitNames&lt;-strsplit(names(cameraData),“\.”);splitNames</p>
-</div>
-<div id="quick-aside---lists" class="section level1">
-<h1>quick aside - lists</h1>
-<p>mylist&lt;-list(letters=c(“A”,“b”,“c”),numbers=1:3,matrix(1:25,ncol=5));mylist mylist[1] mylist$letters mylist[[1]]</p>
-</div>
-<div id="fixing-character-vectors-via-sapply" class="section level1">
-<h1>fixing character vectors via sapply()</h1>
-</div>
-<div id="to-remove-the-period-characters-location.1-location-1" class="section level1">
-<h1>to remove the period characters (“Location.1” –&gt; “Location” “1”)</h1>
-<p>splitNames[[6]][1] splitNames # this only collects / returns the first element if there are multiple elements firstElement&lt;-function(x){x[1]} sapply(splitNames,firstElement)</p>
-</div>
-<div id="downloading-necessary-files-again-and-loading" class="section level1">
-<h1>downloading necessary files again… and loading</h1>
-<p>if(!file.exists(“./data”)){dir.create(“./data”)} if(!file.exists(“./data/reviews.csv”)){ fileUrl1=“<a href="https://dl.dropboxusercontent.com/u/7710864/data/reviews-apr29.csv" class="uri">https://dl.dropboxusercontent.com/u/7710864/data/reviews-apr29.csv</a>” download.file(fileUrl1,destfile=“./data/reviews.csv”,method=“curl”) } if(!file.exists(“./data/solutions.csv”)){ fileUrl2=“<a href="https://dl.dropboxusercontent.com/u/7710864/data/solutions-apr29.csv" class="uri">https://dl.dropboxusercontent.com/u/7710864/data/solutions-apr29.csv</a>” download.file(fileUrl2,destfile=“./data/solutions.csv”,method=“curl”) } reviews&lt;-read.csv(“./data/reviews.csv”);solutions&lt;-read.csv(“./data/solutions.csv”) head(reviews,2);head(solutions,2)</p>
-</div>
-<div id="fixing-character-vectors---sub" class="section level1">
-<h1>fixing character vectors - sub()</h1>
-</div>
-<div id="substituting-out-character-replace-_-with-namesreviews-sub_namesreviews" class="section level1">
-<h1>substituting out character (replace “_&quot; with “”) names(reviews) sub(“_“,”“,names(reviews))</h1>
-</div>
-<div id="fixing-character-vectors---gsub" class="section level1">
-<h1>fixing character vectors - gsub()</h1>
-</div>
-<div id="gsub-replaces-multiple-instances-not-just-the-first-ocurrence" class="section level1">
-<h1>gsub replaces multiple instances (not just the first ocurrence)</h1>
-<p>testName&lt;-“this_is_a_test” sub(“<em>“,”“,testName) gsub(”</em>”,“”,testName)</p>
-</div>
-<div id="finding-values---grep-grepl" class="section level1">
-<h1>finding values - grep(), grepl()</h1>
-</div>
-<div id="look-for-alameda-in-cameradataintersection-appears-in-the-4th-5th-and-36th-element-of-intersection-variable-grepalamedacameradataintersection" class="section level1">
-<h1>look for “Alameda” in cameraData<span class="math inline">\(intersection # appears in the 4th, 5th, and 36th element of intersection variable grep(&quot;Alameda&quot;,cameraData\)</span>intersection)</h1>
-</div>
-<div id="grepl-returns-a-vector-thats-true-whenever-alameda-appears-false-otherwise" class="section level1">
-<h1>grepl returns a vector that’s true whenever Alameda appears, false otherwise</h1>
-<p>table(grepl(“Alameda”,cameraData$intersection))</p>
-</div>
-<div id="subsetting-using-grepl" class="section level1">
-<h1>subsetting using grepl;</h1>
-</div>
-<div id="successfully-removes-out-when-intersection-variable-is-alameda" class="section level1">
-<h1>successfully removes out when intersection variable is “Alameda”</h1>
-<p>cameraData2&lt;-cameraData[!grepl(“Alameda”,cameraData$intersection),];head(cameraData2)</p>
-</div>
-<div id="more-utilites-of-grep" class="section level1">
-<h1>more utilites of grep();</h1>
-</div>
-<div id="valuetrue-gets-the-value-instead-of-the-index-when-grep-matches" class="section level1">
-<h1>value=TRUE gets the value instead of the index when GREP matches</h1>
-<p>grep(“Alameda”,cameraData$intersection,value=TRUE)</p>
-</div>
-<div id="looking-for-when-the-search-query-does-not-appear-in-a-variable" class="section level1">
-<h1>looking for when the search query does not appear in a variable;</h1>
-</div>
-<div id="jeffstreet-is-not-found-hence-outputs-integer-0" class="section level1">
-<h1>“JeffStreet” is not found, hence outputs integer 0</h1>
-<p>grep(“JeffStreet”,cameraData<span class="math inline">\(intersection) # and such output is also length zero (which makes it easier to search for) length(grep(&quot;JeffStreet&quot;,cameraData\)</span>intersection))</p>
-</div>
-<div id="more-useful-string-functions" class="section level1">
-<h1>more useful string functions</h1>
-<p>library(stringr) nchar(“Jeffrey Leek”) # number of characters in the input string substr(“Jeffrey Leek”,1,7) # substring out the input string from 1st index to 7th paste(“Jeffrey”,“Leek”) # pastes two strings together paste0(“Jeffrey”,“Leek”) # pastes together with no whitespace between str_trim(&quot; Jeff “) #trims out whitespaces bidirectionally</p>
-</div>
-<div id="important-points-about-stringtexts" class="section level1">
-<h1>important points about string/texts:</h1>
-</div>
-<div id="should-be-lowercase-if-possible" class="section level1">
-<h1>1) should be lowercase if possible</h1>
-</div>
-<div id="descriptive-as-opposed-to-mysterious-variables" class="section level1">
-<h1>2) descriptive as opposed to mysterious variables</h1>
-</div>
-<div id="non-duplicative" class="section level1">
-<h1>3) non-duplicative</h1>
-</div>
-<div id="not-have-_.-if-possible-5-should-be-made-into-factor-variables-case-by-case-6-should-be-descriptive-use-tf-as-opposed-to-01-and-malefemale-as-opposed-to-01-and-mf" class="section level1">
-<h1>4) not have “_“,”.“,” &quot; if possible # 5) should be made into factor variables (case by case) # 6) should be descriptive (use T/F) as opposed to 0/1; # and “Male/Female” as opposed to 0/1 and “M/F” ```‘’’</h1>
 <div id="working-with-dates" class="section level3">
 <h3>14) working with dates</h3>
-<p>```{r}‘’’ # simple example d1&lt;-date();d1;class(d1)</p>
+<pre class="r"><code># simple example
+d1&lt;-date();d1;class(d1)</code></pre>
+<pre><code>## [1] &quot;Thu Mar 10 16:34:30 2016&quot;</code></pre>
+<pre><code>## [1] &quot;character&quot;</code></pre>
+<pre class="r"><code># 'Date' class
+d2&lt;-Sys.Date();d2;class(d2)</code></pre>
+<pre><code>## [1] &quot;2016-03-10&quot;</code></pre>
+<pre><code>## [1] &quot;Date&quot;</code></pre>
+<pre class="r"><code># formatting dates
+# %d (days as #), %a (abbreviated weekday), %A (unabbreviated weekday)
+# %m (month as #), %b (abbreviated month), %B (unabbreviated month)
+# %y (2 digit year), %Y (4 digit year)
+format(d2,&quot;%a %b %d&quot;)</code></pre>
+<pre><code>## [1] &quot;Thu Mar 10&quot;</code></pre>
+<pre class="r"><code># creating dates
+x&lt;-c(&quot;1jan1960&quot;,&quot;2jan1960&quot;,&quot;31mar1960&quot;,&quot;30jul1960&quot;)
+z&lt;-as.Date(x,&quot;%d%b%Y&quot;);z</code></pre>
+<pre><code>## [1] &quot;1960-01-01&quot; &quot;1960-01-02&quot; &quot;1960-03-31&quot; &quot;1960-07-30&quot;</code></pre>
+<pre class="r"><code>z[2] - z[1]</code></pre>
+<pre><code>## Time difference of 1 days</code></pre>
+<pre class="r"><code>as.numeric(z[2]-z[1])</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code># converting to Julian calendar system
+weekdays(d2)</code></pre>
+<pre><code>## [1] &quot;Thursday&quot;</code></pre>
+<pre class="r"><code>months(d2)</code></pre>
+<pre><code>## [1] &quot;March&quot;</code></pre>
+<pre class="r"><code># number of days since the origin of time (1970-01-01)
+julian(d2)</code></pre>
+<pre><code>## [1] 16870
+## attr(,&quot;origin&quot;)
+## [1] &quot;1970-01-01&quot;</code></pre>
+<pre class="r"><code># Lubridate package
+if(!require(lubridate)){
+  install.packages(&quot;lubridate&quot;,repo=&quot;https://cran.rstudio.com/&quot;)
+}
+library(lubridate);
+ymd(&quot;20140108&quot;)</code></pre>
+<pre><code>## [1] &quot;2014-01-08 UTC&quot;</code></pre>
+<pre class="r"><code>mdy(&quot;08/04/2013&quot;)</code></pre>
+<pre><code>## [1] &quot;2013-08-04 UTC&quot;</code></pre>
+<pre class="r"><code>dmy(&quot;03-04-2013&quot;)</code></pre>
+<pre><code>## [1] &quot;2013-04-03 UTC&quot;</code></pre>
+<pre class="r"><code># Lubridate with time + date
+ymd_hms(&quot;2011-08-03 10:15:03&quot;)</code></pre>
+<pre><code>## [1] &quot;2011-08-03 10:15:03 UTC&quot;</code></pre>
+<pre class="r"><code>ymd_hms(&quot;2011-08-03 10:15:03&quot;,tz=&quot;Pacific/Auckland&quot;)</code></pre>
+<pre><code>## [1] &quot;2011-08-03 10:15:03 NZST&quot;</code></pre>
+<pre class="r"><code># slightly different syntax for some functions
+x&lt;-dmy(c(&quot;1jan2013&quot;,&quot;2jan2013&quot;,&quot;31mar2013&quot;,&quot;30jul2013&quot;))
+wday(x[1]); wday(x[1],label=TRUE)</code></pre>
+<pre><code>## [1] 3</code></pre>
+<pre><code>## [1] Tues
+## Levels: Sun &lt; Mon &lt; Tues &lt; Wed &lt; Thurs &lt; Fri &lt; Sat</code></pre>
 </div>
-</div>
-<div id="date-class" class="section level1">
-<h1>‘Date’ class</h1>
-<p>d2&lt;-Sys.Date();d2;class(d2)</p>
-</div>
-<div id="formatting-dates" class="section level1">
-<h1>formatting dates</h1>
-</div>
-<div id="d-days-as-a-abbreviated-weekday-a-unabbreviated-weekday" class="section level1">
-<h1>%d (days as #), %a (abbreviated weekday), %A (unabbreviated weekday)</h1>
-</div>
-<div id="m-month-as-b-abbreviated-month-b-unabbreviated-month" class="section level1">
-<h1>%m (month as #), %b (abbreviated month), %B (unabbreviated month)</h1>
-</div>
-<div id="y-2-digit-year-y-4-digit-year" class="section level1">
-<h1>%y (2 digit year), %Y (4 digit year)</h1>
-<p>format(d2,“%a %b %d”)</p>
-</div>
-<div id="creating-dates" class="section level1">
-<h1>creating dates</h1>
-<p>x&lt;-c(“1jan1960”,“2jan1960”,“31mar1960”,“30jul1960”) z&lt;-as.Date(x,“%d%b%Y”);z z[2] - z[1] as.numeric(z[2]-z[1])</p>
-</div>
-<div id="converting-to-julian-calendar-system" class="section level1">
-<h1>converting to Julian calendar system</h1>
-<p>weekdays(d2) months(d2) # number of days since the origin of time (1970-01-01) julian(d2)</p>
-</div>
-<div id="lubridate-package" class="section level1">
-<h1>Lubridate package</h1>
-<p>if(!require(lubridate)){ install.packages(“lubridate”,repo=“<a href="https://cran.rstudio.com/" class="uri">https://cran.rstudio.com/</a>”) } library(lubridate); ymd(“20140108”) mdy(“08/04/2013”) dmy(“03-04-2013”)</p>
-</div>
-<div id="lubridate-with-time-date" class="section level1">
-<h1>Lubridate with time + date</h1>
-<p>ymd_hms(“2011-08-03 10:15:03”) ymd_hms(“2011-08-03 10:15:03”,tz=“Pacific/Auckland”)</p>
-</div>
-<div id="slightly-different-syntax-for-some-functions" class="section level1">
-<h1>slightly different syntax for some functions</h1>
-<p>x&lt;-dmy(c(“1jan2013”,“2jan2013”,“31mar2013”,“30jul2013”)) wday(x[1]); wday(x[1],label=TRUE) ```‘’’</p>
-<div id="section-3" class="section level3">
-<h3>15)</h3>
+<div id="data-resources" class="section level3">
+<h3>15) data resources</h3>
+<pre class="r"><code># open government sites
+# United Nations:
+#   http://data.un.org
+# United States:
+#   http:/www.data.gov
+# United Kingdom:
+#   http://data.gov.uk
+# France:
+#   http://www.data.gouv.fr
+# Ghana:
+#   http://data.gov.gh
+# Australia:
+#   http://data.gov.au
+# Germany:
+#   https://www.govdata.de
+# Hong Kong:
+#   http://www.gov.hk/en/theme/psi/datasets
+# Japan:
+#   http://www.data.go.jp
+
+# Gapminder: data about development of human health
+# http://www.gapminder.org
+
+# Survey data from the United States
+# http://www.asdfree.com
+
+# Infochimps Marketplace -- some cost money
+# http://www.infochimps.com/marketplace
+
+# Kaggle -- data sets
+# http://www.kaggle.com
+
+# Collections by data scientists
+# Hilary Mason:
+#   http://bitly.com/bundles/hmason/1
+# Peter Skomoroch
+#   https://delicious.com/pksomoroch/datasets
+# Jeff Hammerbacher
+#   http://www.quora.com/Jeff-Hammerbacher/Introduction-to-Data-Science-Data-Sets
+# Gregory Piatetsky-Shapiro
+#   http://www.kdnuggets.com/gps.html
+# http://blog.mortardata.com/post/67652898761/6-dataset-lists-curated-by-data-scientists
+
+# More specialized collections:
+# Stanford Large Network Data
+# UCI Machine Learning
+# KDD Nuggets Datasets
+# CMU Statlib
+# Gene Expression Omnibus
+# ArXiv Data
+# Public Data Sets on Amazon Web Services
+
+# Some API's with R Interfaces
+# twitter / twitterR pkg
+# figshare / rfigshare
+# PLoS / rplos
+# rOpenSci
+# Facebook / RFacebook
+# Google Maps / RGoogleMaps</code></pre>
 </div>
 </div>
 
